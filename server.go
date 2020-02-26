@@ -4,45 +4,44 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/mmathys/acfts/common"
-	"io/ioutil"
-	"log"
+	"github.com/mmathys/acfts/core"
 	"net/http"
 )
 
-func hello(w http.ResponseWriter, req *http.Request) {
-	// Declare a request struct
-	var body common.Tuple
+var SignedUTXO = map[int]common.Tuple {}
 
-	/*
-	err := json.NewDecoder(req.Body).Decode(&body)
+func handleSign(w http.ResponseWriter, req *http.Request) {
+	// Parse the request
+	var tx common.Transaction
+	err := json.NewDecoder(req.Body).Decode(&tx)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	 */
 
-	payload, err := ioutil.ReadAll(req.Body)
-	if err != nil {
-		log.Fatal("Error reading the body", err)
+	for _, input := range tx.Inputs {
+		SignedUTXO[input.Id] = input
 	}
 
-	err = json.Unmarshal(payload, &body)
+	fmt.Println(SignedUTXO)
+
+	// Sign the request
+	outputs, err := core.Sign(&tx.Inputs, &tx.Outputs)
 	if err != nil {
-		log.Fatal("Decoding error: ", err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
 
-	fmt.Fprintf(w, "thanks, %v\n", body)
+	// Form the response
+	response := common.TransactionSignRes{outputs}
+	err = json.NewEncoder(w).Encode(&response)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 }
 
 func main() {
-	a := []byte{0,0}
-	out, _ := json.Marshal(a)
-	err := json.Unmarshal(out, &a)
-	if err != nil {
-		fmt.Println("failed")
-	}
-	fmt.Println(string(out))
-
-	http.HandleFunc("/sign", hello)
+	http.HandleFunc("/sign", handleSign)
 	http.ListenAndServe(":6666", nil)
 }

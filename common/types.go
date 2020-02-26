@@ -4,12 +4,13 @@ type Address []byte
 
 // Defines an Input / Output tuple
 type Tuple struct {
-	Address		Address		`json: address`
-	Value		int			`json: value`
+	Address		Address
+	Value		int
+	Id			int
 }
 
 // defines the payload of the message which we want to have signed
-type TransactionSignReq struct {
+type Transaction struct {
 	Inputs 	[]Tuple
 	Outputs []Tuple
 }
