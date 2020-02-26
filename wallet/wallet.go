@@ -5,13 +5,20 @@ import (
 	"github.com/mmathys/acfts/common"
 	"github.com/mmathys/acfts/core"
 	"math/rand"
+	"time"
 )
 
+// for testing, each user will have 100 money
+// TODO: this is pseudo-deterministic. Used for testing only.
+var s1 = rand.NewSource(time.Now().UnixNano())
+var r1 = rand.New(s1)
+var key = r1.Int()
 var UTXO = map[int]common.Tuple {
-	0: {[]byte{0},100, 0},
+	key: {[]byte{0},100, key},
 }
 
 func PrepareTransaction(addr common.Address, val int) (common.Transaction, error){
+
 	// Linear Scan through UTXOs
 	var inputs []common.Tuple
 	current := 0
@@ -30,7 +37,7 @@ func PrepareTransaction(addr common.Address, val int) (common.Transaction, error
 
 	// add remaining funds to inputs
 	if current > val {
-		remaining := val - current
+		remaining := current - val
 		outputs = append(outputs, common.Tuple{core.GetOwnAddress(), remaining, rand.Int()})
 	}
 

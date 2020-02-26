@@ -9,6 +9,7 @@ import (
 	"github.com/mmathys/acfts/util"
 	"github.com/mmathys/acfts/wallet"
 	"net/http"
+	"reflect"
 	"sync"
 )
 
@@ -34,28 +35,37 @@ func doTransaction(t common.Transaction) {
 	var wg sync.WaitGroup
 
 	// TODO Only wait for Math.ceil(2/3 * n) of n servers!
-	wg.Add(len(core.GetServers()))
-	sigs := make(chan common.TransactionSignRes)
+	n := len(core.GetServers())
+	sigs := make(chan common.TransactionSignRes, n)
 	
 	for _, server := range core.GetServers() {
+		wg.Add(1)
 		go requestSignature(server, t, &wg, &sigs)
 	}
 
 	wg.Wait()
 
-	// TODO validate and store sigs
-	sig := <- sigs
-
 	fmt.Println("got sigs from all servers")
 
-	// remove and add UTXOs
-	wallet.RemoveUTXO(&t.Inputs)
-	wallet.AddUTXO(&sig.Outputs)
+	// TODO validate and store sigs
+	sig := <-sigs
 
+	// remove own UTXOs, (is spent at this point)
+	wallet.RemoveUTXO(&t.Inputs)
+
+	// add own outputs
+	var ownOutputs []common.Tuple
+	for _, t := range sig.Outputs {
+		if reflect.DeepEqual(t.Address, core.GetOwnAddress()) {
+			ownOutputs = append(ownOutputs, t)
+		}
+	}
+	wallet.AddUTXO(&ownOutputs)
+
+	// TODO: send UTXO to counterpart
 }
 
 func requestSignature(serverAddr common.Address, t common.Transaction, wg *sync.WaitGroup, sigs *chan common.TransactionSignRes) {
-
 	net, err := core.LookupNetworkFromAddress(serverAddr)
 	if err != nil {
 		fmt.Println(err)
@@ -83,7 +93,7 @@ func requestSignature(serverAddr common.Address, t common.Transaction, wg *sync.
 	}
 
 	*sigs <- sig
-	wg.Done()
+	defer wg.Done()
 }
 
 func main() {
