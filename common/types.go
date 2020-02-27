@@ -6,7 +6,7 @@ const (
 
 type Address [AddressLength]byte
 
-// Defines an Input / Output tuple
+// Defines an Input / Output tuple; with extra fields
 type Tuple struct {
 	Address		Address
 	Value		int
