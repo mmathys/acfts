@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-var SignedUTXO = map[int]common.Tuple {}
+var SignedUTXO = map[int]common.Tuple{}
 
 func handleSign(w http.ResponseWriter, req *http.Request) {
 	// Parse the request

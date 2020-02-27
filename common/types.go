@@ -1,6 +1,10 @@
 package common
 
-type Address []byte
+const (
+	AddressLength = 1
+)
+
+type Address [AddressLength]byte
 
 // Defines an Input / Output tuple
 type Tuple struct {
@@ -9,12 +13,17 @@ type Tuple struct {
 	Id			int
 }
 
-// defines the payload of the message which we want to have signed
+// Defines the payload of the message which we want to have signed
 type Transaction struct {
-	Inputs 	[]Tuple
-	Outputs []Tuple
+	Inputs 		[]Tuple
+	Outputs 	[]Tuple
 }
 
 type TransactionSignRes struct {
-	Outputs	[]Tuple
+	Outputs		[]Tuple
+}
+
+type Wallet struct {
+	Address 	Address
+	UTXO 		map[int]Tuple
 }

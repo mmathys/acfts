@@ -2,8 +2,8 @@ package core
 
 import (
 	"errors"
+	"fmt"
 	"github.com/mmathys/acfts/common"
-	"reflect"
 )
 
 type Entry struct {
@@ -11,43 +11,31 @@ type Entry struct {
 	network string
 }
 
-var m = map[string] Entry {
-	"A": {common.Address{0}, "http://localhost:5555"},
-	//"B": {common.Address{1}, "http://localhost:5556"},
-	//"C": {common.Address{2}, "http://localhost:5557"},
-	"W": {common.Address{3}, "http://localhost:6666"},
-	//"X": {common.Address{4}, "http://localhost:6667"},
-	//"Y": {common.Address{5}, "http://localhost:6668"},
-	//"Z": {common.Address{6}, "http://localhost:6669"},
-}
-
-func LookupAddress(alias string) common.Address {
-	return m[alias].address
-}
-
-func LookupNetwork(alias string) string {
-	return m[alias].network
+var m = map[common.Address]string{
+	common.Address{0}: "http://localhost:5555", // A (client)
+	common.Address{1}: "http://localhost:5556", // B (client)
+	common.Address{2}: "http://localhost:5557", // C (client)
+	common.Address{3}: "http://localhost:6666", // W (server)
+	common.Address{4}: "http://localhost:6667", // X (server)
+	common.Address{5}: "http://localhost:6668", // Y (server)
+	common.Address{6}: "http://localhost:6669", // Z (server)
 }
 
 func LookupNetworkFromAddress(address common.Address) (string, error) {
-	for _, e := range m {
-		if reflect.DeepEqual(e.address, address) {
-			return e.network, nil
-		}
+	res, ok := m[address]
+	if ok {
+		return res, nil
+	} else {
+		msg := fmt.Sprintf("could not find address 0x%x\n", address)
+		return "", errors.New(msg)
 	}
-
-	return "", errors.New("could not find address")
 }
 
 func GetServers() []common.Address {
-	return []common.Address {
+	return []common.Address{
 		common.Address{3},
 		//common.Address{4},
 		//common.Address{5},
 		//common.Address{6},
 	}
-}
-
-func GetOwnAddress() common.Address {
-	return common.Address{0}
 }
