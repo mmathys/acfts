@@ -2,13 +2,14 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/mmathys/acfts/common"
 	"github.com/mmathys/acfts/core"
 	"net/http"
+	"sync"
 )
 
-var SignedUTXO = map[int]common.Tuple{}
+//var SignedUTXO = map[int]common.Tuple{}
+var SignedUTXO sync.Map
 
 func handleSign(w http.ResponseWriter, req *http.Request) {
 	// Parse the request
@@ -20,10 +21,10 @@ func handleSign(w http.ResponseWriter, req *http.Request) {
 	}
 
 	for _, input := range tx.Inputs {
-		SignedUTXO[input.Id] = input
+		SignedUTXO.Store(input.Id, input)
 	}
 
-	fmt.Println(SignedUTXO)
+	//fmt.Println(SignedUTXO)
 
 	// Sign the request
 	outputs, err := core.Sign(&tx.Inputs, &tx.Outputs)
@@ -33,7 +34,7 @@ func handleSign(w http.ResponseWriter, req *http.Request) {
 	}
 
 	// Form the response
-	response := common.TransactionSignRes{outputs}
+	response := common.TransactionSignRes{Outputs: outputs}
 	err = json.NewEncoder(w).Encode(&response)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
