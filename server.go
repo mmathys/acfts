@@ -2,9 +2,13 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/mmathys/acfts/common"
 	"github.com/mmathys/acfts/core"
+	"github.com/urfave/cli"
+	"log"
 	"net/http"
+	"os"
 	"sync"
 )
 
@@ -12,7 +16,7 @@ import (
 var SignedUTXO sync.Map
 
 func handleSign(w http.ResponseWriter, req *http.Request) {
-	// Parse the request
+	// parse the request
 	var tx common.Transaction
 	err := json.NewDecoder(req.Body).Decode(&tx)
 	if err != nil {
@@ -24,7 +28,7 @@ func handleSign(w http.ResponseWriter, req *http.Request) {
 		SignedUTXO.Store(input.Id, input)
 	}
 
-	//fmt.Println(SignedUTXO)
+	fmt.Println(SignedUTXO)
 
 	// Sign the request
 	outputs, err := core.Sign(&tx.Inputs, &tx.Outputs)
@@ -42,7 +46,37 @@ func handleSign(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func main() {
+func runServer(c *cli.Context) error {
+	port := c.Int("port")
+	if port < 1025 || port > 65535 {
+		log.Fatal("port must be between 1025 and 65535")
+	}
+
+	log.Printf("initialized server; port = %d\n", port)
+
 	http.HandleFunc("/sign", handleSign)
-	http.ListenAndServe(":6666", nil)
+	localAddr := fmt.Sprintf(":%d", port)
+	http.ListenAndServe(localAddr, nil)
+	return nil
+}
+
+func main() {
+	app := &cli.App{
+		Name:   "ACFTS server",
+		Usage:  "Asynchronous Consensus-Free Transaction System server",
+		Action: runServer,
+		Flags: []cli.Flag {
+			&cli.IntFlag{
+				Name:    "port",
+				Aliases: []string{"p"},
+				Usage:   "Set server port to `PORT` for signing endpoint",
+				Required: true,
+			},
+		},
+	}
+
+	err := app.Run(os.Args)
+	if err != nil {
+		log.Fatal(err)
+	}
 }

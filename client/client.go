@@ -15,6 +15,7 @@ func HandleIncoming(w *common.Wallet, incoming chan common.Tuple) {
 	for {
 		t := <-incoming
 		fmt.Printf("got tuple %v\n", t)
+		wallet.AddUTXO(w, t)
 	}
 }
 
@@ -34,7 +35,7 @@ func doTransaction(w *common.Wallet, t common.Transaction) {
 	}
 
 	// own UTXOs, (is spent at this point)
-	wallet.RemoveUTXO(w, &t.Inputs)
+	wallet.RemoveUTXOMultiple(w, &t.Inputs)
 
 	// TODO combine signatures.
 	sig := (*res)[0]
@@ -49,7 +50,7 @@ func doTransaction(w *common.Wallet, t common.Transaction) {
 		}
 	}
 
-	wallet.AddUTXO(w, &ownOutputs)
+	wallet.AddUTXOMultiple(w, &ownOutputs)
 }
 
 // TODO Only wait for Math.ceil(2/3 * n) of n servers!

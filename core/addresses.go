@@ -12,13 +12,13 @@ type Entry struct {
 }
 
 var m = map[common.Address]string{
-	common.Address{0}: "http://localhost:5555", // A (client)
-	common.Address{1}: "http://localhost:5556", // B (client)
-	common.Address{2}: "http://localhost:5557", // C (client)
-	common.Address{3}: "http://localhost:6666", // W (server)
-	common.Address{4}: "http://localhost:6667", // X (server)
-	common.Address{5}: "http://localhost:6668", // Y (server)
-	common.Address{6}: "http://localhost:6669", // Z (server)
+	common.Address{0}: "http://localhost:5555", // 0x00 (client)
+	common.Address{1}: "http://localhost:5556", // 0x01 (client)
+	common.Address{2}: "http://localhost:5557", // 0x02 (client)
+	common.Address{3}: "http://localhost:6666", // 0x03 (server)
+	common.Address{4}: "http://localhost:6667", // 0x04 (server)
+	common.Address{5}: "http://localhost:6668", // 0x05 (server)
+	common.Address{6}: "http://localhost:6669", // 0x06 (server)
 }
 
 func LookupNetworkFromAddress(address common.Address) (string, error) {

@@ -16,7 +16,7 @@ This is parallel benchmark
 var targetAddr = common.Address{0}
 // in this benchmark, a wallet gets created once. Then, the wallet spends all of its cash, 1 money per iteration.
 func BenchmarkParallelSpendSingle(b *testing.B) {
-	var numWorkers uint8 = 2 // max: 255
+	var numWorkers uint8 = 4 // max: 255
 
 	jobs := make(chan bool, b.N)
 	done := make(chan bool, b.N)

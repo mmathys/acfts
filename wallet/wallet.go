@@ -36,13 +36,21 @@ func PrepareTransaction(w *common.Wallet, addr common.Address, val int) (common.
 	return t, nil
 }
 
-func RemoveUTXO(wallet *common.Wallet, ts *[]common.Tuple) {
+func RemoveUTXO(wallet *common.Wallet, t common.Tuple) {
+	delete(wallet.UTXO, t.Id)
+}
+
+func RemoveUTXOMultiple(wallet *common.Wallet, ts *[]common.Tuple) {
 	for _, t := range *ts {
 		delete(wallet.UTXO, t.Id)
 	}
 }
 
-func AddUTXO(wallet *common.Wallet, ts *[]common.Tuple) {
+func AddUTXO(wallet *common.Wallet, t common.Tuple) {
+	wallet.UTXO[t.Id] = t
+}
+
+func AddUTXOMultiple(wallet *common.Wallet, ts *[]common.Tuple) {
 	for _, t := range *ts {
 		wallet.UTXO[t.Id] = t
 	}

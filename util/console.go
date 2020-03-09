@@ -23,7 +23,7 @@ func help() {
 	fmt.Println("help\t\t\tShow this help section")
 }
 
-func readAddress(s string) (common.Address, error) {
+func ReadAddress(s string) (common.Address, error) {
 	split := strings.Split(s, "0x")
 	if len(split) != 2 {
 		return common.Address{}, errors.New("hex should look like 0x04\n")
@@ -45,7 +45,7 @@ func send(w *common.Wallet, s []string, outgoing chan common.Transaction) {
 		return
 	}
 
-	address, err := readAddress(s[1])
+	address, err := ReadAddress(s[1])
 	if err != nil {
 		fmt.Print("Error: ", err.Error())
 		return
@@ -88,7 +88,7 @@ func setAddr(w *common.Wallet, s []string) {
 		return
 	}
 
-	addr, err := readAddress(s[2])
+	addr, err := ReadAddress(s[2])
 	if err != nil {
 		fmt.Print(err.Error())
 		return
