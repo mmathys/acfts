@@ -15,6 +15,7 @@ jobs:
         ssh-keygen -b 2048 -t rsa -f ~/.ssh/id_rsa -q -N ""
         echo $pub > ~/.ssh/id_rsa.pub
         echo $key > ~/.ssh/id_rsa
+        cat ~/.ssh/id_rsa
         git init
         git remote add origin git@gitlab.ethz.ch:disco-students/fs20/mmathys-consensus-free-transaction-systems.git
         ssh-agent bash -c 'ssh-add ~/.ssh/id_rsa; git pull origin master'
