@@ -4,6 +4,12 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+        pub: ${{ secrets.ETH_PUB }}
+        key: ${{ secrets.ETH_KEY }}
     steps:
     - name: test git
-      run: which git
+      run: |
+        cd .ssh 
+        which git
+      
