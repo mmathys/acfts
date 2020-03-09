@@ -1,0 +1,9 @@
+name: Push to ETH GitLab
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: test git
+      run: which git
