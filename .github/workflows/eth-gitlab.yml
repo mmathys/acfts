@@ -9,12 +9,18 @@ jobs:
         pub: ${{ secrets.ETH_PUB }}
         key: ${{ secrets.ETH_KEY }}
     steps:
-    - name: test git
+    - name: setup ssh
       run: |
         mkdir -p ~/.ssh
         ssh-keygen -b 2048 -t rsa -f ~/.ssh/id_rsa -q -N ""
         echo "${{ secrets.ETH_PUB }}" > ~/.ssh/id_rsa.pub
         echo "${{ secrets.ETH_KEY }}" > ~/.ssh/id_rsa
         echo "gitlab.ethz.ch,129.132.202.219 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBIMSQu1TqCpCLoA4Qt7imrgYIntQkBU3ton7Yh4fKEUjPHm9/f2B0RRhJOJ75clcRPt587NnAZrcFM8SA60+dXg=" > ~/.ssh/known_hosts
-        git remote add origin git@gitlab.ethz.ch:disco-students/fs20/mmathys-consensus-free-transaction-systems.git
-        git push origin master
+    - name: push to mirror
+      run: |
+        mkdir temp
+        cd temp
+        git clone git@github.com:mmathys/acfts.git
+        cd acfts
+        git remote add eth git@gitlab.ethz.ch:disco-students/fs20/mmathys-consensus-free-transaction-systems.git
+        git push eth master
