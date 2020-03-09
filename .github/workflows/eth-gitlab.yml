@@ -19,6 +19,5 @@ jobs:
         git init
         git remote add origin git@gitlab.ethz.ch:disco-students/fs20/mmathys-consensus-free-transaction-systems.git
         git pull origin master
-#        ssh-agent bash -c 'ssh-add ~/.ssh/id_rsa; git pull origin master'
-#        git pull origin master
-#        git push origin master
+        git commit -am "GitHub Bot"
+        git push origin master
