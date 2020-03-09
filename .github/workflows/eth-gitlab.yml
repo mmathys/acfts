@@ -16,7 +16,7 @@ jobs:
         echo "${{ secrets.ETH_PUB }}" > ~/.ssh/id_rsa.pub
         echo "${{ secrets.ETH_KEY }}" > ~/.ssh/id_rsa
         echo "gitlab.ethz.ch,129.132.202.219 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBIMSQu1TqCpCLoA4Qt7imrgYIntQkBU3ton7Yh4fKEUjPHm9/f2B0RRhJOJ75clcRPt587NnAZrcFM8SA60+dXg=" > ~/.ssh/known_hosts
-    - name: push to mirror
+    - name: sync
       run: |
         mkdir temp
         cd temp
@@ -25,3 +25,4 @@ jobs:
         git remote add eth git@gitlab.ethz.ch:disco-students/fs20/mmathys-consensus-free-transaction-systems.git
         git pull eth master
         git push eth master
+        git push origin master
