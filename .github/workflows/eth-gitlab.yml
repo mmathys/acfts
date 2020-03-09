@@ -10,6 +10,6 @@ jobs:
     steps:
     - name: test git
       run: |
-        cd .ssh 
+        which ssh-keygen
         which git
       
