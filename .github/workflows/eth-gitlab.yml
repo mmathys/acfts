@@ -23,4 +23,5 @@ jobs:
         git clone git@github.com:mmathys/acfts.git
         cd acfts
         git remote add eth git@gitlab.ethz.ch:disco-students/fs20/mmathys-consensus-free-transaction-systems.git
+        git pull eth master
         git push eth master
