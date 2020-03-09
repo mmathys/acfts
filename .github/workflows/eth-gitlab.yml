@@ -15,6 +15,6 @@ jobs:
         echo $pub > .ssh/id_rsa.pub
         echo $key > .ssh/id_rsa
         git init
-        git remote add gitlab git@gitlab.ethz.ch:disco-students/fs20/mmathys-consensus-free-transaction-systems.git
+        git remote add origin git@gitlab.ethz.ch:disco-students/fs20/mmathys-consensus-free-transaction-systems.git
         git pull origin master
         git push origin master
