@@ -8,15 +8,13 @@ jobs:
         pub: ${{ secrets.ETH_PUB }}
         key: ${{ secrets.ETH_KEY }}
     steps:
-    - name: ls
-      run: ls
-    - name: pwd
-      run: pwd
     - name: test git
       run: |
         mkdir -p .ssh
         ssh-keygen -b 2048 -t rsa -f .ssh/id_rsa -q -N ""
         echo $pub > .ssh/id_rsa.pub
         echo $key > .ssh/id_rsa
+        git init
         git remote add gitlab git@gitlab.ethz.ch:disco-students/fs20/mmathys-consensus-free-transaction-systems.git
+        git pull origin master
         git push origin master
