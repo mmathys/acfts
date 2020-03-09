@@ -3,6 +3,7 @@ on: [push]
 
 jobs:
   build:
+    name: Push
     runs-on: ubuntu-latest
     env:
         pub: ${{ secrets.ETH_PUB }}
