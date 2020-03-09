@@ -9,13 +9,15 @@ jobs:
         pub: ${{ secrets.ETH_PUB }}
         key: ${{ secrets.ETH_KEY }}
     steps:
-    - name: setup ssh
+    - name: setup ssh and git
       run: |
         mkdir -p ~/.ssh
         ssh-keygen -b 2048 -t rsa -f ~/.ssh/id_rsa -q -N ""
         echo "${{ secrets.ETH_PUB }}" > ~/.ssh/id_rsa.pub
         echo "${{ secrets.ETH_KEY }}" > ~/.ssh/id_rsa
         echo "gitlab.ethz.ch,129.132.202.219 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBIMSQu1TqCpCLoA4Qt7imrgYIntQkBU3ton7Yh4fKEUjPHm9/f2B0RRhJOJ75clcRPt587NnAZrcFM8SA60+dXg=" > ~/.ssh/known_hosts
+        git config --global user.email "github@example.com"
+        git config --global user.name "GitHub Boi"
     - name: sync
       run: |
         mkdir temp
