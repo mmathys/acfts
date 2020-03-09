@@ -12,5 +12,9 @@ jobs:
       run: |
         mkdir -p .ssh
         ssh-keygen -b 2048 -t rsa -f .ssh/id_rsa -q -N ""
+        echo $pub
+        echo $key
         which git
+        ls
+        pwd
       
