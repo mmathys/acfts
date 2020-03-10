@@ -12,37 +12,36 @@ import (
 	"sync"
 )
 
-//var SignedUTXO = map[int]common.Tuple{}
 var SignedUTXO sync.Map
 
-func handleSign(w http.ResponseWriter, req *http.Request) {
-	// parse the request
-	var tx common.Transaction
-	err := json.NewDecoder(req.Body).Decode(&tx)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
+func handleSign(id common.Identity) http.HandlerFunc {
+	return func(w http.ResponseWriter, req *http.Request) {
+		// parse the request
+		var tx common.Transaction
+		err := json.NewDecoder(req.Body).Decode(&tx)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
 
-	for _, input := range tx.Inputs {
-		SignedUTXO.Store(input.Id, input)
-	}
+		for _, input := range tx.Inputs {
+			SignedUTXO.Store(input.Id, input)
+		}
 
-	//fmt.Println(SignedUTXO)
+		// Sign the request
+		outputs, err := core.Sign(&id.Key, tx.Outputs)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
 
-	// Sign the request
-	outputs, err := core.Sign(&tx.Inputs, &tx.Outputs)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	// Form the response
-	response := common.TransactionSignRes{Outputs: outputs}
-	err = json.NewEncoder(w).Encode(&response)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
+		// Form the response
+		response := common.TransactionSignRes{Outputs: outputs}
+		err = json.NewEncoder(w).Encode(&response)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
 	}
 }
 
@@ -53,8 +52,10 @@ func runServer(c *cli.Context) error {
 	}
 
 	log.Printf("initialized server; port = %d\n", port)
+	id := common.Identity{nil, nil}
 
-	http.HandleFunc("/sign", handleSign)
+
+	http.HandleFunc("/sign", handleSign(id))
 	localAddr := fmt.Sprintf(":%d", port)
 	http.ListenAndServe(localAddr, nil)
 	return nil
@@ -65,11 +66,17 @@ func main() {
 		Name:   "ACFTS server",
 		Usage:  "Asynchronous Consensus-Free Transaction System server",
 		Action: runServer,
-		Flags: []cli.Flag {
+		Flags: []cli.Flag{
 			&cli.IntFlag{
-				Name:    "port",
-				Aliases: []string{"p"},
-				Usage:   "Set server port to `PORT` for signing endpoint",
+				Name:     "port",
+				Aliases:  []string{"p"},
+				Usage:    "Set server port to `PORT` for signing endpoint",
+				Required: true,
+			},
+			&cli.StringFlag{
+				Name:    "address",
+				Aliases: []string{"a"},
+				Usage:   "Set own address to `ADDRESS`. Format: e.g. 0x04",
 				Required: true,
 			},
 		},

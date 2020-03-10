@@ -27,7 +27,7 @@ func runClient(c *cli.Context) error {
 
 	log.Printf("initialized client; addr = 0x%x, port = %d\n", addr, port)
 
-	incoming := make(chan common.Tuple, bufferLen)
+	incoming := make(chan common.Value, bufferLen)
 	outgoing := make(chan common.Transaction, bufferLen)
 
 	// create new wallet.

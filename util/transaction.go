@@ -11,8 +11,8 @@ func NewWalletWithAmount(addr common.Address, value int) *common.Wallet {
 	r1 := rand.New(s1)
 	key := r1.Int()
 
-	utxo := map[int]common.Tuple{
-		key: {addr, value, key},
+	utxo := map[int]common.Value{
+		key: {addr, value, key, nil},
 	}
 
 	return &common.Wallet{Address: addr, UTXO: utxo}

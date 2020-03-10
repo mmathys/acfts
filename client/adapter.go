@@ -45,7 +45,7 @@ func RequestSignature(serverAddr common.Address, t common.Transaction, wg *sync.
 	defer wg.Done()
 }
 
-func ForwardSignature(t common.Tuple) {
+func ForwardSignature(t common.Value) {
 	net, err := core.LookupNetworkFromAddress(t.Address)
 	if err != nil {
 		fmt.Print(err.Error())
@@ -67,10 +67,10 @@ func ForwardSignature(t common.Tuple) {
 	}
 }
 
-func ReceiveSignature(c chan common.Tuple) http.HandlerFunc {
+func ReceiveSignature(c chan common.Value) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 		// Parse the request
-		var t common.Tuple
+		var t common.Value
 		err := json.NewDecoder(req.Body).Decode(&t)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)

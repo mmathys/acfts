@@ -8,12 +8,12 @@ import (
 
 func PrepareTransaction(w *common.Wallet, addr common.Address, val int) (common.Transaction, error) {
 	// Linear Scan through UTXOs
-	var inputs []common.Tuple
+	var inputs []common.Value
 	current := 0
 	for _, tx := range w.UTXO {
 		if current < val {
 			inputs = append(inputs, tx)
-			current += tx.Value
+			current += tx.Amount
 		}
 	}
 
@@ -21,36 +21,36 @@ func PrepareTransaction(w *common.Wallet, addr common.Address, val int) (common.
 		return common.Transaction{}, errors.New("not enough funds")
 	}
 
-	var outputs []common.Tuple
+	var outputs []common.Value
 
 	// add remaining funds to inputs
 	if current > val {
 		remaining := current - val
-		outputs = append(outputs, common.Tuple{Address: w.Address, Value: remaining, Id: rand.Int()})
+		outputs = append(outputs, common.Value{Address: w.Address, Amount: remaining, Id: rand.Int()})
 	}
 
 	// add counterpart
-	outputs = append(outputs, common.Tuple{Address: addr, Value: val, Id: rand.Int()})
+	outputs = append(outputs, common.Value{Address: addr, Amount: val, Id: rand.Int()})
 
 	t := common.Transaction{Inputs: inputs, Outputs: outputs}
 	return t, nil
 }
 
-func RemoveUTXO(wallet *common.Wallet, t common.Tuple) {
+func RemoveUTXO(wallet *common.Wallet, t common.Value) {
 	delete(wallet.UTXO, t.Id)
 }
 
-func RemoveUTXOMultiple(wallet *common.Wallet, ts *[]common.Tuple) {
+func RemoveUTXOMultiple(wallet *common.Wallet, ts *[]common.Value) {
 	for _, t := range *ts {
 		delete(wallet.UTXO, t.Id)
 	}
 }
 
-func AddUTXO(wallet *common.Wallet, t common.Tuple) {
+func AddUTXO(wallet *common.Wallet, t common.Value) {
 	wallet.UTXO[t.Id] = t
 }
 
-func AddUTXOMultiple(wallet *common.Wallet, ts *[]common.Tuple) {
+func AddUTXOMultiple(wallet *common.Wallet, ts *[]common.Value) {
 	for _, t := range *ts {
 		wallet.UTXO[t.Id] = t
 	}

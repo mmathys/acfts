@@ -11,7 +11,7 @@ import (
 
 const bufferLen int = 255
 
-func HandleIncoming(w *common.Wallet, incoming chan common.Tuple) {
+func HandleIncoming(w *common.Wallet, incoming chan common.Value) {
 	for {
 		t := <-incoming
 		fmt.Printf("got tuple %v\n", t)
@@ -41,7 +41,7 @@ func doTransaction(w *common.Wallet, t common.Transaction) {
 	sig := (*res)[0]
 
 	// add own outputs
-	var ownOutputs []common.Tuple
+	var ownOutputs []common.Value
 	for _, t := range sig.Outputs {
 		if reflect.DeepEqual(t.Address, w.Address) {
 			ownOutputs = append(ownOutputs, t)

@@ -1,29 +1,49 @@
 package common
 
+import (
+	"crypto/ecdsa"
+	"math/big"
+)
+
 const (
 	AddressLength = 1
 )
 
 type Address [AddressLength]byte
 
-// Defines an Input / Output tuple; with extra fields
-type Tuple struct {
-	Address		Address
-	Value		int
-	Id			int
+type ECDSASig struct {
+	R		*big.Int
+	S		*big.Int
 }
 
-// Defines the payload of the message which we want to have signed
+// Defines an Input / Output tuple; with extra fields
+type Value struct {
+	Address 	Address 	// The address
+	Amount  	int     	// The value itself
+	Id      	int     	// Unique identifier
+	Signatures	[]ECDSASig	// Signatures
+}
+
 type Transaction struct {
-	Inputs 		[]Tuple
-	Outputs 	[]Tuple
+	Inputs 		[]Value
+	Outputs 	[]Value
+}
+
+type TransactionSigRequest struct {
+	Inputs 		[]Value
+	Outputs 	[]Value
 }
 
 type TransactionSignRes struct {
-	Outputs		[]Tuple
+	Outputs		[]Value
+}
+
+type Identity struct {
+	Address		Address
+	Key			ecdsa.PrivateKey
 }
 
 type Wallet struct {
-	Address 	Address
-	UTXO 		map[int]Tuple
+	Identity
+	UTXO 		map[int]Value
 }

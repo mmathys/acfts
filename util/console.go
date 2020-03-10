@@ -79,7 +79,7 @@ func utxo(w *common.Wallet) {
 func balance(w *common.Wallet) {
 	balance := 0
 	for _, t := range w.UTXO {
-		balance += t.Value
+		balance += t.Amount
 	}
 	fmt.Printf("Balance: %d\n", balance)
 }
