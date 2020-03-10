@@ -76,6 +76,14 @@ func utxo(w *common.Wallet) {
 	}
 }
 
+func balance(w *common.Wallet) {
+	balance := 0
+	for _, t := range w.UTXO {
+		balance += t.Value
+	}
+	fmt.Printf("Balance: %d\n", balance)
+}
+
 func clear() {
 	cmd := exec.Command("clear")
 	cmd.Stdout = os.Stdout
@@ -101,6 +109,7 @@ func completer(d prompt.Document) []prompt.Suggest {
 	s := []prompt.Suggest{
 		{Text: "send", Description: "Send money to X"},
 		{Text: "utxo", Description: "Show local UTXOs"},
+		{Text: "balance", Description: "Show balance"},
 		{Text: "info", Description: "Show client information"},
 		{Text: "set", Description: "Set property"},
 		{Text: "help", Description: "Show help"},
@@ -128,6 +137,8 @@ func LaunchClientConsole(w *common.Wallet, outgoing chan common.Transaction) {
 			send(w, s, outgoing)
 		case "utxo":
 			utxo(w)
+		case "balance":
+			balance(w)
 		case "info":
 			info(w)
 		case "clear":

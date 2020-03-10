@@ -7,7 +7,6 @@ import (
 )
 
 type Entry struct {
-	address common.Address
 	network string
 }
 

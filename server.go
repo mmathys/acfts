@@ -28,7 +28,7 @@ func handleSign(w http.ResponseWriter, req *http.Request) {
 		SignedUTXO.Store(input.Id, input)
 	}
 
-	fmt.Println(SignedUTXO)
+	//fmt.Println(SignedUTXO)
 
 	// Sign the request
 	outputs, err := core.Sign(&tx.Inputs, &tx.Outputs)
