@@ -10,7 +10,7 @@
         port: number
         publicKey: Blob
         privateKey: Blob
-        agentType?: "randomSingle"
+        agentType: "randomSingle"
     }
 ]
 ```
