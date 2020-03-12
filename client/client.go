@@ -14,7 +14,7 @@ const bufferLen int = 255
 func HandleIncoming(w *common.Wallet, incoming chan common.Value) {
 	for {
 		t := <-incoming
-		fmt.Printf("got tuple %v\n", t)
+		//fmt.Printf("got tuple %v\n", t)
 		wallet.AddUTXO(w, t)
 	}
 }
@@ -22,7 +22,7 @@ func HandleIncoming(w *common.Wallet, incoming chan common.Value) {
 func HandleOutgoing(w *common.Wallet, outgoing chan common.Transaction) {
 	for {
 		t := <-outgoing
-		fmt.Printf("handle outgoing %v\n", t)
+		//fmt.Printf("handle outgoing %v\n", t)
 		go doTransaction(w, t)
 	}
 }

@@ -15,7 +15,7 @@ import (
 )
 
 func RequestSignature(serverAddr common.Address, t common.Transaction, wg *sync.WaitGroup, sigs *chan common.TransactionSignRes) {
-	net, err := core.LookupNetworkFromAddress(serverAddr)
+	net, err := core.GetNetworkAddress(serverAddr)
 	if err != nil {
 		fmt.Print(err.Error())
 		return
@@ -46,7 +46,7 @@ func RequestSignature(serverAddr common.Address, t common.Transaction, wg *sync.
 }
 
 func ForwardSignature(t common.Value) {
-	net, err := core.LookupNetworkFromAddress(t.Address)
+	net, err := core.GetNetworkAddress(t.Address)
 	if err != nil {
 		fmt.Print(err.Error())
 		return
@@ -63,7 +63,7 @@ func ForwardSignature(t common.Value) {
 	if err != nil || res.StatusCode != 200 {
 		fmt.Printf("failed forwarding tx to %s\n", net)
 	} else {
-		fmt.Println("tx forwarded successfully")
+		//fmt.Println("tx forwarded successfully")
 	}
 }
 

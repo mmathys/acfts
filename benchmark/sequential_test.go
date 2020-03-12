@@ -6,7 +6,6 @@ import (
 	"github.com/mmathys/acfts/common"
 	"github.com/mmathys/acfts/util"
 	"github.com/mmathys/acfts/wallet"
-	"os"
 	"testing"
 )
 
@@ -15,15 +14,6 @@ This is an easy (synchronous!) benchmark
 Do not expect high numbers from this
 */
 
-func TestMain(m *testing.M) {
-	fmt.Println("before!")
-
-	code := m.Run()
-
-	fmt.Println("after!")
-	os.Exit(code)
-}
-
 
 // in this benchmark, in each iteration, a new wallet gets created. then, the wallet spends all of its cash.
 func BenchmarkSequentialNewWallet(b *testing.B) {
@@ -31,7 +21,7 @@ func BenchmarkSequentialNewWallet(b *testing.B) {
 		var addrA = common.Address{0}
 		var addrB = common.Address{1}
 
-		A := util.NewWallet(addrA)
+		A := util.GetWallet(addrA)
 
 		tx, err := wallet.PrepareTransaction(A, addrB, 100)
 		if err != nil {

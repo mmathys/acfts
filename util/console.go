@@ -5,8 +5,11 @@ import (
 	"errors"
 	"fmt"
 	"github.com/c-bata/go-prompt"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/mmathys/acfts/common"
+	"github.com/mmathys/acfts/core"
 	"github.com/mmathys/acfts/wallet"
+	"github.com/olekukonko/tablewriter"
 	"os"
 	"os/exec"
 	"strconv"
@@ -68,12 +71,28 @@ func send(w *common.Wallet, s []string, outgoing chan common.Transaction) {
 
 func info(w *common.Wallet) {
 	fmt.Printf("Address:\t0x%x\t%d\n", w.Address, w.Address)
+
+	net, _ := core.GetNetworkAddress(w.Address)
+	fmt.Printf("Network:\t%s\n", net)
+
+	fmt.Printf("Private Key:\t0x%x\n", crypto.FromECDSA(w.Key))
+	fmt.Printf("Public Key:\t0x%x\n", crypto.FromECDSAPub(&w.Key.PublicKey))
 }
 
 func utxo(w *common.Wallet) {
+	table := tablewriter.NewWriter(os.Stdout)
+	sum := 0
+	table.SetHeader([]string{"address", "amount", "id"})
 	for _, t := range w.UTXO {
-		fmt.Println(t)
+		table.Append([]string{
+			fmt.Sprintf("0x%x", t.Address),
+			fmt.Sprintf("%d", t.Amount),
+			fmt.Sprintf("%d", t.Id),
+		})
+		sum += t.Amount
 	}
+	table.SetBorder(false)
+	table.Render()
 }
 
 func balance(w *common.Wallet) {

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/mmathys/acfts/common"
 	"github.com/mmathys/acfts/core"
+	"github.com/mmathys/acfts/util"
 	"github.com/urfave/cli"
 	"log"
 	"net/http"
@@ -14,7 +15,7 @@ import (
 
 var SignedUTXO sync.Map
 
-func handleSign(id common.Identity) http.HandlerFunc {
+func handleSign(id *common.Identity) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 		// parse the request
 		var tx common.Transaction
@@ -29,7 +30,7 @@ func handleSign(id common.Identity) http.HandlerFunc {
 		}
 
 		// Sign the request
-		outputs, err := core.Sign(&id.Key, tx.Outputs)
+		outputs, err := core.Sign(id.Key, tx.Outputs)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
@@ -45,15 +46,11 @@ func handleSign(id common.Identity) http.HandlerFunc {
 	}
 }
 
-func runServer(c *cli.Context) error {
-	port := c.Int("port")
-	if port < 1025 || port > 65535 {
-		log.Fatal("port must be between 1025 and 65535")
-	}
+func runServer(addr common.Address) error {
+	port := core.GetPort(addr)
 
 	log.Printf("initialized server; port = %d\n", port)
-	id := common.Identity{nil, nil}
-
+	id := util.GetIdentity(addr)
 
 	http.HandleFunc("/sign", handleSign(id))
 	localAddr := fmt.Sprintf(":%d", port)
@@ -63,20 +60,21 @@ func runServer(c *cli.Context) error {
 
 func main() {
 	app := &cli.App{
-		Name:   "ACFTS server",
-		Usage:  "Asynchronous Consensus-Free Transaction System server",
-		Action: runServer,
+		Name:  "ACFTS server",
+		Usage: "Asynchronous Consensus-Free Transaction System server",
+		Action: func(c *cli.Context) error {
+			addr, err := util.ReadAddress(c.String("address"))
+			if err != nil {
+				log.Fatal(err)
+			}
+			runServer(addr)
+			return nil
+		},
 		Flags: []cli.Flag{
-			&cli.IntFlag{
-				Name:     "port",
-				Aliases:  []string{"p"},
-				Usage:    "Set server port to `PORT` for signing endpoint",
-				Required: true,
-			},
 			&cli.StringFlag{
-				Name:    "address",
-				Aliases: []string{"a"},
-				Usage:   "Set own address to `ADDRESS`. Format: e.g. 0x04",
+				Name:     "address",
+				Aliases:  []string{"a"},
+				Usage:    "Set own address to `ADDRESS`. Format: e.g. 0x04",
 				Required: true,
 			},
 		},

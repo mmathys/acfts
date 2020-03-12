@@ -3,6 +3,7 @@ package common
 import (
 	"crypto/ecdsa"
 	"math/big"
+	"time"
 )
 
 const (
@@ -40,10 +41,28 @@ type TransactionSignRes struct {
 
 type Identity struct {
 	Address		Address
-	Key			ecdsa.PrivateKey
+	Key			*ecdsa.PrivateKey
 }
 
 type Wallet struct {
-	Identity
+	*Identity
 	UTXO 		map[int]Value
+}
+
+type NodeType string		// "server" | "client"
+
+type Node struct {
+	NodeType 	NodeType
+	Address  	Address				// internal address
+	Net      	string				// network address, with http
+	Port     	int					// port
+	Key      	*ecdsa.PrivateKey
+}
+
+type Agent struct {
+	NumTransactions	int				// how many tx the agent completes before exiting
+	StartDelay		time.Duration	// delay before starting transactions in ns (waiting for other agents to launch)
+	EndDelay		time.Duration	// delay finishing (for receiving stuff tx)
+	Address			Address			// reference to node
+	Topology		[]Address		// other nodes (exluding self)
 }
