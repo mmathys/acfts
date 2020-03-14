@@ -4,6 +4,7 @@ import (
 	"github.com/mmathys/acfts/common"
 	"github.com/mmathys/acfts/core"
 	"math/rand"
+	"sync"
 	"time"
 )
 
@@ -18,12 +19,11 @@ func NewWalletWithAmount(addr common.Address, value int) *common.Wallet {
 	r1 := rand.New(s1)
 	key := r1.Int()
 
-	utxo := map[int]common.Value{
-		key: {addr, value, key, nil},
-	}
+	var utxo sync.Map
+	utxo.Store(key, common.Value{addr, value, key, nil})
 
 	id := GetIdentity(addr)
-	return &common.Wallet{Identity: id, UTXO: utxo}
+	return &common.Wallet{Identity: id, UTXO: &utxo}
 }
 
 // creates test wallet with 100 money

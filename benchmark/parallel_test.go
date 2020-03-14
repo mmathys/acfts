@@ -19,7 +19,7 @@ var targetAddr = common.Address{0}
 func BenchmarkParallelSpendSingle(b *testing.B) {
 	var numWorkers uint8 = 1
 
-	for ; numWorkers < 10; numWorkers++ {
+	for ; numWorkers <= 16; numWorkers++ {
 		s := fmt.Sprintf("ParallelSpendSingle, workers=%d", numWorkers)
 		b.Run(s, func(b *testing.B) {
 

@@ -10,12 +10,16 @@ func PrepareTransaction(w *common.Wallet, addr common.Address, val int) (common.
 	// Linear Scan through UTXOs
 	var inputs []common.Value
 	current := 0
-	for _, tx := range w.UTXO {
+	w.UTXO.Range(func(_ interface{}, value interface{}) bool {
+		v := value.(common.Value)
 		if current < val {
-			inputs = append(inputs, tx)
-			current += tx.Amount
+			inputs = append(inputs, v)
+			current += v.Amount
+			return true
+		} else {
+			return false
 		}
-	}
+	})
 
 	if current < val {
 		return common.Transaction{}, errors.New("not enough funds")
@@ -37,21 +41,21 @@ func PrepareTransaction(w *common.Wallet, addr common.Address, val int) (common.
 }
 
 func RemoveUTXO(wallet *common.Wallet, t common.Value) {
-	delete(wallet.UTXO, t.Id)
+	wallet.UTXO.Delete(t.Id)
 }
 
 func RemoveUTXOMultiple(wallet *common.Wallet, ts *[]common.Value) {
 	for _, t := range *ts {
-		delete(wallet.UTXO, t.Id)
+		wallet.UTXO.Delete(t.Id)
 	}
 }
 
 func AddUTXO(wallet *common.Wallet, t common.Value) {
-	wallet.UTXO[t.Id] = t
+	wallet.UTXO.Store(t.Id, t)
 }
 
 func AddUTXOMultiple(wallet *common.Wallet, ts *[]common.Value) {
 	for _, t := range *ts {
-		wallet.UTXO[t.Id] = t
+		wallet.UTXO.Store(t.Id, t)
 	}
 }

@@ -35,7 +35,8 @@ func simpleAgent(a common.Agent, wg *sync.WaitGroup) {
 	sendBufferLen := 1      // sync
 	receiveBufferLen := 256 // async
 
-	w := util.GetWallet(a.Address)
+	w := util.NewWalletWithAmount(a.Address, a.NumTransactions)
+
 	incoming := make(chan common.Value, sendBufferLen)
 	outgoing := make(chan common.Transaction, receiveBufferLen)
 
@@ -54,8 +55,8 @@ func simpleAgent(a common.Agent, wg *sync.WaitGroup) {
 		to := getRandomAddress(a)
 		t, err := wallet.PrepareTransaction(w, to, 1)
 		if err != nil {
-			fmt.Println("failed to prepare transaction")
-			return
+			fmt.Println(err)
+			panic("failed to prepare transaction")
 		}
 
 		outgoing <- t
@@ -64,18 +65,18 @@ func simpleAgent(a common.Agent, wg *sync.WaitGroup) {
 }
 
 func TestAgents(t *testing.T) {
-	numTx := 10
+	numTx := 10000
 	delay := 500 * time.Millisecond
+	endDelay := 1 * time.Second
 	clients := core.GetClients()
 	var wg sync.WaitGroup
 
 	for _, addr := range clients {
-		a := common.Agent{NumTransactions: numTx, StartDelay: delay, EndDelay: 2 * delay, Address: addr, Topology: clients}
+		a := common.Agent{NumTransactions: numTx, StartDelay: delay, EndDelay: endDelay, Address: addr, Topology: clients}
 		wg.Add(1)
 		go simpleAgent(a, &wg)
 	}
 
-	fmt.Println("ended.")
-
 	wg.Wait()
+	fmt.Println("ended.")
 }

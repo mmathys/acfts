@@ -3,6 +3,7 @@ package common
 import (
 	"crypto/ecdsa"
 	"math/big"
+	"sync"
 	"time"
 )
 
@@ -46,7 +47,7 @@ type Identity struct {
 
 type Wallet struct {
 	*Identity
-	UTXO 		map[int]Value
+	UTXO 		*sync.Map // of type int --> Value
 }
 
 type NodeType string		// "server" | "client"

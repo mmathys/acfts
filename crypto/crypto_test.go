@@ -9,10 +9,12 @@ import (
 )
 
 func TestPrintGeneratedKey(t *testing.T) {
-	key := GenerateKey()
-	priv := crypto.FromECDSA(key)
-	pub := crypto.FromECDSAPub(&key.PublicKey)
-	fmt.Printf("%x\n%x\n", priv, pub)
+	for i := 0; i < 10; i++ {
+		key := GenerateKey()
+		priv := crypto.FromECDSA(key)
+		pub := crypto.FromECDSAPub(&key.PublicKey)
+		fmt.Printf("\"%x\",\"%x\"\n", priv, pub)
+	}
 }
 
 func TestGenerateParseKey(t *testing.T) {
@@ -66,7 +68,6 @@ func TestGenerateParsePubkey(t *testing.T) {
 		t.Error("verification failed")
 	}
 }
-
 
 func TestSignVerify(t *testing.T) {
 	key := GenerateKey()

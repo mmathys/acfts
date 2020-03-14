@@ -83,23 +83,27 @@ func utxo(w *common.Wallet) {
 	table := tablewriter.NewWriter(os.Stdout)
 	sum := 0
 	table.SetHeader([]string{"address", "amount", "id"})
-	for _, t := range w.UTXO {
+	w.UTXO.Range(func(_ interface{}, value interface{}) bool {
+		v := value.(common.Value)
 		table.Append([]string{
-			fmt.Sprintf("0x%x", t.Address),
-			fmt.Sprintf("%d", t.Amount),
-			fmt.Sprintf("%d", t.Id),
+			fmt.Sprintf("0x%x", v.Address),
+			fmt.Sprintf("%d", v.Amount),
+			fmt.Sprintf("%d", v.Id),
 		})
-		sum += t.Amount
-	}
+		sum += v.Amount
+		return true
+	})
 	table.SetBorder(false)
 	table.Render()
 }
 
 func balance(w *common.Wallet) {
 	balance := 0
-	for _, t := range w.UTXO {
-		balance += t.Amount
-	}
+	w.UTXO.Range(func(_ interface{}, value interface{}) bool {
+		v := value.(common.Value)
+		balance += v.Amount
+		return true
+	})
 	fmt.Printf("Balance: %d\n", balance)
 }
 

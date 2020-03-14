@@ -23,7 +23,7 @@ func HandleOutgoing(w *common.Wallet, outgoing chan common.Transaction) {
 	for {
 		t := <-outgoing
 		//fmt.Printf("handle outgoing %v\n", t)
-		go doTransaction(w, t)
+		doTransaction(w, t)
 	}
 }
 

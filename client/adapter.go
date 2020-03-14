@@ -30,8 +30,9 @@ func RequestSignature(serverAddr common.Address, t common.Transaction, wg *sync.
 
 	res, err := http.Post(net+"/sign", "raw", &buf)
 	if err != nil {
-		fmt.Printf("could not fetch sig at %s\n", net)
-		return
+		msg := fmt.Sprintf("could not fetch sig at %s\n", net)
+		fmt.Println(err)
+		panic(msg)
 	}
 
 	var sig common.TransactionSignRes
@@ -61,7 +62,9 @@ func ForwardSignature(t common.Value) {
 
 	res, err := http.Post(net+"/transaction", "raw", &buf)
 	if err != nil || res.StatusCode != 200 {
-		fmt.Printf("failed forwarding tx to %s\n", net)
+		msg := fmt.Sprintf("failed forwarding tx to %s.\n", net)
+		fmt.Println(err)
+		panic(msg)
 	} else {
 		//fmt.Println("tx forwarded successfully")
 	}

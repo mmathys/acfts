@@ -17,10 +17,13 @@ var SignedUTXO sync.Map
 
 func handleSign(id *common.Identity) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
+		defer req.Body.Close()
+
 		// parse the request
 		var tx common.Transaction
 		err := json.NewDecoder(req.Body).Decode(&tx)
 		if err != nil {
+			fmt.Println(err)
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
@@ -32,6 +35,7 @@ func handleSign(id *common.Identity) http.HandlerFunc {
 		// Sign the request
 		outputs, err := core.Sign(id.Key, tx.Outputs)
 		if err != nil {
+			fmt.Println(err)
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
@@ -40,9 +44,11 @@ func handleSign(id *common.Identity) http.HandlerFunc {
 		response := common.TransactionSignRes{Outputs: outputs}
 		err = json.NewEncoder(w).Encode(&response)
 		if err != nil {
+			fmt.Println(err)
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
+
 	}
 }
 
