@@ -64,6 +64,7 @@ func simpleAgent(a common.Agent, wg *sync.WaitGroup) {
 	time.Sleep(a.EndDelay) // wait for others?
 }
 
+// there are 16 clients
 func TestAgents(t *testing.T) {
 	numTx := 10000
 	delay := 500 * time.Millisecond
