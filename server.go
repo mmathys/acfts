@@ -14,10 +14,15 @@ import (
 )
 
 var SignedUTXO sync.Map
+var TxCounter *int32 = new(int32)
+var BenchmarkMode bool = false
 
 func handleSign(id *common.Identity) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 		defer req.Body.Close()
+		if BenchmarkMode {
+			defer util.CountTx(TxCounter)
+		}
 
 		// parse the request
 		var tx common.Transaction
@@ -48,14 +53,18 @@ func handleSign(id *common.Identity) http.HandlerFunc {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-
 	}
 }
 
-func runServer(addr common.Address) error {
+func runServer(addr common.Address, benchmark bool) error {
 	port := core.GetPort(addr)
 
-	log.Printf("initialized server; port = %d\n", port)
+	if !benchmark {
+		log.Printf("initialized server; port = %d; benchmark = %t\n", port, benchmark)
+	} else {
+		BenchmarkMode = true
+		go util.Ticker(TxCounter)
+	}
 	id := util.GetIdentity(addr)
 
 	http.HandleFunc("/sign", handleSign(id))
@@ -73,7 +82,10 @@ func main() {
 			if err != nil {
 				log.Fatal(err)
 			}
-			runServer(addr)
+
+			benchmark := c.Bool("benchmark")
+
+			runServer(addr, benchmark)
 			return nil
 		},
 		Flags: []cli.Flag{
@@ -82,6 +94,12 @@ func main() {
 				Aliases:  []string{"a"},
 				Usage:    "Set own address to `ADDRESS`. Format: e.g. 0x04",
 				Required: true,
+			},
+			&cli.BoolFlag{
+				Name:     "benchmark",
+				Aliases:  []string{"b"},
+				Usage:    "Enables benchmark mode. If set, then outputs number of tx/s to stdout, separated by a newline.",
+				Required: false,
 			},
 		},
 	}
