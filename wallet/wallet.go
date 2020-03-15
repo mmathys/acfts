@@ -4,9 +4,15 @@ import (
 	"errors"
 	"github.com/mmathys/acfts/common"
 	"math/rand"
+	"sync"
 )
 
+// prepare transaction mutex
+var prepareTxMutex sync.Mutex
+
 func PrepareTransaction(w *common.Wallet, addr common.Address, val int) (common.Transaction, error) {
+	prepareTxMutex.Lock()
+
 	// Linear Scan through UTXOs
 	var inputs []common.Value
 	current := 0
@@ -24,6 +30,8 @@ func PrepareTransaction(w *common.Wallet, addr common.Address, val int) (common.
 	if current < val {
 		return common.Transaction{}, errors.New("not enough funds")
 	}
+
+	prepareTxMutex.Unlock()
 
 	var outputs []common.Value
 

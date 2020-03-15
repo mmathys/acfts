@@ -32,13 +32,13 @@ Clients send 1 money to random other clients
 func simpleAgent(a common.Agent, wg *sync.WaitGroup) {
 	defer wg.Done()
 
+	receiveBufferLen := 512 // async
 	sendBufferLen := 1      // sync
-	receiveBufferLen := 256 // async
 
 	w := util.NewWalletWithAmount(a.Address, a.NumTransactions)
 
-	incoming := make(chan common.Value, sendBufferLen)
-	outgoing := make(chan common.Transaction, receiveBufferLen)
+	incoming := make(chan common.Value, receiveBufferLen)
+	outgoing := make(chan common.Transaction, sendBufferLen)
 
 	go client.HandleIncoming(w, incoming)
 	go client.HandleOutgoing(w, outgoing)
@@ -66,16 +66,20 @@ func simpleAgent(a common.Agent, wg *sync.WaitGroup) {
 
 // there are 16 clients
 func TestAgents(t *testing.T) {
-	numTx := 100
+	numTx := 50000
+	maxClients := 15
 	delay := 500 * time.Millisecond
 	endDelay := 1 * time.Second
 	clients := core.GetClients()
 	var wg sync.WaitGroup
 
-	for _, addr := range clients {
-		a := common.Agent{NumTransactions: numTx, StartDelay: delay, EndDelay: endDelay, Address: addr, Topology: clients}
+	topology := clients[:maxClients+1]
+
+	for _, addr := range topology {
+		a := common.Agent{NumTransactions: numTx, StartDelay: delay, EndDelay: endDelay, Address: addr, Topology: topology}
 		wg.Add(1)
 		go simpleAgent(a, &wg)
+
 	}
 
 	wg.Wait()

@@ -57,3 +57,23 @@ func BenchmarkSequentialSpendSingle(b *testing.B) {
 		}
 	}
 }
+
+func TestSequentialSpendSingle(t *testing.T) {
+	N := 10000
+	var addrA = common.Address{0}
+	var addrB = common.Address{1}
+	A := util.NewWalletWithAmount(addrA, N)
+
+	for i := 0; i < N; i++ {
+		tx, err := wallet.PrepareTransaction(A, addrB, 1)
+		if err != nil {
+			panic("failed to prepare transaction")
+		}
+
+		_, err = client.SignTransaction(A, tx)
+		if err != nil {
+			fmt.Println("failed to sign transaction")
+			return
+		}
+	}
+}
