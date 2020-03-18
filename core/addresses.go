@@ -127,3 +127,7 @@ func GetServers() []common.Address {
 		//common.Address{19},
 	}
 }
+
+func GetNumServers() int {
+	return len(GetServers())
+}

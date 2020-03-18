@@ -18,7 +18,7 @@ var targetAddr = common.Address{0}
 // in this benchmark, a wallet gets created once. Then, the wallet spends all of its cash, 1 money per iteration.
 func BenchmarkParallelSpendSingle(b *testing.B) {
 	var numWorkers uint8 = 1
-	N := 10000
+	N := 100000
 
 	for ; numWorkers <= 16; numWorkers++ {
 		s := fmt.Sprintf("ParallelSpendSingle, workers=%d", numWorkers)

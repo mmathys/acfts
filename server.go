@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"github.com/mmathys/acfts/common"
 	"github.com/mmathys/acfts/core"
+	"github.com/mmathys/acfts/crypto"
+	"github.com/mmathys/acfts/server"
 	"github.com/mmathys/acfts/util"
 	"github.com/urfave/cli"
 	"log"
@@ -33,12 +35,19 @@ func handleSign(id *common.Identity) http.HandlerFunc {
 			return
 		}
 
+		err = server.CheckValidity(id, &tx)
+		if err != nil {
+			fmt.Println(err)
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
 		for _, input := range tx.Inputs {
 			SignedUTXO.Store(input.Id, input)
 		}
 
 		// Sign the request
-		outputs, err := core.Sign(id.Key, tx.Outputs)
+		outputs, err := crypto.SignValues(id.Key, tx.Outputs)
 		if err != nil {
 			fmt.Println(err)
 			http.Error(w, err.Error(), http.StatusBadRequest)
