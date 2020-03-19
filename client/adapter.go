@@ -14,8 +14,8 @@ import (
 	"sync"
 )
 
-func RequestSignature(serverAddr common.Address, t common.Transaction, wg *sync.WaitGroup, sigs *chan common.TransactionSignRes) {
-	net, err := core.GetNetworkAddress(serverAddr)
+func RequestSignature(serverAlias common.Alias, t common.Transaction, wg *sync.WaitGroup, sigs *chan common.TransactionSignRes) {
+	net, err := core.GetNetworkAddress(serverAlias)
 	if err != nil {
 		fmt.Print(err.Error())
 		return
@@ -47,7 +47,13 @@ func RequestSignature(serverAddr common.Address, t common.Transaction, wg *sync.
 }
 
 func ForwardSignature(t common.Value) {
-	net, err := core.GetNetworkAddress(t.Address)
+	alias, err := core.GetAliasFromAddress(t.Address)
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
+	net, err := core.GetNetworkAddress(alias)
 	if err != nil {
 		fmt.Print(err.Error())
 		return

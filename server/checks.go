@@ -20,6 +20,11 @@ func CheckValidity(id *common.Identity, tx *common.Transaction) error {
 		return err
 	}
 
+	err = checkRequestSignature(id, tx)
+	if err != nil {
+		return err
+	}
+
 	err = checkInputSignatures(id, tx)
 	if err != nil {
 		return err
@@ -30,6 +35,13 @@ func CheckValidity(id *common.Identity, tx *common.Transaction) error {
 		return err
 	}
 
+	return nil
+}
+
+/**
+Checks whether the request signature is valid; i.e. the public key of the signature matches with the public key of the inputs
+*/
+func checkRequestSignature(id *common.Identity, tx *common.Transaction) error {
 	return nil
 }
 

@@ -43,7 +43,7 @@ func doTransaction(w *common.Wallet, t common.Transaction) {
 	// add own outputs
 	var ownOutputs []common.Value
 	for _, t := range sig.Outputs {
-		if reflect.DeepEqual(t.Address, w.Address) {
+		if reflect.DeepEqual(t.Address, w.Key.PublicKey) {
 			ownOutputs = append(ownOutputs, t)
 		} else {
 			go ForwardSignature(t)

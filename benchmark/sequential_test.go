@@ -21,7 +21,7 @@ func BenchmarkSequentialNewWallet(b *testing.B) {
 		var addrA = common.Address{0}
 		var addrB = common.Address{1}
 
-		A := util.GetWallet(addrA)
+		A := util.NewWallet(addrA)
 
 		tx, err := wallet.PrepareTransaction(A, addrB, 100)
 		if err != nil {

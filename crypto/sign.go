@@ -51,7 +51,7 @@ Verifies single value
 */
 func VerifyValue(key *ecdsa.PrivateKey, value *common.Value) error {
 	hash := HashValue(*value)
-	var origins map[string]bool
+	origins := make(map[string]bool)
 	numSigs := 0
 
 	for _, sig := range value.Signatures {

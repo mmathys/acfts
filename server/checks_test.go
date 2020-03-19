@@ -9,7 +9,7 @@ import (
 )
 
 func TestValidSig(t *testing.T) {
-	w := util.GetWallet(common.Address{0})
+	w := util.NewWallet(common.Address{0})
 	tx, _ := wallet.PrepareTransaction(w, common.Address{1}, 1)
 	_, err := client2.SignTransaction(w, tx)
 
@@ -19,7 +19,7 @@ func TestValidSig(t *testing.T) {
 }
 
 func TestMinZero(t *testing.T) {
-	w := util.GetWallet(common.Address{0})
+	w := util.NewWallet(common.Address{0})
 
 	tx, _ := wallet.PrepareTransaction(w, common.Address{1}, 0)
 	_, err := client2.SignTransaction(w, tx)

@@ -1,4 +1,4 @@
-package util
+package client
 
 import (
 	"encoding/hex"
@@ -26,20 +26,20 @@ func help() {
 	fmt.Println("help\t\t\tShow this help section")
 }
 
-func ReadAddress(s string) (common.Address, error) {
+func ReadAlias(s string) (common.Alias, error) {
 	split := strings.Split(s, "0x")
 	if len(split) != 2 {
-		return common.Address{}, errors.New("hex should look like 0x04\n")
+		return common.Alias{}, errors.New("hex should look like 0x04\n")
 	}
 
 	addrInput, err := hex.DecodeString(split[1])
 	if err != nil {
-		return common.Address{}, errors.New("could not decode hex\n")
+		return common.Alias{}, errors.New("could not decode hex\n")
 	}
 
-	var address common.Address
-	copy(address[:], addrInput)
-	return address, nil
+	var alias common.Alias
+	copy(alias[:], addrInput)
+	return alias, nil
 }
 
 func send(w *common.Wallet, s []string, outgoing chan common.Transaction) {
@@ -48,7 +48,7 @@ func send(w *common.Wallet, s []string, outgoing chan common.Transaction) {
 		return
 	}
 
-	address, err := ReadAddress(s[1])
+	address, err := ReadAlias(s[1])
 	if err != nil {
 		fmt.Print("Error: ", err.Error())
 		return
@@ -70,9 +70,9 @@ func send(w *common.Wallet, s []string, outgoing chan common.Transaction) {
 }
 
 func info(w *common.Wallet) {
-	fmt.Printf("Address:\t0x%x\t%d\n", w.Address, w.Address)
+	fmt.Printf("Alias:\t\t0x%x\n", w.Alias)
 
-	net, _ := core.GetNetworkAddress(w.Address)
+	net, _ := core.GetNetworkAddress(w.Alias)
 	fmt.Printf("Network:\t%s\n", net)
 
 	fmt.Printf("Private Key:\t0x%x\n", crypto.FromECDSA(w.Key))
@@ -82,13 +82,15 @@ func info(w *common.Wallet) {
 func utxo(w *common.Wallet) {
 	table := tablewriter.NewWriter(os.Stdout)
 	sum := 0
-	table.SetHeader([]string{"address", "amount", "id"})
+	table.SetHeader([]string{"address", "amount", "id", "sig count"})
 	w.UTXO.Range(func(_ interface{}, value interface{}) bool {
 		v := value.(common.Value)
+		trimmedAddr := fmt.Sprintf("0x%x", v.Address)[:10]
 		table.Append([]string{
-			fmt.Sprintf("0x%x", v.Address),
+			fmt.Sprintf("%s...", trimmedAddr),
 			fmt.Sprintf("%d", v.Amount),
 			fmt.Sprintf("%d", v.Id),
+			fmt.Sprintf("%d", len(v.Signatures)),
 		})
 		sum += v.Amount
 		return true
@@ -113,19 +115,19 @@ func clear() {
 	cmd.Run()
 }
 
-func setAddr(w *common.Wallet, s []string) {
-	if len(s) != 3 || s[1] != "addr" {
-		fmt.Println("invalid format. Sample format: set addr 0x03")
+func setAlias(w *common.Wallet, s []string) {
+	if len(s) != 3 || s[1] != "alias" {
+		fmt.Println("invalid format. Sample format: set alias 0x03")
 		return
 	}
 
-	addr, err := ReadAddress(s[2])
+	alias, err := ReadAlias(s[2])
 	if err != nil {
 		fmt.Print(err.Error())
 		return
 	}
 
-	w.Address = addr
+	w.Alias = alias
 }
 
 func completer(d prompt.Document) []prompt.Suggest {
@@ -167,7 +169,7 @@ func LaunchClientConsole(w *common.Wallet, outgoing chan common.Transaction) {
 		case "clear":
 			clear()
 		case "set":
-			setAddr(w, s)
+			setAlias(w, s)
 		case "":
 		default:
 			fmt.Printf("Unknown command \"%s\"\n", cmd)

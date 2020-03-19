@@ -8,10 +8,10 @@ import (
 )
 
 const (
-	AddressLength = 1
+	AliasLength = 1
 )
 
-type Address [AddressLength]byte
+type Alias [AliasLength]byte
 
 type ECDSASig struct {
 	R		*big.Int
@@ -20,10 +20,10 @@ type ECDSASig struct {
 
 // Defines an Input / Output tuple; with extra fields
 type Value struct {
-	Address 	Address 	// The address
-	Amount  	int     	// The value itself
-	Id      	int     	// Unique identifier
-	Signatures	[]ECDSASig	// Signatures
+	Address 	[]byte	// The public key (encoded)
+	Amount  	int     		// The value itself
+	Id      	int     		// Unique identifier
+	Signatures	[]ECDSASig		// Signatures
 }
 
 type Transaction struct {
@@ -32,8 +32,8 @@ type Transaction struct {
 }
 
 type TransactionSigRequest struct {
-	Inputs 		[]Value
-	Outputs 	[]Value
+	Transaction	Transaction
+	Signature	ECDSASig
 }
 
 type TransactionSignRes struct {
@@ -41,7 +41,7 @@ type TransactionSignRes struct {
 }
 
 type Identity struct {
-	Address		Address
+	Alias		Alias
 	Key			*ecdsa.PrivateKey
 }
 
@@ -54,7 +54,7 @@ type NodeType string		// "server" | "client"
 
 type Node struct {
 	NodeType 	NodeType
-	Address  	Address				// internal address
+	Alias  		Alias				// alias for easier handling
 	Net      	string				// network address, with http
 	Port     	int					// port
 	Key      	*ecdsa.PrivateKey
@@ -64,6 +64,6 @@ type Agent struct {
 	NumTransactions	int				// how many tx the agent completes before exiting
 	StartDelay		time.Duration	// delay before starting transactions in ns (waiting for other agents to launch)
 	EndDelay		time.Duration	// delay finishing (for receiving stuff tx)
-	Address			Address			// reference to node
-	Topology		[]Address		// other nodes (exluding self)
+	Address			Alias			// reference to node
+	Topology		[]Alias		// other nodes (exluding self)
 }

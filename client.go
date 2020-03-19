@@ -16,7 +16,7 @@ const bufferLen int = 255
 
 
 func runClient(c *cli.Context) error {
-	addr, err := util.ReadAddress(c.String("address"))
+	addr, err := client.ReadAlias(c.String("address"))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -28,11 +28,11 @@ func runClient(c *cli.Context) error {
 	incoming := make(chan common.Value, bufferLen)
 	outgoing := make(chan common.Transaction, bufferLen)
 
-	w := util.GetWallet(addr)
+	w := util.NewWallet(addr)
 
 	go client.HandleIncoming(w, incoming)
 	go client.HandleOutgoing(w, outgoing)
-	go util.LaunchClientConsole(w, outgoing)
+	go client.LaunchClientConsole(w, outgoing)
 
 	http.HandleFunc("/transaction", client.ReceiveSignature(incoming))
 	localAddr := fmt.Sprintf(":%d", port)

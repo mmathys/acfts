@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/mmathys/acfts/client"
 	"github.com/mmathys/acfts/common"
 	"github.com/mmathys/acfts/core"
 	"github.com/mmathys/acfts/crypto"
@@ -65,8 +66,8 @@ func handleSign(id *common.Identity) http.HandlerFunc {
 	}
 }
 
-func runServer(addr common.Address, benchmark bool) error {
-	port := core.GetPort(addr)
+func runServer(alias common.Alias, benchmark bool) error {
+	port := core.GetPort(alias)
 
 	if !benchmark {
 		log.Printf("initialized server; port = %d; benchmark = %t\n", port, benchmark)
@@ -74,7 +75,7 @@ func runServer(addr common.Address, benchmark bool) error {
 		BenchmarkMode = true
 		go util.Ticker(TxCounter)
 	}
-	id := util.GetIdentity(addr)
+	id := util.GetIdentity(alias)
 
 	http.HandleFunc("/sign", handleSign(id))
 	localAddr := fmt.Sprintf(":%d", port)
@@ -87,7 +88,7 @@ func main() {
 		Name:  "ACFTS server",
 		Usage: "Asynchronous Consensus-Free Transaction System server",
 		Action: func(c *cli.Context) error {
-			addr, err := util.ReadAddress(c.String("address"))
+			addr, err := client.ReadAlias(c.String("address"))
 			if err != nil {
 				log.Fatal(err)
 			}

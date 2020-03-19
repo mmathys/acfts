@@ -7,6 +7,7 @@ import (
 	crypto2 "github.com/ethereum/go-ethereum/crypto"
 	"github.com/mmathys/acfts/common"
 	"log"
+	"reflect"
 )
 
 type Entry struct {
@@ -32,9 +33,9 @@ var generatedKeyPairs = [][]string{
 	{"d14cf893a767cf9354ee594afa2eee111391c78f88a34d2074a1ffad2cc01f35", "04a775a6e44e897f96232ca2c752070b46681dd12eecd1c494315e46634f499ed83a1018854c00780c5ab7f40d4d23f41d81d1ff5a8724f0fea0a9c7a6ed90e97b"},
 	{"cab38d74a8311482489c99209604dbba09296be182df069cdebc37f8800962a5", "043b1e0a072dcb1f69d847ef74473665ebc20450d3594d708d13d7dc61744ab443f735848675ffc8036a71c57d7a844a42e745f3fea4482e08d8f4cb5032a6ecc9"},
 	{"d5830ac0b696931ee3f2e88fbb1b859198aa01d7b49f1fedc239355f9a5752a7", "04d34e04d720691c6d392cfc49d59d501e813ab6d879a1aba563a26b76c6f3109791c7aa8297fca7d399b068ff1baae0c9587f371ca04ccadded614a49e474cc25"},
-	{"18496d30042a8c5eb58772c4c23c5557ade72f3edbb24259fd154613a9250229","0401eb21077a36b36c09f590dcd52ef3feb62b36177df7314f6818485b78296998ce8fedb19e62f7df72f52dc9f9ebf7f0f1782ab6bbcb033ccf0dd75e60c9419d"},
-	{"fc3ff9856860914dd5cbd8504b9a61ea85414cc8d634ffa5a384e57fec6d5d84","04ee67afaa950a4e9a3358f02ed4e56716c1c9b5b9f17d6c1d94ac9a31c3f32f669830cfdacf0b408164d3237ec5e6b8995b8e62d05cbfafce149051f582dcd7be"},
-	{"424cf13a70d3b5706d7b8fd1be3a957bae5163b5e7fccf3ad35901c076f68768","043c9b75ee68c84752e6da58a3ec366ba82e67815e15100604eea17897a76d8b02e49f3bdd6a08cc657c6508fdbc6e72d247a63eb5c7148aa62f2a788ab85ba367"},
+	{"18496d30042a8c5eb58772c4c23c5557ade72f3edbb24259fd154613a9250229", "0401eb21077a36b36c09f590dcd52ef3feb62b36177df7314f6818485b78296998ce8fedb19e62f7df72f52dc9f9ebf7f0f1782ab6bbcb033ccf0dd75e60c9419d"},
+	{"fc3ff9856860914dd5cbd8504b9a61ea85414cc8d634ffa5a384e57fec6d5d84", "04ee67afaa950a4e9a3358f02ed4e56716c1c9b5b9f17d6c1d94ac9a31c3f32f669830cfdacf0b408164d3237ec5e6b8995b8e62d05cbfafce149051f582dcd7be"},
+	{"424cf13a70d3b5706d7b8fd1be3a957bae5163b5e7fccf3ad35901c076f68768", "043c9b75ee68c84752e6da58a3ec366ba82e67815e15100604eea17897a76d8b02e49f3bdd6a08cc657c6508fdbc6e72d247a63eb5c7148aa62f2a788ab85ba367"},
 }
 
 func readKey(keypair []string) *ecdsa.PrivateKey {
@@ -45,86 +46,96 @@ func readKey(keypair []string) *ecdsa.PrivateKey {
 	return res
 }
 
-var m = map[common.Address]common.Node{
-	common.Address{0}:  {"client", common.Address{0}, "http://localhost", 5555, readKey(generatedKeyPairs[0])}, // 0x00 (client)
-	common.Address{1}:  {"client", common.Address{1}, "http://localhost", 5556, readKey(generatedKeyPairs[1])}, // 0x01 (client)
-	common.Address{2}:  {"client", common.Address{2}, "http://localhost", 5557, readKey(generatedKeyPairs[2])}, // 0x02 (client)
-	common.Address{3}:  {"client", common.Address{3}, "http://localhost", 5558, readKey(generatedKeyPairs[3])},
-	common.Address{4}:  {"client", common.Address{4}, "http://localhost", 5559, readKey(generatedKeyPairs[4])},
-	common.Address{5}:  {"client", common.Address{5}, "http://localhost", 5560, readKey(generatedKeyPairs[5])},
-	common.Address{6}:  {"client", common.Address{6}, "http://localhost", 5561, readKey(generatedKeyPairs[6])},
-	common.Address{7}:  {"client", common.Address{7}, "http://localhost", 5562, readKey(generatedKeyPairs[7])},
-	common.Address{8}:  {"client", common.Address{8}, "http://localhost", 5563, readKey(generatedKeyPairs[8])},
-	common.Address{9}:  {"client", common.Address{9}, "http://localhost", 5564, readKey(generatedKeyPairs[9])},
-	common.Address{10}: {"client", common.Address{10}, "http://localhost", 5565, readKey(generatedKeyPairs[10])},
-	common.Address{11}: {"client", common.Address{11}, "http://localhost", 5566, readKey(generatedKeyPairs[11])},
-	common.Address{12}: {"client", common.Address{12}, "http://localhost", 5567, readKey(generatedKeyPairs[12])},
-	common.Address{13}: {"client", common.Address{13}, "http://localhost", 5568, readKey(generatedKeyPairs[13])},
-	common.Address{14}: {"client", common.Address{14}, "http://localhost", 5569, readKey(generatedKeyPairs[14])},
-	common.Address{15}: {"client", common.Address{15}, "http://localhost", 5570, readKey(generatedKeyPairs[15])},
-	common.Address{16}: {"server", common.Address{16}, "http://localhost", 6666, readKey(generatedKeyPairs[16])},
-	common.Address{17}: {"server", common.Address{17}, "http://localhost", 6667, readKey(generatedKeyPairs[17])},
-	common.Address{18}: {"server", common.Address{18}, "http://localhost", 6668, readKey(generatedKeyPairs[18])},
-	common.Address{19}: {"server", common.Address{19}, "http://localhost", 6669, readKey(generatedKeyPairs[19])},
+var m = map[common.Alias]common.Node{
+	common.Alias{0}:  {"client", common.Alias{0}, "http://localhost", 5555, readKey(generatedKeyPairs[0])}, // 0x00 (client)
+	common.Alias{1}:  {"client", common.Alias{1}, "http://localhost", 5556, readKey(generatedKeyPairs[1])}, // 0x01 (client)
+	common.Alias{2}:  {"client", common.Alias{2}, "http://localhost", 5557, readKey(generatedKeyPairs[2])}, // 0x02 (client)
+	common.Alias{3}:  {"client", common.Alias{3}, "http://localhost", 5558, readKey(generatedKeyPairs[3])},
+	common.Alias{4}:  {"client", common.Alias{4}, "http://localhost", 5559, readKey(generatedKeyPairs[4])},
+	common.Alias{5}:  {"client", common.Alias{5}, "http://localhost", 5560, readKey(generatedKeyPairs[5])},
+	common.Alias{6}:  {"client", common.Alias{6}, "http://localhost", 5561, readKey(generatedKeyPairs[6])},
+	common.Alias{7}:  {"client", common.Alias{7}, "http://localhost", 5562, readKey(generatedKeyPairs[7])},
+	common.Alias{8}:  {"client", common.Alias{8}, "http://localhost", 5563, readKey(generatedKeyPairs[8])},
+	common.Alias{9}:  {"client", common.Alias{9}, "http://localhost", 5564, readKey(generatedKeyPairs[9])},
+	common.Alias{10}: {"client", common.Alias{10}, "http://localhost", 5565, readKey(generatedKeyPairs[10])},
+	common.Alias{11}: {"client", common.Alias{11}, "http://localhost", 5566, readKey(generatedKeyPairs[11])},
+	common.Alias{12}: {"client", common.Alias{12}, "http://localhost", 5567, readKey(generatedKeyPairs[12])},
+	common.Alias{13}: {"client", common.Alias{13}, "http://localhost", 5568, readKey(generatedKeyPairs[13])},
+	common.Alias{14}: {"client", common.Alias{14}, "http://localhost", 5569, readKey(generatedKeyPairs[14])},
+	common.Alias{15}: {"client", common.Alias{15}, "http://localhost", 5570, readKey(generatedKeyPairs[15])},
+	common.Alias{16}: {"server", common.Alias{16}, "http://localhost", 6666, readKey(generatedKeyPairs[16])},
+	common.Alias{17}: {"server", common.Alias{17}, "http://localhost", 6667, readKey(generatedKeyPairs[17])},
+	common.Alias{18}: {"server", common.Alias{18}, "http://localhost", 6668, readKey(generatedKeyPairs[18])},
+	common.Alias{19}: {"server", common.Alias{19}, "http://localhost", 6669, readKey(generatedKeyPairs[19])},
 }
 
-func GetNetworkAddress(address common.Address) (string, error) {
-	res, ok := m[address]
+func GetNetworkAddress(alias common.Alias) (string, error) {
+	res, ok := m[alias]
 	if ok {
 		return fmt.Sprintf("%s:%d", res.Net, res.Port), nil
 	} else {
-		msg := fmt.Sprintf("could not find address 0x%x\n", address)
+		msg := fmt.Sprintf("could not find alias 0x%x\n", alias)
 		return "", errors.New(msg)
 	}
 }
 
-func GetKey(address common.Address) *ecdsa.PrivateKey {
-	res, ok := m[address]
+func GetAliasFromAddress(pub []byte) (common.Alias, error) {
+	for _, client := range GetClients() {
+		enc := crypto2.FromECDSAPub(&m[client].Key.PublicKey)
+		if reflect.DeepEqual(enc, pub) {
+			return client, nil
+		}
+	}
+
+	return common.Alias{}, errors.New("could not find alias")
+}
+
+func GetKey(alias common.Alias) *ecdsa.PrivateKey {
+	res, ok := m[alias]
 	if ok {
 		return res.Key
 	} else {
-		log.Panicf("could not find address 0x%x\n", address)
-		return nil
+		log.Panicf("could not find alias 0x%x\n", alias)
 	}
 }
 
-func GetPort(address common.Address) int {
-	res, ok := m[address]
+func GetPort(alias common.Alias) int {
+	res, ok := m[alias]
 	if ok {
 		return res.Port
 	} else {
-		log.Fatal("could not find address")
+		log.Fatal("could not find alias")
 		return -1
 	}
 }
 
-func GetClients() []common.Address {
-	return []common.Address{
-		common.Address{0},
-		common.Address{1},
-		common.Address{2},
-		common.Address{3},
-		common.Address{4},
-		common.Address{5},
-		common.Address{6},
-		common.Address{7},
-		common.Address{8},
-		common.Address{9},
-		common.Address{10},
-		common.Address{11},
-		common.Address{12},
-		common.Address{13},
-		common.Address{14},
-		common.Address{15},
+func GetClients() []common.Alias {
+	return []common.Alias{
+		{0},
+		{1},
+		{2},
+		{3},
+		{4},
+		{5},
+		{6},
+		{7},
+		{8},
+		{9},
+		{10},
+		{11},
+		{12},
+		{13},
+		{14},
+		{15},
 	}
 }
 
-func GetServers() []common.Address {
-	return []common.Address{
-		common.Address{16},
-		//common.Address{17},
-		//common.Address{18},
-		//common.Address{19},
+func GetServers() []common.Alias {
+	return []common.Alias{
+		{16},
+		//{17},
+		//{18},
+		//{19},
 	}
 }
 
