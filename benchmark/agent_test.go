@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/mmathys/acfts/client"
 	"github.com/mmathys/acfts/common"
-	"github.com/mmathys/acfts/core"
 	"github.com/mmathys/acfts/util"
 	"github.com/mmathys/acfts/wallet"
 	"math/rand"
@@ -46,7 +45,7 @@ func simpleAgent(a common.Agent, wg *sync.WaitGroup) {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/transaction", client.ReceiveSignature(incoming))
-	localAddr := fmt.Sprintf(":%d", core.GetPort(a.Address))
+	localAddr := fmt.Sprintf(":%d", common.GetPort(a.Address))
 	go http.ListenAndServe(localAddr, mux)
 
 	time.Sleep(a.StartDelay) // wait before starting tx
@@ -70,7 +69,7 @@ func TestAgents(t *testing.T) {
 	maxClients := 3
 	delay := 500 * time.Millisecond
 	endDelay := 1 * time.Second
-	clients := core.GetClients()
+	clients := common.GetClients()
 	var wg sync.WaitGroup
 
 	topology := clients[:maxClients+1]

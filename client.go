@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/mmathys/acfts/client"
 	"github.com/mmathys/acfts/common"
-	"github.com/mmathys/acfts/core"
 	"github.com/mmathys/acfts/util"
 	"github.com/urfave/cli"
 	"log"
@@ -16,12 +15,12 @@ const bufferLen int = 255
 
 
 func runClient(c *cli.Context) error {
-	addr, err := client.ReadAlias(c.String("address"))
+	addr, err := client.ReadAddress(c.String("address"))
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	port := core.GetPort(addr)
+	port := common.GetPort(addr)
 
 	log.Printf("initialized client; addr = 0x%x, port = %d\n", addr, port)
 

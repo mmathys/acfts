@@ -3,7 +3,7 @@ package benchmark
 import (
 	"crypto/ecdsa"
 	"crypto/rand"
-	"github.com/mmathys/acfts/crypto"
+	"github.com/mmathys/acfts/common"
 	"testing"
 )
 
@@ -12,7 +12,7 @@ Benchmark for crypto ops
  */
 
 func BenchmarkSign(b *testing.B) {
-	key := crypto.GenerateKey()
+	key := common.GenerateKey()
 
 	hash := make([]byte, 32) // random hash
 	rand.Read(hash)
@@ -28,7 +28,7 @@ func BenchmarkHashValue(b *testing.B) {
 }
 
 func BenchmarkVerify(b *testing.B) {
-	key := crypto.GenerateKey()
+	key := common.GenerateKey()
 
 	hash := make([]byte, 32) // random hash
 	rand.Read(hash)

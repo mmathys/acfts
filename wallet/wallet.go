@@ -2,7 +2,6 @@ package wallet
 
 import (
 	"errors"
-	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/mmathys/acfts/common"
 	"github.com/mmathys/acfts/util"
 	"math/rand"
@@ -12,7 +11,7 @@ import (
 // prepare transaction mutex
 var prepareTxMutex sync.Mutex
 
-func PrepareTransaction(w *common.Wallet, target common.Alias, val int) (common.Transaction, error) {
+func PrepareTransaction(w *common.Wallet, target common.Address, val int) (common.Transaction, error) {
 	prepareTxMutex.Lock()
 
 	// Linear Scan through UTXOs
@@ -35,9 +34,9 @@ func PrepareTransaction(w *common.Wallet, target common.Alias, val int) (common.
 
 	prepareTxMutex.Unlock()
 
-	addressOwn := crypto.FromECDSAPub(&w.Key.PublicKey)
+	addressOwn := common.MarshalPubkey(&w.Key.PublicKey)
 	counterpart := util.GetIdentity(target)
-	addressCounterpart := crypto.FromECDSAPub(&counterpart.Key.PublicKey)
+	addressCounterpart := common.MarshalPubkey(&counterpart.Key.PublicKey)
 	var outputs []common.Value
 
 	// add remaining fund to output

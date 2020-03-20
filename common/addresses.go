@@ -1,20 +1,23 @@
-package core
+package common
 
 import (
 	"crypto/ecdsa"
 	"errors"
 	"fmt"
 	crypto2 "github.com/ethereum/go-ethereum/crypto"
-	"github.com/mmathys/acfts/common"
 	"log"
-	"reflect"
+	"sync"
 )
 
 type Entry struct {
 	network string
 }
 
+var doOnce sync.Once
+
 // note: the public key can be recovered from the private key. not necessarily needed in this array.
+var numClients = 16
+var numServers = 4
 var generatedKeyPairs = [][]string{
 	{"439ffd45a52551b1a5470b618a18b58e70c6f1201422760c02ffab17a1dc73e1", "04ae9c97b237b6dc65081c41bbbb45419933353a848867b4ea61bd92fa202669532ccac6cd35324ef47c5c402847f74f6e6d0873a81a9cee9290bf796ae0348ca2"},
 	{"0401df1f7bdbff562bc87f21c4fcbe9bf09b2ffe8c2e4609b32f9b11bc79b9a0", "04799fb6d7685ea7fb7a0477db235dcebf4ec7b871a26287df9552a2ba035a46d00d538409e3d5ad4834d0cfa2f82c5426ebc78ee8d1bacd4d4783ad19c56c123c"},
@@ -46,100 +49,108 @@ func readKey(keypair []string) *ecdsa.PrivateKey {
 	return res
 }
 
-var m = map[common.Alias]common.Node{
-	common.Alias{0}:  {"client", common.Alias{0}, "http://localhost", 5555, readKey(generatedKeyPairs[0])}, // 0x00 (client)
-	common.Alias{1}:  {"client", common.Alias{1}, "http://localhost", 5556, readKey(generatedKeyPairs[1])}, // 0x01 (client)
-	common.Alias{2}:  {"client", common.Alias{2}, "http://localhost", 5557, readKey(generatedKeyPairs[2])}, // 0x02 (client)
-	common.Alias{3}:  {"client", common.Alias{3}, "http://localhost", 5558, readKey(generatedKeyPairs[3])},
-	common.Alias{4}:  {"client", common.Alias{4}, "http://localhost", 5559, readKey(generatedKeyPairs[4])},
-	common.Alias{5}:  {"client", common.Alias{5}, "http://localhost", 5560, readKey(generatedKeyPairs[5])},
-	common.Alias{6}:  {"client", common.Alias{6}, "http://localhost", 5561, readKey(generatedKeyPairs[6])},
-	common.Alias{7}:  {"client", common.Alias{7}, "http://localhost", 5562, readKey(generatedKeyPairs[7])},
-	common.Alias{8}:  {"client", common.Alias{8}, "http://localhost", 5563, readKey(generatedKeyPairs[8])},
-	common.Alias{9}:  {"client", common.Alias{9}, "http://localhost", 5564, readKey(generatedKeyPairs[9])},
-	common.Alias{10}: {"client", common.Alias{10}, "http://localhost", 5565, readKey(generatedKeyPairs[10])},
-	common.Alias{11}: {"client", common.Alias{11}, "http://localhost", 5566, readKey(generatedKeyPairs[11])},
-	common.Alias{12}: {"client", common.Alias{12}, "http://localhost", 5567, readKey(generatedKeyPairs[12])},
-	common.Alias{13}: {"client", common.Alias{13}, "http://localhost", 5568, readKey(generatedKeyPairs[13])},
-	common.Alias{14}: {"client", common.Alias{14}, "http://localhost", 5569, readKey(generatedKeyPairs[14])},
-	common.Alias{15}: {"client", common.Alias{15}, "http://localhost", 5570, readKey(generatedKeyPairs[15])},
-	common.Alias{16}: {"server", common.Alias{16}, "http://localhost", 6666, readKey(generatedKeyPairs[16])},
-	common.Alias{17}: {"server", common.Alias{17}, "http://localhost", 6667, readKey(generatedKeyPairs[17])},
-	common.Alias{18}: {"server", common.Alias{18}, "http://localhost", 6668, readKey(generatedKeyPairs[18])},
-	common.Alias{19}: {"server", common.Alias{19}, "http://localhost", 6669, readKey(generatedKeyPairs[19])},
-}
+var clients = map[Address]Node{}
+var clientKeys []Address
+var servers = map[Address]Node{}
+var serverKeys []Address
 
-func GetNetworkAddress(alias common.Alias) (string, error) {
-	res, ok := m[alias]
-	if ok {
-		return fmt.Sprintf("%s:%d", res.Net, res.Port), nil
-	} else {
-		msg := fmt.Sprintf("could not find alias 0x%x\n", alias)
-		return "", errors.New(msg)
+func initAddresses() {
+	for i := 0; i < numClients; i++ {
+		key := readKey(generatedKeyPairs[i])
+		addr := MarshalPubkey(&key.PublicKey)
+		clients[addr] = Node{
+			NodeType: "client",
+			Net:      "http://localhost",
+			Port:     5555 + i,
+			Key:      key,
+		}
+		clientKeys = append(clientKeys, addr)
+	}
+
+	for i := numClients; i < numClients+numServers; i++ {
+		key := readKey(generatedKeyPairs[i])
+		addr := MarshalPubkey(&key.PublicKey)
+		servers[addr] = Node{
+			NodeType: "server",
+			Net:      "http://localhost",
+			Port:     6666 + i - numClients,
+			Key:      key,
+		}
+		serverKeys = append(serverKeys, addr)
 	}
 }
 
-func GetAliasFromAddress(pub []byte) (common.Alias, error) {
-	for _, client := range GetClients() {
-		enc := crypto2.FromECDSAPub(&m[client].Key.PublicKey)
-		if reflect.DeepEqual(enc, pub) {
-			return client, nil
+func lookup(address Address) (Node, error) {
+	client, ok := clients[address]
+	if ok {
+		return client, nil
+	}
+
+	server, ok := servers[address]
+	if ok {
+		return server, nil
+	}
+
+	msg := fmt.Sprintf("could not find address 0x%x\n", address)
+	return Node{}, errors.New(msg)
+}
+
+func GetNetworkAddress(address Address) (string, error) {
+	doOnce.Do(initAddresses)
+	res, err := lookup(address)
+	if err != nil {
+		return "", err
+	} else {
+		return fmt.Sprintf("%s:%d", res.Net, res.Port), nil
+	}
+}
+
+func GetAliasFromAddress(pub Address) (Address, error) {
+	doOnce.Do(initAddresses)
+	for _, clientAddr := range GetClients() {
+		client, _ := lookup(clientAddr)
+		enc := MarshalPubkey(&client.Key.PublicKey)
+		if enc == pub {
+			return clientAddr, nil
 		}
 	}
 
-	return common.Alias{}, errors.New("could not find alias")
+	return Address{}, errors.New("could not find address")
 }
 
-func GetKey(alias common.Alias) *ecdsa.PrivateKey {
-	res, ok := m[alias]
-	if ok {
-		return res.Key
-	} else {
-		log.Panicf("could not find alias 0x%x\n", alias)
+func GetKey(address Address) *ecdsa.PrivateKey {
+	doOnce.Do(initAddresses)
+	res, err := lookup(address)
+	if err != nil {
+		log.Panicf("could not find address 0x%x\n", address)
 		return nil
-	}
-}
-
-func GetPort(alias common.Alias) int {
-	res, ok := m[alias]
-	if ok {
-		return res.Port
 	} else {
-		log.Fatal("could not find alias")
+		return res.Key
+	}
+}
+
+func GetPort(address Address) int {
+	doOnce.Do(initAddresses)
+	res, err := lookup(address)
+	if err != nil {
+		log.Fatal("could not find address")
 		return -1
+	} else {
+		return res.Port
 	}
 }
 
-func GetClients() []common.Alias {
-	return []common.Alias{
-		{0},
-		{1},
-		{2},
-		{3},
-		{4},
-		{5},
-		{6},
-		{7},
-		{8},
-		{9},
-		{10},
-		{11},
-		{12},
-		{13},
-		{14},
-		{15},
-	}
+func GetClients() []Address {
+	doOnce.Do(initAddresses)
+	return clientKeys
 }
 
-func GetServers() []common.Alias {
-	return []common.Alias{
-		{16},
-		//{17},
-		//{18},
-		//{19},
-	}
+func GetServers() []Address {
+	doOnce.Do(initAddresses)
+	return serverKeys[:1]
 }
 
 func GetNumServers() int {
+	doOnce.Do(initAddresses)
 	return len(GetServers())
 }

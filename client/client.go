@@ -3,7 +3,6 @@ package client
 import (
 	"fmt"
 	"github.com/mmathys/acfts/common"
-	"github.com/mmathys/acfts/core"
 	"github.com/mmathys/acfts/wallet"
 	"reflect"
 	"sync"
@@ -55,12 +54,12 @@ func doTransaction(w *common.Wallet, t common.Transaction) {
 
 // TODO Only wait for Math.ceil(2/3 * n) of n servers!
 func SignTransaction(w *common.Wallet, t common.Transaction) (*[]common.TransactionSignRes, error) {
-	n := len(core.GetServers())
+	n := len(common.GetServers())
 	sigs := make(chan common.TransactionSignRes, n)
 
 	var wg sync.WaitGroup
 
-	for _, server := range core.GetServers() {
+	for _, server := range common.GetServers() {
 		wg.Add(1)
 		go RequestSignature(server, w.Identity, t, &wg, &sigs)
 	}

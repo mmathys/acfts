@@ -2,7 +2,6 @@ package server
 
 import (
 	"github.com/mmathys/acfts/common"
-	"github.com/mmathys/acfts/crypto"
 )
 
 /**
@@ -51,7 +50,7 @@ checks if inputs signatures are valid.
 */
 func checkInputSignatures(id *common.Identity, tx *common.Transaction) error {
 	for _, input := range tx.Inputs {
-		err := crypto.VerifyValue(id.Key, &input)
+		err := common.VerifyValue(id.Key, &input)
 		if err != nil {
 			return err
 		}

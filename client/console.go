@@ -5,9 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/c-bata/go-prompt"
-	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/mmathys/acfts/common"
-	"github.com/mmathys/acfts/core"
 	"github.com/mmathys/acfts/wallet"
 	"github.com/olekukonko/tablewriter"
 	"os"
@@ -26,20 +24,20 @@ func help() {
 	fmt.Println("help\t\t\tShow this help section")
 }
 
-func ReadAlias(s string) (common.Alias, error) {
+func ReadAddress(s string) (common.Address, error) {
 	split := strings.Split(s, "0x")
 	if len(split) != 2 {
-		return common.Alias{}, errors.New("hex should look like 0x04\n")
+		return common.Address{}, errors.New("hex should look like 0x04\n")
 	}
 
 	addrInput, err := hex.DecodeString(split[1])
 	if err != nil {
-		return common.Alias{}, errors.New("could not decode hex\n")
+		return common.Address{}, errors.New("could not decode hex\n")
 	}
 
-	var alias common.Alias
-	copy(alias[:], addrInput)
-	return alias, nil
+	var address common.Address
+	copy(address[:], addrInput)
+	return address, nil
 }
 
 func send(w *common.Wallet, s []string, outgoing chan common.Transaction) {
@@ -48,7 +46,7 @@ func send(w *common.Wallet, s []string, outgoing chan common.Transaction) {
 		return
 	}
 
-	address, err := ReadAlias(s[1])
+	address, err := ReadAddress(s[1])
 	if err != nil {
 		fmt.Print("Error: ", err.Error())
 		return
@@ -70,13 +68,10 @@ func send(w *common.Wallet, s []string, outgoing chan common.Transaction) {
 }
 
 func info(w *common.Wallet) {
-	fmt.Printf("Alias:\t\t0x%x\n", w.Alias)
-
-	net, _ := core.GetNetworkAddress(w.Alias)
-	fmt.Printf("Network:\t%s\n", net)
-
-	fmt.Printf("Private Key:\t0x%x\n", crypto.FromECDSA(w.Key))
-	fmt.Printf("Public Key:\t0x%x\n", crypto.FromECDSAPub(&w.Key.PublicKey))
+	net, _ := common.GetNetworkAddress(w.Address)
+	fmt.Printf("Address (public key):\t0x%x\n", w.Address)
+	fmt.Printf("Private Key:\t\t0x%x\n", common.MarshalKey(w.Key))
+	fmt.Printf("Network:\t\t%s\n", net)
 }
 
 func utxo(w *common.Wallet) {
@@ -115,28 +110,12 @@ func clear() {
 	cmd.Run()
 }
 
-func setAlias(w *common.Wallet, s []string) {
-	if len(s) != 3 || s[1] != "alias" {
-		fmt.Println("invalid format. Sample format: set alias 0x03")
-		return
-	}
-
-	alias, err := ReadAlias(s[2])
-	if err != nil {
-		fmt.Print(err.Error())
-		return
-	}
-
-	w.Alias = alias
-}
-
 func completer(d prompt.Document) []prompt.Suggest {
 	s := []prompt.Suggest{
 		{Text: "send", Description: "Send money to X"},
 		{Text: "utxo", Description: "Show local UTXOs"},
 		{Text: "balance", Description: "Show balance"},
 		{Text: "info", Description: "Show client information"},
-		{Text: "set", Description: "Set property"},
 		{Text: "help", Description: "Show help"},
 		{Text: "clear", Description: "Clear screen"},
 	}
@@ -168,8 +147,6 @@ func LaunchClientConsole(w *common.Wallet, outgoing chan common.Transaction) {
 			info(w)
 		case "clear":
 			clear()
-		case "set":
-			setAlias(w, s)
 		case "":
 		default:
 			fmt.Printf("Unknown command \"%s\"\n", cmd)

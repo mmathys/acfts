@@ -1,4 +1,4 @@
-package crypto
+package common
 
 import (
 	"crypto/ecdsa"
@@ -6,24 +6,22 @@ import (
 	"errors"
 	"fmt"
 	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/mmathys/acfts/common"
-	"github.com/mmathys/acfts/core"
 	"math"
 )
 
-func signHash(key *ecdsa.PrivateKey, hash []byte) (common.ECDSASig, error) {
+func signHash(key *ecdsa.PrivateKey, hash []byte) (ECDSASig, error) {
 	r, s, err := ecdsa.Sign(rand.Reader, key, hash)
 	if err != nil {
-		return common.ECDSASig{}, err
+		return ECDSASig{}, err
 	}
-	return common.ECDSASig{R: r, S: s}, nil
+	return ECDSASig{R: r, S: s}, nil
 }
 
-func SignValue(key *ecdsa.PrivateKey, value *common.Value) error {
+func SignValue(key *ecdsa.PrivateKey, value *Value) error {
 	hash := HashValue(*value)
 
 	if value.Signatures == nil {
-		value.Signatures = []common.ECDSASig{}
+		value.Signatures = []ECDSASig{}
 	}
 
 	sig, err := signHash(key, hash)
@@ -35,8 +33,8 @@ func SignValue(key *ecdsa.PrivateKey, value *common.Value) error {
 	return nil
 }
 
-func SignValues(key *ecdsa.PrivateKey, outputs []common.Value) ([]common.Value, error) {
-	var signed []common.Value
+func SignValues(key *ecdsa.PrivateKey, outputs []Value) ([]Value, error) {
+	var signed []Value
 	for _, i := range outputs {
 		SignValue(key, &i)
 		signed = append(signed, i)
@@ -44,7 +42,7 @@ func SignValues(key *ecdsa.PrivateKey, outputs []common.Value) ([]common.Value, 
 	return signed, nil
 }
 
-func SignTransactionSigRequest(key *ecdsa.PrivateKey, request *common.TransactionSigReq) error {
+func SignTransactionSigRequest(key *ecdsa.PrivateKey, request *TransactionSigReq) error {
 	hash := HashTransactionSigRequest(*request)
 	sig, err := signHash(key, hash)
 	if err != nil {
@@ -60,7 +58,7 @@ Verifies single value
 - Verifies all signatures
 - Checks whether there are enough signatures to satisfy the validity constraint. (> 2/3 of all sigs)
 */
-func VerifyValue(key *ecdsa.PrivateKey, value *common.Value) error {
+func VerifyValue(key *ecdsa.PrivateKey, value *Value) error {
 	hash := HashValue(*value)
 	origins := make(map[string]bool)
 	numSigs := 0
@@ -80,7 +78,7 @@ func VerifyValue(key *ecdsa.PrivateKey, value *common.Value) error {
 		numSigs++
 	}
 
-	numServers := core.GetNumServers()
+	numServers := GetNumServers()
 	numRequiredSigs := int(math.Ceil(2.0 / 3.0 * float64(numServers)))
 
 	if numSigs < numRequiredSigs {
@@ -95,6 +93,6 @@ func VerifyValue(key *ecdsa.PrivateKey, value *common.Value) error {
 Checks validity of a *completed* transaction. It's only used in the client.
 - verifies inputs and outputs
 */
-func VerifyTransaction(key *ecdsa.PrivateKey, value *common.Transaction) error {
+func VerifyTransaction(key *ecdsa.PrivateKey, value *Transaction) error {
 	return nil
 }

@@ -9,22 +9,20 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/mmathys/acfts/common"
-	"github.com/mmathys/acfts/core"
-	"github.com/mmathys/acfts/crypto"
 	"log"
 	"net/http"
 	"sync"
 )
 
-func RequestSignature(serverAlias common.Alias, id *common.Identity, t common.Transaction, wg *sync.WaitGroup, sigs *chan common.TransactionSignRes) {
-	net, err := core.GetNetworkAddress(serverAlias)
+func RequestSignature(serverAddr common.Address, id *common.Identity, t common.Transaction, wg *sync.WaitGroup, sigs *chan common.TransactionSignRes) {
+	net, err := common.GetNetworkAddress(serverAddr)
 	if err != nil {
 		fmt.Print(err.Error())
 		return
 	}
 
 	request := common.TransactionSigReq{Transaction: t}
-	err = crypto.SignTransactionSigRequest(id.Key, &request)
+	err = common.SignTransactionSigRequest(id.Key, &request)
 	if err != nil{
 		log.Panic(err)
 	}
@@ -55,13 +53,13 @@ func RequestSignature(serverAlias common.Alias, id *common.Identity, t common.Tr
 }
 
 func ForwardSignature(t common.Value) {
-	alias, err := core.GetAliasFromAddress(t.Address)
+	alias, err := common.GetAliasFromAddress(t.Address)
 	if err != nil {
 		fmt.Println(err.Error())
 		return
 	}
 
-	net, err := core.GetNetworkAddress(alias)
+	net, err := common.GetNetworkAddress(alias)
 	if err != nil {
 		fmt.Print(err.Error())
 		return
