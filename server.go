@@ -28,21 +28,22 @@ func handleSign(id *common.Identity) http.HandlerFunc {
 		}
 
 		// parse the request
-		var tx common.Transaction
-		err := json.NewDecoder(req.Body).Decode(&tx)
+		var sigReq common.TransactionSigReq
+		err := json.NewDecoder(req.Body).Decode(&sigReq)
 		if err != nil {
 			fmt.Println(err)
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
-		err = server.CheckValidity(id, &tx)
+		err = server.CheckValidity(id, &sigReq)
 		if err != nil {
 			fmt.Println(err)
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
+		tx := sigReq.Transaction
 		for _, input := range tx.Inputs {
 			SignedUTXO.Store(input.Id, input)
 		}

@@ -96,6 +96,7 @@ func GetKey(alias common.Alias) *ecdsa.PrivateKey {
 		return res.Key
 	} else {
 		log.Panicf("could not find alias 0x%x\n", alias)
+		return nil
 	}
 }
 

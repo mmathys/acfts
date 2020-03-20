@@ -62,7 +62,7 @@ func SignTransaction(w *common.Wallet, t common.Transaction) (*[]common.Transact
 
 	for _, server := range core.GetServers() {
 		wg.Add(1)
-		go RequestSignature(server, t, &wg, &sigs)
+		go RequestSignature(server, w.Identity, t, &wg, &sigs)
 	}
 
 	wg.Wait()

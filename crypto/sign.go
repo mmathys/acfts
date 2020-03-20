@@ -8,15 +8,15 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/mmathys/acfts/common"
 	"github.com/mmathys/acfts/core"
-	"golang.org/x/crypto/sha3"
 	"math"
 )
 
-func HashValue(value common.Value) []byte {
-	d := sha3.New256()
-	value.Signatures = nil                    // zero out signatures before hash
-	d.Write([]byte(fmt.Sprintf("%v", value))) // this may be slow!
-	return d.Sum(nil)
+func signHash(key *ecdsa.PrivateKey, hash []byte) (common.ECDSASig, error) {
+	r, s, err := ecdsa.Sign(rand.Reader, key, hash)
+	if err != nil {
+		return common.ECDSASig{}, err
+	}
+	return common.ECDSASig{R: r, S: s}, nil
 }
 
 func SignValue(key *ecdsa.PrivateKey, value *common.Value) error {
@@ -26,12 +26,12 @@ func SignValue(key *ecdsa.PrivateKey, value *common.Value) error {
 		value.Signatures = []common.ECDSASig{}
 	}
 
-	r, s, err := ecdsa.Sign(rand.Reader, key, hash)
+	sig, err := signHash(key, hash)
 	if err != nil {
 		return err
 	}
 
-	value.Signatures = append(value.Signatures, common.ECDSASig{R: r, S: s})
+	value.Signatures = append(value.Signatures, sig)
 	return nil
 }
 
@@ -42,6 +42,17 @@ func SignValues(key *ecdsa.PrivateKey, outputs []common.Value) ([]common.Value, 
 		signed = append(signed, i)
 	}
 	return signed, nil
+}
+
+func SignTransactionSigRequest(key *ecdsa.PrivateKey, request *common.TransactionSigReq) error {
+	hash := HashTransactionSigRequest(*request)
+	sig, err := signHash(key, hash)
+	if err != nil {
+		return err
+	}
+
+	request.Signature = sig
+	return nil
 }
 
 /**

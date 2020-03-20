@@ -9,28 +9,29 @@ import (
 Functions, which check the validity of incoming UTXOs before signing. Used by server only.
 */
 
-func CheckValidity(id *common.Identity, tx *common.Transaction) error {
-	err := common.CheckFormat(tx)
+func CheckValidity(id *common.Identity, req *common.TransactionSigReq) error {
+	tx := req.Transaction
+	err := common.CheckFormat(&tx)
 	if err != nil {
 		return err
 	}
 
-	err = common.CheckConstraints(tx)
+	err = common.CheckConstraints(&tx)
 	if err != nil {
 		return err
 	}
 
-	err = checkRequestSignature(id, tx)
+	err = checkRequestSignature(id, req)
 	if err != nil {
 		return err
 	}
 
-	err = checkInputSignatures(id, tx)
+	err = checkInputSignatures(id, &tx)
 	if err != nil {
 		return err
 	}
 
-	err = checkUnspent(id, tx)
+	err = checkUnspent(id, &tx)
 	if err != nil {
 		return err
 	}
@@ -41,7 +42,7 @@ func CheckValidity(id *common.Identity, tx *common.Transaction) error {
 /**
 Checks whether the request signature is valid; i.e. the public key of the signature matches with the public key of the inputs
 */
-func checkRequestSignature(id *common.Identity, tx *common.Transaction) error {
+func checkRequestSignature(id *common.Identity, req *common.TransactionSigReq) error {
 	return nil
 }
 

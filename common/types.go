@@ -31,7 +31,7 @@ type Transaction struct {
 	Outputs 	[]Value
 }
 
-type TransactionSigRequest struct {
+type TransactionSigReq struct {
 	Transaction	Transaction
 	Signature	ECDSASig
 }

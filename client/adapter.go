@@ -10,21 +10,29 @@ import (
 	"fmt"
 	"github.com/mmathys/acfts/common"
 	"github.com/mmathys/acfts/core"
+	"github.com/mmathys/acfts/crypto"
+	"log"
 	"net/http"
 	"sync"
 )
 
-func RequestSignature(serverAlias common.Alias, t common.Transaction, wg *sync.WaitGroup, sigs *chan common.TransactionSignRes) {
+func RequestSignature(serverAlias common.Alias, id *common.Identity, t common.Transaction, wg *sync.WaitGroup, sigs *chan common.TransactionSignRes) {
 	net, err := core.GetNetworkAddress(serverAlias)
 	if err != nil {
 		fmt.Print(err.Error())
 		return
 	}
 
+	request := common.TransactionSigReq{Transaction: t}
+	err = crypto.SignTransactionSigRequest(id.Key, &request)
+	if err != nil{
+		log.Panic(err)
+	}
+
 	var buf bytes.Buffer
-	err = json.NewEncoder(&buf).Encode(&t)
+	err = json.NewEncoder(&buf).Encode(&request)
 	if err != nil {
-		fmt.Println("could not encode transaction")
+		fmt.Println("could not encode transaction sign request")
 		return
 	}
 
