@@ -4,7 +4,6 @@ import (
 	"errors"
 	"github.com/mmathys/acfts/common"
 	"github.com/mmathys/acfts/util"
-	"math/rand"
 	"sync"
 )
 
@@ -42,11 +41,11 @@ func PrepareTransaction(w *common.Wallet, target common.Address, val int) (commo
 	// add remaining fund to output
 	if current > val {
 		remaining := current - val
-		outputs = append(outputs, common.Value{Address: addressOwn, Amount: remaining, Id: rand.Int()})
+		outputs = append(outputs, common.Value{Address: addressOwn, Amount: remaining, Id: common.RandomIdentifier()})
 	}
 
 	// add counterpart
-	outputs = append(outputs, common.Value{Address: addressCounterpart, Amount: val, Id: rand.Int()})
+	outputs = append(outputs, common.Value{Address: addressCounterpart, Amount: val, Id: common.RandomIdentifier()})
 
 	t := common.Transaction{Inputs: inputs, Outputs: outputs}
 	return t, nil

@@ -18,8 +18,8 @@ import (
 func help() {
 	fmt.Println("send 0x00 100\t\tSend 100 money to 0x00")
 	fmt.Println("utxo\t\t\tShow local UTXOs")
+	fmt.Println("balance\t\t\tShow balance")
 	fmt.Println("info\t\t\tShow client information")
-	fmt.Println("set addr 0x03\t\tSet own address to 0x03 (for testing)")
 	fmt.Println("clear\t\t\tClear console")
 	fmt.Println("help\t\t\tShow this help section")
 }
@@ -81,10 +81,11 @@ func utxo(w *common.Wallet) {
 	w.UTXO.Range(func(_ interface{}, value interface{}) bool {
 		v := value.(common.Value)
 		trimmedAddr := fmt.Sprintf("0x%x", v.Address)[:10]
+		trimmedId := fmt.Sprintf("0x%x", v.Id)[:10]
 		table.Append([]string{
 			fmt.Sprintf("%s...", trimmedAddr),
 			fmt.Sprintf("%d", v.Amount),
-			fmt.Sprintf("%d", v.Id),
+			fmt.Sprintf("%s...", trimmedId),
 			fmt.Sprintf("%d", len(v.Signatures)),
 		})
 		sum += v.Amount

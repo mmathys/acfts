@@ -2,9 +2,7 @@ package util
 
 import (
 	"github.com/mmathys/acfts/common"
-	"math/rand"
 	"sync"
-	"time"
 )
 
 func GetIdentity(address common.Address) *common.Identity {
@@ -14,9 +12,7 @@ func GetIdentity(address common.Address) *common.Identity {
 }
 
 func NewWalletWithAmount(address common.Address, value int) *common.Wallet {
-	s1 := rand.NewSource(time.Now().UnixNano())
-	r1 := rand.New(s1)
-	utxoId := r1.Int()
+	utxoId := common.RandomIdentifier()
 	id := GetIdentity(address)
 
 	var utxo sync.Map

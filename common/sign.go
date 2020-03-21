@@ -5,7 +5,6 @@ import (
 	"crypto/rand"
 	"errors"
 	"fmt"
-	"github.com/ethereum/go-ethereum/crypto"
 	"math"
 )
 
@@ -14,7 +13,8 @@ func signHash(key *ecdsa.PrivateKey, hash []byte) (ECDSASig, error) {
 	if err != nil {
 		return ECDSASig{}, err
 	}
-	return ECDSASig{R: r, S: s}, nil
+	addr := MarshalPubkey(&key.PublicKey)
+	return ECDSASig{R: r, S: s, Address: addr}, nil
 }
 
 func SignValue(key *ecdsa.PrivateKey, value *Value) error {
@@ -56,25 +56,27 @@ func SignTransactionSigRequest(key *ecdsa.PrivateKey, request *TransactionSigReq
 /**
 Verifies single value
 - Verifies all signatures
+- Checks whether there are duplicate signatures
+- Checks whether the signature are from valid severs
 - Checks whether there are enough signatures to satisfy the validity constraint. (> 2/3 of all sigs)
 */
-func VerifyValue(key *ecdsa.PrivateKey, value *Value) error {
+func VerifyValue(value *Value) error {
 	hash := HashValue(*value)
-	origins := make(map[string]bool)
+	origins := make(map[Address]bool)
 	numSigs := 0
 
 	for _, sig := range value.Signatures {
-		valid := ecdsa.Verify(&key.PublicKey, hash, sig.R, sig.S)
+		pubkey := UnmarshalPubkey(sig.Address)
+		valid := ecdsa.Verify(pubkey, hash, sig.R, sig.S)
 		if !valid {
 			return errors.New("verification failed")
 		}
 
-		// look out for duplicates
-		encoded := string(crypto.FromECDSAPub(&key.PublicKey))
-		if origins[encoded] {
+		// look out for duplicates signatures
+		if origins[sig.Address] {
 			return errors.New("duplicate signatures")
 		}
-		origins[encoded] = true
+		origins[sig.Address] = true
 		numSigs++
 	}
 

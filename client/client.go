@@ -35,9 +35,7 @@ func doTransaction(w *common.Wallet, t common.Transaction) {
 
 	// own UTXOs, (is spent at this point)
 	wallet.RemoveUTXOMultiple(w, &t.Inputs)
-
-	// TODO combine signatures.
-	sig := (*res)[0]
+	sig := combineSignatures(res)
 
 	// add own outputs
 	var ownOutputs []common.Value

@@ -25,7 +25,7 @@ func CheckValidity(id *common.Identity, req *common.TransactionSigReq) error {
 		return err
 	}
 
-	err = checkInputSignatures(id, &tx)
+	err = checkInputSignatures(&tx)
 	if err != nil {
 		return err
 	}
@@ -48,9 +48,9 @@ func checkRequestSignature(id *common.Identity, req *common.TransactionSigReq) e
 /**
 checks if inputs signatures are valid.
 */
-func checkInputSignatures(id *common.Identity, tx *common.Transaction) error {
+func checkInputSignatures(tx *common.Transaction) error {
 	for _, input := range tx.Inputs {
-		err := common.VerifyValue(id.Key, &input)
+		err := common.VerifyValue(&input)
 		if err != nil {
 			return err
 		}
