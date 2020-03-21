@@ -65,7 +65,7 @@ func simpleAgent(a common.Agent, wg *sync.WaitGroup) {
 
 // there are 16 clients
 func TestAgents(t *testing.T) {
-	numTx := 20000
+	numTx := 100
 	maxClients := 3
 	delay := 500 * time.Millisecond
 	endDelay := 1 * time.Second

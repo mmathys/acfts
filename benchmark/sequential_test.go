@@ -18,8 +18,8 @@ Do not expect high numbers from this
 // in this benchmark, in each iteration, a new wallet gets created. then, the wallet spends all of its cash.
 func BenchmarkSequentialNewWallet(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		var addrA = common.Address{0}
-		var addrB = common.Address{1}
+		var addrA = common.GetClients()[0]
+		var addrB = common.GetClients()[1]
 
 		A := util.NewWallet(addrA)
 
@@ -39,8 +39,8 @@ func BenchmarkSequentialNewWallet(b *testing.B) {
 
 // in this benchmark, a wallet gets created once. Then, the wallet spends all of its cash, 1 money per iteration.
 func BenchmarkSequentialSpendSingle(b *testing.B) {
-	var addrA = common.Address{0}
-	var addrB = common.Address{1}
+	var addrA = common.GetClients()[0]
+	var addrB = common.GetClients()[1]
 	A := util.NewWalletWithAmount(addrA, b.N)
 
 	b.ResetTimer()
@@ -60,8 +60,8 @@ func BenchmarkSequentialSpendSingle(b *testing.B) {
 
 func TestSequentialSpendSingle(t *testing.T) {
 	N := 10000
-	var addrA = common.Address{0}
-	var addrB = common.Address{1}
+	var addrA = common.GetClients()[0]
+	var addrB = common.GetClients()[1]
 	A := util.NewWalletWithAmount(addrA, N)
 
 	for i := 0; i < N; i++ {
