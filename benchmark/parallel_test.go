@@ -16,41 +16,35 @@ This is parallel benchmark
 var targetAddr = common.GetClients()[0]
 
 // in this benchmark, a wallet gets created once. Then, the wallet spends all of its cash, 1 money per iteration.
-func BenchmarkParallelSpendSingle(b *testing.B) {
-	var numWorkers uint8 = 1
-	N := 1000
+func TestParallelSpendSingle(t *testing.T) {
+	var numWorkers uint8 = 3
+	N := 10000
 
-	for ; numWorkers <= 16; numWorkers++ {
-		s := fmt.Sprintf("ParallelSpendSingle, workers=%d", numWorkers)
-		b.Run(s, func(b *testing.B) {
+	jobs := make(chan bool, N)
+	done := make(chan bool, N)
 
-			jobs := make(chan bool, N)
-			done := make(chan bool, N)
+	var i uint8 = 0
+	for ; i < numWorkers; i++ {
+		addr := common.GetClients()[i]
+		w := util.NewWalletWithAmount(addr, N)
+		go worker(w, t, jobs, done)
+	}
 
-			var i uint8 = 0
-			for ; i < numWorkers; i++ {
-				addr := common.GetClients()[i]
-				w := util.NewWalletWithAmount(addr, N)
-				go worker(w, b, jobs, done)
-			}
+	for j := 0; j < N; j++ {
+		jobs <- true
+	}
+	close(jobs)
 
-			for j := 0; j < N; j++ {
-				jobs <- true
-			}
-			close(jobs)
-
-			for k := 0; k < N; k++ {
-				<-done
-			}
-		})
+	for k := 0; k < N; k++ {
+		<-done
 	}
 }
 
-func worker(w *common.Wallet, b *testing.B, jobs <-chan bool, done chan<- bool) {
+func worker(w *common.Wallet, t *testing.T, jobs <-chan bool, done chan<- bool) {
 	for _ = range jobs {
 		tx, err := wallet.PrepareTransaction(w, targetAddr, 1)
 		if err != nil {
-			b.Error("failed to prepare transaction")
+			t.Error("failed to prepare transaction")
 		}
 
 		_, err = client.SignTransaction(w, tx)

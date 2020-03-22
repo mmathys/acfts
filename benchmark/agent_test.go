@@ -7,7 +7,6 @@ import (
 	"github.com/mmathys/acfts/util"
 	"github.com/mmathys/acfts/wallet"
 	"math/rand"
-	"net/http"
 	"reflect"
 	"sync"
 	"testing"
@@ -17,7 +16,7 @@ import (
 func getRandomAddress(a common.Agent) common.Address {
 	src := rand.NewSource(time.Now().UnixNano())
 	r := rand.New(src)
-	i := r.Intn(len(a.Topology) - 2)
+	i := r.Intn(len(a.Topology) - 1)
 	m := a.Topology[i]
 	if reflect.DeepEqual(a.Address, m) {
 		i++
@@ -31,55 +30,38 @@ Clients send 1 money to random other clients
 func simpleAgent(a common.Agent, wg *sync.WaitGroup) {
 	defer wg.Done()
 
-	receiveBufferLen := 512 // async
-	sendBufferLen := 1      // sync
-
 	w := util.NewWalletWithAmount(a.Address, a.NumTransactions)
-
-	incoming := make(chan common.Value, receiveBufferLen)
-	outgoing := make(chan common.Transaction, sendBufferLen)
-
-	go client.HandleIncoming(w, incoming)
-	go client.HandleOutgoing(w, outgoing)
-
-	mux := http.NewServeMux()
-
-	mux.HandleFunc("/transaction", client.ReceiveSignature(incoming))
-	localAddr := fmt.Sprintf(":%d", common.GetPort(a.Address))
-	go http.ListenAndServe(localAddr, mux)
 
 	time.Sleep(a.StartDelay) // wait before starting tx
 
 	for i := 0; i < a.NumTransactions; i++ {
 		to := getRandomAddress(a)
+
 		t, err := wallet.PrepareTransaction(w, to, 1)
 		if err != nil {
 			fmt.Println(err)
 			panic("failed to prepare transaction")
 		}
 
-		outgoing <- t
+		client.DoTransaction(w, t, false)
 	}
-	time.Sleep(a.EndDelay) // wait for others?
 }
 
 // there are 16 clients
 func TestAgents(t *testing.T) {
-	numTx := 100
-	maxClients := 3
+	maxClients := 9
+	numTx := 100000/maxClients
 	delay := 500 * time.Millisecond
-	endDelay := 1 * time.Second
 	clients := common.GetClients()
-	var wg sync.WaitGroup
 
-	topology := clients[:maxClients+1]
+	var wg sync.WaitGroup
+	topology := clients[:maxClients]
 
 	for _, addr := range topology {
-		a := common.Agent{NumTransactions: numTx, StartDelay: delay, EndDelay: endDelay, Address: addr, Topology: topology}
+		a := common.Agent{NumTransactions: numTx, StartDelay: delay, Address: addr, Topology: topology}
 		wg.Add(1)
 		go simpleAgent(a, &wg)
 	}
 
 	wg.Wait()
-	fmt.Println("ended.")
 }

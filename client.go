@@ -30,7 +30,6 @@ func runClient(c *cli.Context) error {
 	w := util.NewWallet(addr)
 
 	go client.HandleIncoming(w, incoming)
-	go client.HandleOutgoing(w, outgoing)
 	go client.LaunchClientConsole(w, outgoing)
 
 	http.HandleFunc("/transaction", client.ReceiveSignature(incoming))

@@ -10,13 +10,16 @@ import (
 	"github.com/urfave/cli"
 	"log"
 	"net/http"
+	_ "net/http/pprof"
 	"os"
 	"sync"
 )
 
 var SignedUTXO sync.Map
-var TxCounter *int32 = new(int32)
-var BenchmarkMode bool = false
+var TxCounter = new(int32)
+var BenchmarkMode = false
+
+var DEBUG = true
 
 func handleSign(id *common.Identity) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
@@ -27,6 +30,8 @@ func handleSign(id *common.Identity) http.HandlerFunc {
 
 		// parse the request
 		var sigReq common.TransactionSigReq
+
+
 		err := json.NewDecoder(req.Body).Decode(&sigReq)
 		if err != nil {
 			fmt.Println(err)
@@ -34,20 +39,33 @@ func handleSign(id *common.Identity) http.HandlerFunc {
 			return
 		}
 
-		err = server.CheckValidity(id, &sigReq)
-		if err != nil {
-			fmt.Println(err)
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
+		if !DEBUG {
+			err = server.CheckValidity(id, &sigReq)
+			if err != nil {
+				fmt.Println(err)
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
 		}
 
 		tx := sigReq.Transaction
-		for _, input := range tx.Inputs {
-			SignedUTXO.Store(input.Id, input)
+		if !DEBUG {
+			for _, input := range tx.Inputs {
+				SignedUTXO.Store(input.Id, input)
+			}
 		}
 
 		// Sign the request
-		outputs, err := common.SignValues(id.Key, tx.Outputs)
+		var outputs []common.Value
+		if DEBUG {
+			outputs = tx.Outputs
+			for i, _ := range outputs {
+				outputs[i].Signatures = []common.ECDSASig{}
+			}
+		} else {
+			outputs, err = common.SignValues(id.Key, tx.Outputs)
+		}
+
 		if err != nil {
 			fmt.Println(err)
 			http.Error(w, err.Error(), http.StatusBadRequest)
@@ -75,10 +93,10 @@ func runServer(address common.Address, benchmark bool) error {
 		go util.Ticker(TxCounter)
 	}
 	id := util.GetIdentity(address)
-
 	http.HandleFunc("/sign", handleSign(id))
 	localAddr := fmt.Sprintf(":%d", port)
 	http.ListenAndServe(localAddr, nil)
+
 	return nil
 }
 

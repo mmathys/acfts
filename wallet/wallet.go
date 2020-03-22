@@ -4,18 +4,15 @@ import (
 	"errors"
 	"github.com/mmathys/acfts/common"
 	"github.com/mmathys/acfts/util"
-	"sync"
 )
 
 // prepare transaction mutex
-var prepareTxMutex sync.Mutex
 
 func PrepareTransaction(w *common.Wallet, target common.Address, val int) (common.Transaction, error) {
-	prepareTxMutex.Lock()
-
 	// Linear Scan through UTXOs
 	var inputs []common.Value
 	current := 0
+
 	w.UTXO.Range(func(_ interface{}, value interface{}) bool {
 		v := value.(common.Value)
 		if current < val {
@@ -31,9 +28,8 @@ func PrepareTransaction(w *common.Wallet, target common.Address, val int) (commo
 		return common.Transaction{}, errors.New("not enough funds")
 	}
 
-	prepareTxMutex.Unlock()
-
 	addressOwn := common.MarshalPubkey(&w.Key.PublicKey)
+
 	counterpart := util.GetIdentity(target)
 	addressCounterpart := common.MarshalPubkey(&counterpart.Key.PublicKey)
 	var outputs []common.Value

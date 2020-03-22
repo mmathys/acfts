@@ -35,10 +35,12 @@ func SignValue(key *ecdsa.PrivateKey, value *Value) error {
 
 func SignValues(key *ecdsa.PrivateKey, outputs []Value) ([]Value, error) {
 	var signed []Value
+
 	for _, i := range outputs {
 		SignValue(key, &i)
 		signed = append(signed, i)
 	}
+
 	return signed, nil
 }
 

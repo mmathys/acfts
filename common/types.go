@@ -67,7 +67,6 @@ type Node struct {
 type Agent struct {
 	NumTransactions int           // how many tx the agent completes before exiting
 	StartDelay      time.Duration // delay before starting transactions in ns (waiting for other agents to launch)
-	EndDelay        time.Duration // delay finishing (for receiving stuff tx)
 	Address         Address       // reference to node
 	Topology        []Address     // other nodes (excluding self)
 }

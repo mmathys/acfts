@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/mmathys/acfts/common"
 	"github.com/mmathys/acfts/wallet"
-	"reflect"
 	"sync"
 )
 
@@ -18,15 +17,7 @@ func HandleIncoming(w *common.Wallet, incoming chan common.Value) {
 	}
 }
 
-func HandleOutgoing(w *common.Wallet, outgoing chan common.Transaction) {
-	for {
-		t := <-outgoing
-		//fmt.Printf("handle outgoing %v\n", t)
-		doTransaction(w, t)
-	}
-}
-
-func doTransaction(w *common.Wallet, t common.Transaction) {
+func DoTransaction(w *common.Wallet, t common.Transaction, forward bool) {
 	res, err := SignTransaction(w, t)
 	if err != nil {
 		fmt.Println("failed to sign transaction")
@@ -35,15 +26,16 @@ func doTransaction(w *common.Wallet, t common.Transaction) {
 
 	// own UTXOs, (is spent at this point)
 	wallet.RemoveUTXOMultiple(w, &t.Inputs)
+
 	sig := combineSignatures(res)
 
 	// add own outputs
 	var ownOutputs []common.Value
-	for _, t := range sig.Outputs {
-		if reflect.DeepEqual(t.Address, w.Key.PublicKey) {
-			ownOutputs = append(ownOutputs, t)
-		} else {
-			go ForwardSignature(t)
+	for _, v := range sig.Outputs {
+		if v.Address == w.Identity.Address {
+			ownOutputs = append(ownOutputs, v)
+		} else if forward {
+			go ForwardValue(v)
 		}
 	}
 
@@ -53,6 +45,7 @@ func doTransaction(w *common.Wallet, t common.Transaction) {
 // TODO Only wait for Math.ceil(2/3 * n) of n servers!
 func SignTransaction(w *common.Wallet, t common.Transaction) (*[]common.TransactionSignRes, error) {
 	n := len(common.GetServers())
+
 	sigs := make(chan common.TransactionSignRes, n)
 
 	var wg sync.WaitGroup
@@ -64,7 +57,6 @@ func SignTransaction(w *common.Wallet, t common.Transaction) (*[]common.Transact
 
 	wg.Wait()
 
-	//fmt.Println("got sigs from all servers")
 
 	// TODO validate and store sigs
 	var res []common.TransactionSignRes

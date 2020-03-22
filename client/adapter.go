@@ -49,10 +49,10 @@ func RequestSignature(serverAddr common.Address, id *common.Identity, t common.T
 	}
 
 	*sigs <- sig
-	defer wg.Done()
+	wg.Done()
 }
 
-func ForwardSignature(t common.Value) {
+func ForwardValue(t common.Value) {
 	alias, err := common.GetAliasFromAddress(t.Address)
 	if err != nil {
 		fmt.Println(err.Error())
