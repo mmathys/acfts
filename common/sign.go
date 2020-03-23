@@ -70,10 +70,8 @@ func VerifyValue(value *Value) error {
 
 	for _, sig := range value.Signatures {
 		pubkey := UnmarshalPubkey(sig.Address)
-		R := new(big.Int)
-		R.SetBytes(sig.R)
-		S := new(big.Int)
-		S.SetBytes(sig.S)
+		R := new(big.Int).SetBytes(sig.R)
+		S := new(big.Int).SetBytes(sig.S)
 		valid := ecdsa.Verify(pubkey, hash, R, S)
 		if !valid {
 			return errors.New("verification failed")
