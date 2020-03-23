@@ -13,12 +13,12 @@ const (
 	IdentifierLength = 32
 )
 
-type Address = [AddressLength]byte
+type Address = []byte // len = AddressLength
 type PrivateKey = [PrivateKeyLength]byte
 type Identifier = [IdentifierLength]byte
 
 type ECDSASig struct {
-	Address		Address // could also use recovery Id "V" like in ethereu
+	Address		Address // could also use recovery Id "V" like in ethereum
 	R 			*big.Int
 	S 			*big.Int
 }

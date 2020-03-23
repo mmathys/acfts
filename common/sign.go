@@ -64,7 +64,7 @@ Verifies single value
 */
 func VerifyValue(value *Value) error {
 	hash := HashValue(*value)
-	origins := make(map[Address]bool)
+	origins := make(map[[AddressLength]byte]bool)
 	numSigs := 0
 
 	for _, sig := range value.Signatures {
@@ -75,10 +75,12 @@ func VerifyValue(value *Value) error {
 		}
 
 		// look out for duplicates signatures
-		if origins[sig.Address] {
+		index := [AddressLength]byte{}
+		copy(index[:], sig.Address[:AddressLength])
+		if origins[index] {
 			return errors.New("duplicate signatures")
 		}
-		origins[sig.Address] = true
+		origins[index] = true
 		numSigs++
 	}
 

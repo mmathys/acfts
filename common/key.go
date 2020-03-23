@@ -8,6 +8,8 @@ import (
 	"log"
 )
 
+
+
 func GenerateKey() *ecdsa.PrivateKey {
 	key, _ := ecdsa.GenerateKey(secp256k1.S256(), rand.Reader)
 	return key
@@ -19,10 +21,7 @@ func MarshalPubkey(pub *ecdsa.PublicKey) Address {
 		log.Fatalln("key length does not match when marshalling")
 	}
 
-	res := [AddressLength]byte{}
-	copy(res[:], encoded[:AddressLength])
-
-	return res
+	return encoded
 }
 
 func UnmarshalPubkey(pub Address) *ecdsa.PublicKey {

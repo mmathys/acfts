@@ -19,7 +19,7 @@ var SignedUTXO sync.Map
 var TxCounter = new(int32)
 var BenchmarkMode = false
 
-var DEBUG = true
+var DEBUG = false
 
 func handleSign(id *common.Identity) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
@@ -108,6 +108,10 @@ func main() {
 			addr, err := client.ReadAddress(c.String("address"))
 			if err != nil {
 				log.Fatal(err)
+			}
+
+			if addr == nil {
+				log.Fatal("must define address")
 			}
 
 			benchmark := c.Bool("benchmark")

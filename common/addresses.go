@@ -50,16 +50,23 @@ func readKey(keypair []string) *ecdsa.PrivateKey {
 	return res
 }
 
-var clients = map[Address]Node{}
+var clients = map[[AddressLength]byte]Node{}
 var clientKeys []Address
-var servers = map[Address]Node{}
+var servers = map[[AddressLength]byte]Node{}
 var serverKeys []Address
+
+func getIndex(addr Address) [AddressLength]byte {
+	index := [AddressLength]byte{}
+	copy(index[:], addr[:AddressLength])
+	return index
+}
 
 func initAddresses() {
 	for i := 0; i < numClients; i++ {
 		key := readKey(generatedKeyPairs[i])
 		addr := MarshalPubkey(&key.PublicKey)
-		clients[addr] = Node{
+		index := getIndex(addr)
+		clients[index] = Node{
 			NodeType: "client",
 			Net:      "http://localhost",
 			Port:     5555 + i,
@@ -71,7 +78,8 @@ func initAddresses() {
 	for i := numClients; i < numClients+numServers; i++ {
 		key := readKey(generatedKeyPairs[i])
 		addr := MarshalPubkey(&key.PublicKey)
-		servers[addr] = Node{
+		index := getIndex(addr)
+		servers[index] = Node{
 			NodeType: "server",
 			Net:      "http://localhost",
 			Port:     6666 + i - numClients,
@@ -82,12 +90,13 @@ func initAddresses() {
 }
 
 func lookup(address Address) (Node, error) {
-	client, ok := clients[address]
+	index := getIndex(address)
+	client, ok := clients[index]
 	if ok {
 		return client, nil
 	}
 
-	server, ok := servers[address]
+	server, ok := servers[index]
 	if ok {
 		return server, nil
 	}
@@ -104,19 +113,6 @@ func GetNetworkAddress(address Address) (string, error) {
 	} else {
 		return fmt.Sprintf("%s:%d", res.Net, res.Port), nil
 	}
-}
-
-func GetAliasFromAddress(pub Address) (Address, error) {
-	doOnce.Do(initAddresses)
-	for _, clientAddr := range GetClients() {
-		client, _ := lookup(clientAddr)
-		enc := MarshalPubkey(&client.Key.PublicKey)
-		if enc == pub {
-			return clientAddr, nil
-		}
-	}
-
-	return Address{}, errors.New("could not find address")
 }
 
 func GetKey(address Address) *ecdsa.PrivateKey {
