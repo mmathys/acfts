@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"math"
+	"math/big"
 )
 
 func signHash(key *ecdsa.PrivateKey, hash []byte) (ECDSASig, error) {
@@ -14,7 +15,7 @@ func signHash(key *ecdsa.PrivateKey, hash []byte) (ECDSASig, error) {
 		return ECDSASig{}, err
 	}
 	addr := MarshalPubkey(&key.PublicKey)
-	return ECDSASig{R: r, S: s, Address: addr}, nil
+	return ECDSASig{R: r.Bytes(), S: s.Bytes(), Address: addr}, nil
 }
 
 func SignValue(key *ecdsa.PrivateKey, value *Value) error {
@@ -69,7 +70,11 @@ func VerifyValue(value *Value) error {
 
 	for _, sig := range value.Signatures {
 		pubkey := UnmarshalPubkey(sig.Address)
-		valid := ecdsa.Verify(pubkey, hash, sig.R, sig.S)
+		R := new(big.Int)
+		R.SetBytes(sig.R)
+		S := new(big.Int)
+		S.SetBytes(sig.S)
+		valid := ecdsa.Verify(pubkey, hash, R, S)
 		if !valid {
 			return errors.New("verification failed")
 		}
