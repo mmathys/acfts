@@ -25,7 +25,7 @@ type ECDSASig struct {
 // Defines an Input / Output tuple; with extra fields
 type Value struct {
 	Address    Address    	// The public key = Address (encoded)
-	Amount     int        	// The value itself
+	Amount     int32       	// The value itself
 	Id         Identifier	// Unique identifier
 	Signatures []ECDSASig 	// Signatures
 }

@@ -25,7 +25,6 @@ func handleSignREST(id *common.Identity, debug bool, benchmarkMode bool, SignedU
 		// parse the request
 		var sigReq common.TransactionSigReq
 
-
 		err := json.NewDecoder(req.Body).Decode(&sigReq)
 		if err != nil {
 			fmt.Println(err)

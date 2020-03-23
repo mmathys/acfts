@@ -19,8 +19,8 @@ message Transaction  {
 message Value {
     bytes Address = 1;
     int32 Amount = 2;
-    bytes Identifier = 3;
-    repeated ECDSASig Signature = 4;
+    bytes Id = 3;
+    repeated ECDSASig Signatures = 4;
 }
 
 message ECDSASig  {
