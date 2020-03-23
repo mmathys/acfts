@@ -39,14 +39,11 @@ func MarshalKey(key *ecdsa.PrivateKey) *PrivateKey {
 		log.Fatalln("key length does not match when marshalling private key")
 	}
 
-	res := [PrivateKeyLength]byte{}
-	copy(res[:], encoded[:PrivateKeyLength])
-
-	return &res
+	return &encoded
 }
 
 func UnmarshalPrivateKey(key *PrivateKey) *ecdsa.PrivateKey {
-	res, err := crypto2.ToECDSA(key[:])
+	res, err := crypto2.ToECDSA(*key)
 	if err != nil {
 		log.Fatal(err)
 	}

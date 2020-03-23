@@ -45,7 +45,9 @@ func handleSignREST(id *common.Identity, debug bool, benchmarkMode bool, SignedU
 		tx := sigReq.Transaction
 		if !debug {
 			for _, input := range tx.Inputs {
-				SignedUTXO.Store(input.Id, input)
+				index := [common.IdentifierLength]byte{}
+				copy(index[:], input.Id[:common.IdentifierLength])
+				SignedUTXO.Store(index, input)
 			}
 		}
 

@@ -1,6 +1,9 @@
 package client
 
-import "github.com/mmathys/acfts/common"
+import (
+	"bytes"
+	"github.com/mmathys/acfts/common"
+)
 
 func combineSignatures(res *[]common.TransactionSignRes) common.TransactionSignRes {
 	baseRes := (*res)[0]
@@ -8,7 +11,7 @@ func combineSignatures(res *[]common.TransactionSignRes) common.TransactionSignR
 	for _, r := range (*res)[1:] {
 		for _, rOutput := range r.Outputs {
 			for i, baseOutput := range baseRes.Outputs {
-				if baseOutput.Id == rOutput.Id {
+				if bytes.Equal(baseOutput.Id, rOutput.Id) {
 					baseRes.Outputs[i].Signatures = append(baseRes.Outputs[i].Signatures, rOutput.Signatures[0])
 				}
 			}

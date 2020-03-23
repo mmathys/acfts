@@ -8,6 +8,12 @@ import (
 
 // prepare transaction mutex
 
+func getIndex(id common.Identifier) [common.IdentifierLength]byte {
+	index := [common.IdentifierLength]byte{}
+	copy(index[:], id[:common.IdentifierLength])
+	return index
+}
+
 func PrepareTransaction(w *common.Wallet, target common.Address, val int) (common.Transaction, error) {
 	// Linear Scan through UTXOs
 	var inputs []common.Value
@@ -48,21 +54,21 @@ func PrepareTransaction(w *common.Wallet, target common.Address, val int) (commo
 }
 
 func RemoveUTXO(wallet *common.Wallet, t common.Value) {
-	wallet.UTXO.Delete(t.Id)
+	wallet.UTXO.Delete(getIndex(t.Id))
 }
 
 func RemoveUTXOMultiple(wallet *common.Wallet, ts *[]common.Value) {
 	for _, t := range *ts {
-		wallet.UTXO.Delete(t.Id)
+		wallet.UTXO.Delete(getIndex(t.Id))
 	}
 }
 
 func AddUTXO(wallet *common.Wallet, t common.Value) {
-	wallet.UTXO.Store(t.Id, t)
+	wallet.UTXO.Store(getIndex(t.Id), t)
 }
 
 func AddUTXOMultiple(wallet *common.Wallet, ts *[]common.Value) {
 	for _, t := range *ts {
-		wallet.UTXO.Store(t.Id, t)
+		wallet.UTXO.Store(getIndex(t.Id), t)
 	}
 }

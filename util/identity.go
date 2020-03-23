@@ -29,7 +29,10 @@ func NewWalletWithAmount(address common.Address, value int) *common.Wallet {
 		}
 	}
 
-	utxo.Store(utxoId, v)
+	index := [common.IdentifierLength]byte{}
+	copy(index[:], utxoId[:common.IdentifierLength])
+
+	utxo.Store(index, v)
 
 	return &common.Wallet{Identity: id, UTXO: &utxo}
 }
