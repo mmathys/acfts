@@ -2,7 +2,6 @@ package common
 
 import (
 	"crypto/ecdsa"
-	"math/big"
 	"sync"
 	"time"
 )
@@ -13,20 +12,20 @@ const (
 	IdentifierLength = 32
 )
 
-type Address = [AddressLength]byte
-type PrivateKey = [PrivateKeyLength]byte
-type Identifier = [IdentifierLength]byte
+type Address = []byte // len = AddressLength
+type PrivateKey = []byte // len = PrivateKeyLength
+type Identifier = []byte // len = IdentifierLength
 
 type ECDSASig struct {
-	Address		Address // could also use recovery Id "V" like in ethereu
-	R 			*big.Int
-	S 			*big.Int
+	Address		Address // could also use recovery Id "V" like in ethereum
+	R 			[]byte // *big.Int
+	S 			[]byte // *big.Int
 }
 
 // Defines an Input / Output tuple; with extra fields
 type Value struct {
 	Address    Address    	// The public key = Address (encoded)
-	Amount     int        	// The value itself
+	Amount     int32       	// The value itself
 	Id         Identifier	// Unique identifier
 	Signatures []ECDSASig 	// Signatures
 }

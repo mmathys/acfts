@@ -1,13 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"github.com/mmathys/acfts/client"
 	"github.com/mmathys/acfts/common"
 	"github.com/mmathys/acfts/util"
 	"github.com/urfave/cli"
 	"log"
-	"net/http"
 	"os"
 )
 
@@ -25,16 +23,13 @@ func runClient(c *cli.Context) error {
 	log.Printf("initialized client; addr = 0x%x, port = %d\n", addr, port)
 
 	incoming := make(chan common.Value, bufferLen)
-	outgoing := make(chan common.Transaction, bufferLen)
 
 	w := util.NewWallet(addr)
 
 	go client.HandleIncoming(w, incoming)
-	go client.LaunchClientConsole(w, outgoing)
+	go client.LaunchClientConsole(w)
 
-	http.HandleFunc("/transaction", client.ReceiveSignature(incoming))
-	localAddr := fmt.Sprintf(":%d", port)
-	http.ListenAndServe(localAddr, nil)
+	client.InitREST(port, incoming)
 
 	return nil
 }

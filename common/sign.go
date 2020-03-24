@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"math"
+	"math/big"
 )
 
 func signHash(key *ecdsa.PrivateKey, hash []byte) (ECDSASig, error) {
@@ -14,7 +15,7 @@ func signHash(key *ecdsa.PrivateKey, hash []byte) (ECDSASig, error) {
 		return ECDSASig{}, err
 	}
 	addr := MarshalPubkey(&key.PublicKey)
-	return ECDSASig{R: r, S: s, Address: addr}, nil
+	return ECDSASig{R: r.Bytes(), S: s.Bytes(), Address: addr}, nil
 }
 
 func SignValue(key *ecdsa.PrivateKey, value *Value) error {
@@ -64,21 +65,25 @@ Verifies single value
 */
 func VerifyValue(value *Value) error {
 	hash := HashValue(*value)
-	origins := make(map[Address]bool)
+	origins := make(map[[AddressLength]byte]bool)
 	numSigs := 0
 
 	for _, sig := range value.Signatures {
 		pubkey := UnmarshalPubkey(sig.Address)
-		valid := ecdsa.Verify(pubkey, hash, sig.R, sig.S)
+		R := new(big.Int).SetBytes(sig.R)
+		S := new(big.Int).SetBytes(sig.S)
+		valid := ecdsa.Verify(pubkey, hash, R, S)
 		if !valid {
 			return errors.New("verification failed")
 		}
 
 		// look out for duplicates signatures
-		if origins[sig.Address] {
+		index := [AddressLength]byte{}
+		copy(index[:], sig.Address[:AddressLength])
+		if origins[index] {
 			return errors.New("duplicate signatures")
 		}
-		origins[sig.Address] = true
+		origins[index] = true
 		numSigs++
 	}
 

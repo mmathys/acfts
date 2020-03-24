@@ -1,13 +1,13 @@
 package benchmark
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/mmathys/acfts/client"
 	"github.com/mmathys/acfts/common"
 	"github.com/mmathys/acfts/util"
 	"github.com/mmathys/acfts/wallet"
 	"math/rand"
-	"reflect"
 	"sync"
 	"testing"
 	"time"
@@ -18,7 +18,7 @@ func getRandomAddress(a common.Agent) common.Address {
 	r := rand.New(src)
 	i := r.Intn(len(a.Topology) - 1)
 	m := a.Topology[i]
-	if reflect.DeepEqual(a.Address, m) {
+	if bytes.Equal(a.Address, m) {
 		i++
 	}
 	return a.Topology[i]

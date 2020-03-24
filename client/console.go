@@ -30,17 +30,15 @@ func ReadAddress(s string) (common.Address, error) {
 		return common.Address{}, errors.New("hex should look like 0x04\n")
 	}
 
-	addrInput, err := hex.DecodeString(split[1])
+	addr, err := hex.DecodeString(split[1])
 	if err != nil {
 		return common.Address{}, errors.New("could not decode hex\n")
 	}
 
-	var address common.Address
-	copy(address[:], addrInput)
-	return address, nil
+	return addr, nil
 }
 
-func send(w *common.Wallet, s []string, outgoing chan common.Transaction) {
+func send(w *common.Wallet, s []string) {
 	if len(s) != 3 {
 		fmt.Println("invalid format. Sample format: send X 100")
 		return
@@ -64,7 +62,7 @@ func send(w *common.Wallet, s []string, outgoing chan common.Transaction) {
 		return
 	}
 
-	outgoing <- t
+	DoTransaction(w, t, true)
 }
 
 func info(w *common.Wallet) {
@@ -129,7 +127,7 @@ func completer(d prompt.Document) []prompt.Suggest {
 	}
 }
 
-func LaunchClientConsole(w *common.Wallet, outgoing chan common.Transaction) {
+func LaunchClientConsole(w *common.Wallet) {
 	fmt.Println("For help, enter \"help\"")
 	for {
 		t := prompt.Input("> ", completer)
@@ -139,7 +137,7 @@ func LaunchClientConsole(w *common.Wallet, outgoing chan common.Transaction) {
 		case "help":
 			help()
 		case "send":
-			send(w, s, outgoing)
+			send(w, s)
 		case "utxo":
 			utxo(w)
 		case "balance":

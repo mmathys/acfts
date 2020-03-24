@@ -1,6 +1,7 @@
 package client
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/mmathys/acfts/common"
 	"github.com/mmathys/acfts/wallet"
@@ -32,10 +33,10 @@ func DoTransaction(w *common.Wallet, t common.Transaction, forward bool) {
 	// add own outputs
 	var ownOutputs []common.Value
 	for _, v := range sig.Outputs {
-		if v.Address == w.Identity.Address {
+		if bytes.Equal(v.Address, w.Identity.Address) {
 			ownOutputs = append(ownOutputs, v)
 		} else if forward {
-			go ForwardValue(v)
+			go ForwardValueREST(v)
 		}
 	}
 
@@ -52,11 +53,10 @@ func SignTransaction(w *common.Wallet, t common.Transaction) (*[]common.Transact
 
 	for _, server := range common.GetServers() {
 		wg.Add(1)
-		go RequestSignature(server, w.Identity, t, &wg, &sigs)
+		go RequestSignatureREST(server, w.Identity, t, &wg, &sigs)
 	}
 
 	wg.Wait()
-
 
 	// TODO validate and store sigs
 	var res []common.TransactionSignRes
