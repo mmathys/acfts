@@ -14,14 +14,15 @@ import (
 	"sync"
 )
 
-func InitREST(port int, incoming chan common.Value) {
-	http.HandleFunc("/transaction", ReceiveSignatureREST(incoming))
+func initREST(port int, incoming chan common.Value) {
+	http.HandleFunc("/transaction", receiveSignatureREST(incoming))
 	localAddr := fmt.Sprintf(":%d", port)
 	http.ListenAndServe(localAddr, nil)
 }
 
-func RequestSignatureREST(serverAddr common.Address, id *common.Identity, t common.Transaction, wg *sync.WaitGroup, sigs *chan common.TransactionSignRes) {
+func requestSignatureREST(serverAddr common.Address, id *common.Identity, t common.Transaction, wg *sync.WaitGroup, sigs *chan common.TransactionSignRes) {
 	net, err := common.GetNetworkAddress(serverAddr)
+	net = "http://" + net
 	if err != nil {
 		fmt.Print(err.Error())
 		return
@@ -58,8 +59,9 @@ func RequestSignatureREST(serverAddr common.Address, id *common.Identity, t comm
 	wg.Done()
 }
 
-func ForwardValueREST(t common.Value) {
+func forwardValueREST(t common.Value) {
 	net, err := common.GetNetworkAddress(t.Address)
+	net = "http://" + net
 	if err != nil {
 		fmt.Print(err.Error())
 		return
@@ -82,7 +84,7 @@ func ForwardValueREST(t common.Value) {
 	}
 }
 
-func ReceiveSignatureREST(c chan common.Value) http.HandlerFunc {
+func receiveSignatureREST(c chan common.Value) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 		// Parse the request
 		var t common.Value

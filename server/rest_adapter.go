@@ -9,7 +9,7 @@ import (
 	"sync"
 )
 
-func InitREST(port int, id *common.Identity, debug bool, benchmark bool, SignedUTXO *sync.Map, TxCounter *int32) {
+func initREST(port int, id *common.Identity, debug bool, benchmark bool, SignedUTXO *sync.Map, TxCounter *int32) {
 	http.HandleFunc("/sign", handleSignREST(id, debug, benchmark, SignedUTXO, TxCounter))
 	localAddr := fmt.Sprintf(":%d", port)
 	http.ListenAndServe(localAddr, nil)

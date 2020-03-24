@@ -36,7 +36,7 @@ func DoTransaction(w *common.Wallet, t common.Transaction, forward bool) {
 		if bytes.Equal(v.Address, w.Identity.Address) {
 			ownOutputs = append(ownOutputs, v)
 		} else if forward {
-			go ForwardValueREST(v)
+			go ForwardValue(v)
 		}
 	}
 
@@ -53,7 +53,7 @@ func SignTransaction(w *common.Wallet, t common.Transaction) (*[]common.Transact
 
 	for _, server := range common.GetServers() {
 		wg.Add(1)
-		go RequestSignatureREST(server, w.Identity, t, &wg, &sigs)
+		go RequestSignature(server, w.Identity, t, &wg, &sigs)
 	}
 
 	wg.Wait()

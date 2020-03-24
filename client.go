@@ -18,9 +18,15 @@ func runClient(c *cli.Context) error {
 		log.Fatal(err)
 	}
 
+	adapter := "rest"
+	if c.String("adapter") != "" {
+		adapter = c.String("adapter")
+	}
+	client.SetAdapterMode(adapter)
+
 	port := common.GetPort(addr)
 
-	log.Printf("initialized client; addr = 0x%x, port = %d\n", addr, port)
+	log.Printf("initialized client; addr = 0x%x, port = %d; adapter=%s\n", addr, port, adapter)
 
 	incoming := make(chan common.Value, bufferLen)
 
@@ -29,7 +35,7 @@ func runClient(c *cli.Context) error {
 	go client.HandleIncoming(w, incoming)
 	go client.LaunchClientConsole(w)
 
-	client.InitREST(port, incoming)
+	client.Init(port, incoming)
 
 	return nil
 }
@@ -45,6 +51,11 @@ func main() {
 				Aliases: []string{"a"},
 				Usage:   "Set own address to `ADDRESS`. Format: e.g. 0x04",
 				Required: true,
+			},
+			&cli.StringFlag{
+				Name:     "adapter",
+				Usage:    "Set the adapter. Either \"rest\" or \"rpc\"",
+				Required: false,
 			},
 		},
 	}
