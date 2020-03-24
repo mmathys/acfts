@@ -5,7 +5,7 @@ import (
 )
 
 /**
-Functions, which check the validity of incoming UTXOs before signing. Used by server only.
+Functions, which check the validity of incoming UTXOs before signing. Used by Server only.
 */
 
 func CheckValidity(id *common.Identity, req *common.TransactionSigReq) error {

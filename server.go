@@ -17,6 +17,7 @@ var TxCounter = new(int32)
 
 func runServer(address common.Address, benchmark bool, adapter string) error {
 	port := common.GetPort(address)
+	server.SetAdapterMode(adapter)
 
 	if !benchmark {
 		log.Printf("initialized server; port = %d; benchmark = %t; adapter=%s\n", port, benchmark, adapter)
@@ -25,13 +26,7 @@ func runServer(address common.Address, benchmark bool, adapter string) error {
 	}
 
 	id := util.GetIdentity(address)
-	if adapter == "rest" {
-		server.InitREST(port, id, false, benchmark, &SignedUTXO, TxCounter)
-	} else if adapter == "grpc" {
-		server.InitGRPC(port, id, false, benchmark, &SignedUTXO, TxCounter)
-	} else {
-		log.Fatalf("unrecognized adapter %s", adapter)
-	}
+	server.Init(port, id, true, benchmark, &SignedUTXO, TxCounter)
 
 	return nil
 }
@@ -45,6 +40,7 @@ func main() {
 			if c.String("adapter") != "" {
 				adapter = c.String("adapter")
 			}
+
 
 			addr, err := client.ReadAddress(c.String("address"))
 			if err != nil {
@@ -69,7 +65,7 @@ func main() {
 			},
 			&cli.StringFlag{
 				Name:     "adapter",
-				Usage:    "Set the adapter. Either REST or GRPC",
+				Usage:    "Set the adapter. Either \"rest\" or \"rpc\"",
 				Required: false,
 			},
 			&cli.BoolFlag{

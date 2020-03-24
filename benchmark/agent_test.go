@@ -48,7 +48,7 @@ func simpleAgent(a common.Agent, wg *sync.WaitGroup) {
 }
 
 // there are 16 clients
-func TestAgents(t *testing.T) {
+func testAgents(t *testing.T) {
 	maxClients := 9
 	numTx := 100000/maxClients
 	delay := 500 * time.Millisecond
@@ -64,4 +64,13 @@ func TestAgents(t *testing.T) {
 	}
 
 	wg.Wait()
+}
+
+func TestAgentsREST(t *testing.T) {
+	testAgents(t)
+}
+
+func TestAgentsRPC(t *testing.T) {
+	client.SetAdapterMode("rpc")
+	testAgents(t)
 }

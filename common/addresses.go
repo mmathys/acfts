@@ -68,7 +68,7 @@ func initAddresses() {
 		index := getIndex(addr)
 		clients[index] = Node{
 			NodeType: "client",
-			Net:      "http://localhost",
+			Net:      "localhost",
 			Port:     5555 + i,
 			Key:      key,
 		}
@@ -81,7 +81,7 @@ func initAddresses() {
 		index := getIndex(addr)
 		servers[index] = Node{
 			NodeType: "server",
-			Net:      "http://localhost",
+			Net:      "localhost",
 			Port:     6666 + i - numClients,
 			Key:      key,
 		}
