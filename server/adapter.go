@@ -2,19 +2,19 @@ package server
 
 import (
 	"github.com/mmathys/acfts/common"
-	"github.com/mmathys/acfts/server/rest"
-	"github.com/mmathys/acfts/server/rpc"
 	"log"
 	"sync"
 )
 
 type Adapter interface {
-	Init(port int, id *common.Identity, debug bool, benchmark bool, SignedUTXO *sync.Map, TxCounter *int32)
+	Init(port int, id *common.Identity, debug bool, benchmark bool, TxCounter *int32)
 }
 
-var restAdapter = &rest.Adapter{}
-var rpcAdapter = &rpc.Adapter{}
+var restAdapter = &RESTAdapter{}
+var rpcAdapter = &RPCAdapter{}
 var currentAdapter Adapter = restAdapter
+
+var SignedUTXO sync.Map
 
 func SetAdapterMode(mode string) {
 	if mode == "rest" {
@@ -26,6 +26,6 @@ func SetAdapterMode(mode string) {
 	}
 }
 
-func Init(port int, id *common.Identity, debug bool, benchmark bool, SignedUTXO *sync.Map, TxCounter *int32) {
-	currentAdapter.Init(port, id, debug, benchmark, SignedUTXO, TxCounter)
+func Init(port int, id *common.Identity, debug bool, benchmark bool, TxCounter *int32) {
+	currentAdapter.Init(port, id, debug, benchmark, TxCounter)
 }

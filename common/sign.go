@@ -1,6 +1,7 @@
 package common
 
 import (
+	"bytes"
 	"crypto/ecdsa"
 	"crypto/rand"
 	"errors"
@@ -74,7 +75,7 @@ func VerifyValue(value *Value) error {
 		S := new(big.Int).SetBytes(sig.S)
 		valid := ecdsa.Verify(pubkey, hash, R, S)
 		if !valid {
-			return errors.New("verification failed")
+			return errors.New("value verification failed")
 		}
 
 		// look out for duplicates signatures
@@ -102,6 +103,32 @@ func VerifyValue(value *Value) error {
 Checks validity of a *completed* transaction. It's only used in the client.
 - verifies inputs and outputs
 */
-func VerifyTransaction(key *ecdsa.PrivateKey, value *Transaction) error {
+func VerifyTransaction(value *Transaction) error {
+	return nil
+}
+
+/*
+Verifies a signature request
+- checks if all inputs are owned by the same party
+- checks if party signed the request
+ */
+func VerifyTransactionSigRequest(req *TransactionSigReq) error {
+	owner := req.Transaction.Inputs[0].Address
+
+	for _, input := range req.Transaction.Inputs {
+		if !bytes.Equal(owner, input.Address) {
+			return errors.New("inputs are not owned by the same party")
+		}
+	}
+
+	hash := HashTransactionSigRequest(*req)
+	pubkey := UnmarshalPubkey(owner)
+	R := new(big.Int).SetBytes(req.Signature.R)
+	S := new(big.Int).SetBytes(req.Signature.S)
+	valid := ecdsa.Verify(pubkey, hash, R, S)
+	if !valid {
+		return errors.New("sig request verification failed")
+	}
+
 	return nil
 }

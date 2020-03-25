@@ -1,24 +1,23 @@
-package rest
+package server
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/mmathys/acfts/common"
-	"github.com/mmathys/acfts/server"
 	"github.com/mmathys/acfts/util"
 	"net/http"
-	"sync"
 )
 
-type Adapter struct {}
+type RESTAdapter struct {}
 
-func (a *Adapter) Init(port int, id *common.Identity, debug bool, benchmark bool, SignedUTXO *sync.Map, TxCounter *int32) {
-	http.HandleFunc("/sign", handleSign(id, debug, benchmark, SignedUTXO, TxCounter))
+func (a *RESTAdapter) Init(port int, id *common.Identity, debug bool, benchmark bool, TxCounter *int32) {
+	http.HandleFunc("/sign", handleSign(id, debug, benchmark, TxCounter))
 	localAddr := fmt.Sprintf(":%d", port)
 	http.ListenAndServe(localAddr, nil)
 }
 
-func handleSign(id *common.Identity, debug bool, benchmarkMode bool, SignedUTXO *sync.Map, TxCounter *int32) http.HandlerFunc {
+func handleSign(id *common.Identity, debug bool, benchmarkMode bool, TxCounter *int32) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 		defer req.Body.Close()
 		if benchmarkMode {
@@ -36,7 +35,7 @@ func handleSign(id *common.Identity, debug bool, benchmarkMode bool, SignedUTXO 
 		}
 
 		if !debug {
-			err = server.CheckValidity(id, &sigReq)
+			err = CheckValidity(&sigReq)
 			if err != nil {
 				fmt.Println(err)
 				http.Error(w, err.Error(), http.StatusBadRequest)
@@ -49,7 +48,13 @@ func handleSign(id *common.Identity, debug bool, benchmarkMode bool, SignedUTXO 
 			for _, input := range tx.Inputs {
 				index := [common.IdentifierLength]byte{}
 				copy(index[:], input.Id[:common.IdentifierLength])
-				SignedUTXO.Store(index, input)
+				_, loaded := SignedUTXO.LoadOrStore(index, input) // single synchronization point
+				if loaded {
+					err := errors.New("UTXO already exists: no double spending")
+					fmt.Println(err)
+					http.Error(w, err.Error(), http.StatusBadRequest)
+					return
+				}
 			}
 		}
 

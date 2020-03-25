@@ -9,10 +9,8 @@ import (
 	"log"
 	_ "net/http/pprof"
 	"os"
-	"sync"
 )
 
-var SignedUTXO sync.Map
 var TxCounter = new(int32)
 
 func runServer(address common.Address, benchmark bool, adapter string) error {
@@ -26,7 +24,7 @@ func runServer(address common.Address, benchmark bool, adapter string) error {
 	}
 
 	id := util.GetIdentity(address)
-	server.Init(port, id, false, benchmark, &SignedUTXO, TxCounter)
+	server.Init(port, id, false, benchmark, TxCounter)
 
 	return nil
 }

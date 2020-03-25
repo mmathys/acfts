@@ -1,26 +1,24 @@
-package rpc
+package server
 
 import (
+	"errors"
 	"fmt"
 	"github.com/mmathys/acfts/common"
-	"github.com/mmathys/acfts/server"
 	"github.com/mmathys/acfts/util"
 	"log"
 	"net"
 	"net/http"
 	"net/rpc"
-	"sync"
 )
 
 
 var id *common.Identity
 var debug bool
 var benchmarkMode bool
-var SignedUTXO *sync.Map
 var TxCounter *int32
 
 type Server struct {}
-type Adapter struct {}
+type RPCAdapter struct {}
 
 func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignRes) error {
 	//log.Printf("got sign request: %v", req)
@@ -30,7 +28,7 @@ func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignR
 	}
 
 	if !debug {
-		err := server.CheckValidity(id, &req)
+		err := CheckValidity(&req)
 		if err != nil {
 			fmt.Println(err)
 			return err
@@ -42,7 +40,13 @@ func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignR
 		for _, input := range tx.Inputs {
 			index := [common.IdentifierLength]byte{}
 			copy(index[:], input.Id[:common.IdentifierLength])
-			SignedUTXO.Store(index, input)
+
+			_, loaded := SignedUTXO.LoadOrStore(index, input) // single synchronization point
+			if loaded {
+				err := errors.New("UTXO already exists: no double spending")
+				fmt.Println(err)
+				return err
+			}
 		}
 	}
 
@@ -67,11 +71,10 @@ func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignR
 	return nil
 }
 
-func (a *Adapter) Init(port int, _id *common.Identity, _debug bool, _benchmark bool, _SignedUTXO *sync.Map, _TxCounter *int32) {
+func (a *RPCAdapter) Init(port int, _id *common.Identity, _debug bool, _benchmark bool, _TxCounter *int32) {
 	id = _id
 	debug = _debug
 	benchmarkMode  = _benchmark
-	SignedUTXO = _SignedUTXO
 	TxCounter = _TxCounter
 
 	addr := fmt.Sprintf(":%d", port)
