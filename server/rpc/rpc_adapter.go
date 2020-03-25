@@ -1,8 +1,9 @@
-package server
+package rpc
 
 import (
 	"fmt"
 	"github.com/mmathys/acfts/common"
+	"github.com/mmathys/acfts/server"
 	"github.com/mmathys/acfts/util"
 	"log"
 	"net"
@@ -19,6 +20,8 @@ var SignedUTXO *sync.Map
 var TxCounter *int32
 
 type Server struct {}
+type Adapter struct {}
+
 func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignRes) error {
 	//log.Printf("got sign request: %v", req)
 
@@ -27,7 +30,7 @@ func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignR
 	}
 
 	if !debug {
-		err := CheckValidity(id, &req)
+		err := server.CheckValidity(id, &req)
 		if err != nil {
 			fmt.Println(err)
 			return err
@@ -64,7 +67,7 @@ func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignR
 	return nil
 }
 
-func initRPC(port int, _id *common.Identity, _debug bool, _benchmark bool, _SignedUTXO *sync.Map, _TxCounter *int32) {
+func (a *Adapter) Init(port int, _id *common.Identity, _debug bool, _benchmark bool, _SignedUTXO *sync.Map, _TxCounter *int32) {
 	id = _id
 	debug = _debug
 	benchmarkMode  = _benchmark

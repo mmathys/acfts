@@ -1,43 +1,41 @@
 package client
 
 import (
+	"github.com/mmathys/acfts/client/rest"
+	"github.com/mmathys/acfts/client/rpc"
 	"github.com/mmathys/acfts/common"
 	"log"
 	"sync"
 )
 
-var _mode = "rest"
+type Adapter interface {
+	Init(port int, incoming chan common.Value)
+	RequestSignature(serverAddr common.Address, id *common.Identity, t common.Transaction, wg *sync.WaitGroup, sigs *chan common.TransactionSignRes)
+	ForwardValue(t common.Value)
+}
+
+var restAdapter = &rest.Adapter{}
+var rpcAdapter = &rpc.Adapter{}
+var currentAdapter Adapter = restAdapter
 
 func SetAdapterMode(mode string) {
-	_mode = mode
+	if mode == "rest" {
+		currentAdapter = restAdapter
+	} else if mode == "rpc" {
+		currentAdapter = rpcAdapter
+	} else {
+		log.Panic("unrecognized mode")
+	}
 }
 
 func Init(port int, incoming chan common.Value) {
-	if _mode == "rest" {
-		initREST(port, incoming)
-	} else if _mode == "rpc" {
-		initRPC(port, incoming)
-	} else {
-		log.Panic("unrecognized _mode")
-	}
+	currentAdapter.Init(port, incoming)
 }
 
 func RequestSignature(serverAddr common.Address, id *common.Identity, t common.Transaction, wg *sync.WaitGroup, sigs *chan common.TransactionSignRes) {
-	if _mode == "rest" {
-		requestSignatureREST(serverAddr, id, t, wg, sigs)
-	} else if _mode == "rpc" {
-		requestSignatureRPC(serverAddr, id, t, wg, sigs)
-	} else {
-		log.Panic("unrecognized _mode")
-	}
+	currentAdapter.RequestSignature(serverAddr, id, t, wg, sigs)
 }
 
 func ForwardValue(t common.Value) {
-	if _mode == "rest" {
-		forwardValueREST(t)
-	} else if _mode == "rpc" {
-		forwardValueRPC(t)
-	} else {
-		log.Panic("unrecognized _mode")
-	}
+	currentAdapter.ForwardValue(t)
 }

@@ -1,4 +1,4 @@
-package client
+package rest
 
 /**
 Includes functions, which clients use to communicate to each other. Handles transport, serialization and deserialization.
@@ -14,13 +14,15 @@ import (
 	"sync"
 )
 
-func initREST(port int, incoming chan common.Value) {
+type Adapter struct {}
+
+func (a *Adapter) Init(port int, incoming chan common.Value) {
 	http.HandleFunc("/transaction", receiveSignatureREST(incoming))
 	localAddr := fmt.Sprintf(":%d", port)
 	http.ListenAndServe(localAddr, nil)
 }
 
-func requestSignatureREST(serverAddr common.Address, id *common.Identity, t common.Transaction, wg *sync.WaitGroup, sigs *chan common.TransactionSignRes) {
+func (a *Adapter) RequestSignature(serverAddr common.Address, id *common.Identity, t common.Transaction, wg *sync.WaitGroup, sigs *chan common.TransactionSignRes) {
 	net, err := common.GetNetworkAddress(serverAddr)
 	net = "http://" + net
 	if err != nil {
@@ -59,7 +61,7 @@ func requestSignatureREST(serverAddr common.Address, id *common.Identity, t comm
 	wg.Done()
 }
 
-func forwardValueREST(t common.Value) {
+func (a *Adapter) ForwardValue(t common.Value) {
 	net, err := common.GetNetworkAddress(t.Address)
 	net = "http://" + net
 	if err != nil {

@@ -1,21 +1,24 @@
-package server
+package rest
 
 import (
 	"encoding/json"
 	"fmt"
 	"github.com/mmathys/acfts/common"
+	"github.com/mmathys/acfts/server"
 	"github.com/mmathys/acfts/util"
 	"net/http"
 	"sync"
 )
 
-func initREST(port int, id *common.Identity, debug bool, benchmark bool, SignedUTXO *sync.Map, TxCounter *int32) {
-	http.HandleFunc("/sign", handleSignREST(id, debug, benchmark, SignedUTXO, TxCounter))
+type Adapter struct {}
+
+func (a *Adapter) Init(port int, id *common.Identity, debug bool, benchmark bool, SignedUTXO *sync.Map, TxCounter *int32) {
+	http.HandleFunc("/sign", handleSign(id, debug, benchmark, SignedUTXO, TxCounter))
 	localAddr := fmt.Sprintf(":%d", port)
 	http.ListenAndServe(localAddr, nil)
 }
 
-func handleSignREST(id *common.Identity, debug bool, benchmarkMode bool, SignedUTXO *sync.Map, TxCounter *int32) http.HandlerFunc {
+func handleSign(id *common.Identity, debug bool, benchmarkMode bool, SignedUTXO *sync.Map, TxCounter *int32) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 		defer req.Body.Close()
 		if benchmarkMode {
@@ -33,7 +36,7 @@ func handleSignREST(id *common.Identity, debug bool, benchmarkMode bool, SignedU
 		}
 
 		if !debug {
-			err = CheckValidity(id, &sigReq)
+			err = server.CheckValidity(id, &sigReq)
 			if err != nil {
 				fmt.Println(err)
 				http.Error(w, err.Error(), http.StatusBadRequest)

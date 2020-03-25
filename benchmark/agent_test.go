@@ -1,28 +1,15 @@
 package benchmark
 
 import (
-	"bytes"
 	"fmt"
 	"github.com/mmathys/acfts/client"
 	"github.com/mmathys/acfts/common"
 	"github.com/mmathys/acfts/util"
 	"github.com/mmathys/acfts/wallet"
-	"math/rand"
 	"sync"
 	"testing"
 	"time"
 )
-
-func getRandomAddress(a common.Agent) common.Address {
-	src := rand.NewSource(time.Now().UnixNano())
-	r := rand.New(src)
-	i := r.Intn(len(a.Topology) - 1)
-	m := a.Topology[i]
-	if bytes.Equal(a.Address, m) {
-		i++
-	}
-	return a.Topology[i]
-}
 
 /**
 Clients send 1 money to random other clients
@@ -35,7 +22,7 @@ func simpleAgent(a common.Agent, wg *sync.WaitGroup) {
 	time.Sleep(a.StartDelay) // wait before starting tx
 
 	for i := 0; i < a.NumTransactions; i++ {
-		to := getRandomAddress(a)
+		to := a.Topology[0]
 
 		t, err := wallet.PrepareTransaction(w, to, 1)
 		if err != nil {
@@ -49,21 +36,26 @@ func simpleAgent(a common.Agent, wg *sync.WaitGroup) {
 
 // there are 16 clients
 func testAgents(t *testing.T) {
-	maxClients := 9
-	numTx := 100000/maxClients
+	maxClients := 16
 	delay := 500 * time.Millisecond
 	clients := common.GetClients()
 
-	var wg sync.WaitGroup
-	topology := clients[:maxClients]
+	for numClients := 10; numClients <= maxClients; numClients++ {
+		msg := fmt.Sprintf("numClients: %d", numClients)
+		t.Run(msg, func(t *testing.T) {
+			numTx := 100000
+			var wg sync.WaitGroup
+			topology := clients[:numClients]
 
-	for _, addr := range topology {
-		a := common.Agent{NumTransactions: numTx, StartDelay: delay, Address: addr, Topology: topology}
-		wg.Add(1)
-		go simpleAgent(a, &wg)
+			for _, addr := range topology {
+				a := common.Agent{NumTransactions: numTx, StartDelay: delay, Address: addr, Topology: topology}
+				wg.Add(1)
+				go simpleAgent(a, &wg)
+			}
+
+			wg.Wait()
+		})
 	}
-
-	wg.Wait()
 }
 
 func TestAgentsREST(t *testing.T) {
