@@ -36,9 +36,11 @@ func simpleAgent(a common.Agent, wg *sync.WaitGroup) {
 
 // there are 16 clients
 func testAgents(t *testing.T) {
-	maxClients := 16
-	delay := 500 * time.Millisecond
+	common.InitAddresses("../topologies/localSimple.json")
+
 	clients := common.GetClients()
+	maxClients := len(clients)
+	delay := 500 * time.Millisecond
 
 	for numClients := 9; numClients <= maxClients; numClients++ {
 		msg := fmt.Sprintf("numClients: %d", numClients)

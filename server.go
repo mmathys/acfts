@@ -14,13 +14,7 @@ import (
 var TxCounter = new(int32)
 
 func runServer(address common.Address, benchmark bool, adapter string, topology string) error {
-
-	file, err :=  os.Open(topology)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	common.InitAddresses(file)
+	common.InitAddresses(topology)
 
 	port := common.GetPort(address)
 	server.SetAdapterMode(adapter)

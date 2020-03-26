@@ -40,8 +40,18 @@ func getIndex(addr Address) [AddressLength]byte {
 	return index
 }
 
-func InitAddresses(file *os.File) {
+func InitAddresses(path string) {
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		log.Panicf("%s does not exist", path)
+	}
+
+	file, err := os.Open(path)
+	if err != nil {
+		log.Panicf("error opening %s", path)
+	}
+
 	defer file.Close()
+
 
 	var topo Topology
 	dec := json.NewDecoder(file)

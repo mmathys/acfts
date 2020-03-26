@@ -13,8 +13,6 @@ import (
 This is parallel benchmark
 */
 
-var targetAddr = common.GetClients()[0]
-
 // in this benchmark, a wallet gets created once. Then, the wallet spends all of its cash, 1 money per iteration.
 func TestParallelSpendSingle(t *testing.T) {
 	var numWorkers uint8 = 3
@@ -41,6 +39,7 @@ func TestParallelSpendSingle(t *testing.T) {
 }
 
 func worker(w *common.Wallet, t *testing.T, jobs <-chan bool, done chan<- bool) {
+	targetAddr := common.GetClients()[0]
 	for _ = range jobs {
 		tx, err := wallet.PrepareTransaction(w, targetAddr, 1)
 		if err != nil {

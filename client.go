@@ -18,12 +18,7 @@ func runClient(c *cli.Context) error {
 		log.Fatal(err)
 	}
 
-	file, err :=  os.Open(c.String("topology"))
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	common.InitAddresses(file)
+	common.InitAddresses(c.String("topology"))
 
 	adapter := "rest"
 	if c.String("adapter") != "" {
