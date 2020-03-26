@@ -41,7 +41,7 @@ func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignR
 			index := [common.IdentifierLength]byte{}
 			copy(index[:], input.Id[:common.IdentifierLength])
 
-			_, loaded := SignedUTXO.LoadOrStore(index, input) // single synchronization point
+			_, loaded := SignedUTXO.LoadOrStore(index, true) // single synchronization point
 			if loaded {
 				err := errors.New("UTXO already exists: no double spending")
 				fmt.Println(err)

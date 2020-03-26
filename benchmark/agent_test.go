@@ -40,7 +40,7 @@ func testAgents(t *testing.T) {
 	delay := 500 * time.Millisecond
 	clients := common.GetClients()
 
-	for numClients := 10; numClients <= maxClients; numClients++ {
+	for numClients := 9; numClients <= maxClients; numClients++ {
 		msg := fmt.Sprintf("numClients: %d", numClients)
 		t.Run(msg, func(t *testing.T) {
 			numTx := 100000
