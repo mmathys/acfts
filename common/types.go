@@ -54,10 +54,7 @@ type Wallet struct {
 	UTXO *sync.Map // of type int --> Value
 }
 
-type NodeType string // "server" | "client"
-
 type Node struct {
-	NodeType NodeType
 	Net      string // network address, with http
 	Port     int    // port
 	Key      *ecdsa.PrivateKey

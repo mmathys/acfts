@@ -13,7 +13,15 @@ import (
 
 var TxCounter = new(int32)
 
-func runServer(address common.Address, benchmark bool, adapter string) error {
+func runServer(address common.Address, benchmark bool, adapter string, topology string) error {
+
+	file, err :=  os.Open(topology)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	common.InitAddresses(file)
+
 	port := common.GetPort(address)
 	server.SetAdapterMode(adapter)
 
@@ -39,7 +47,6 @@ func main() {
 				adapter = c.String("adapter")
 			}
 
-
 			addr, err := client.ReadAddress(c.String("address"))
 			if err != nil {
 				log.Fatal(err)
@@ -51,7 +58,7 @@ func main() {
 
 			benchmark := c.Bool("benchmark")
 
-			runServer(addr, benchmark, adapter)
+			runServer(addr, benchmark, adapter, c.String("topology"))
 			return nil
 		},
 		Flags: []cli.Flag{
@@ -65,6 +72,12 @@ func main() {
 				Name:     "adapter",
 				Usage:    "Set the adapter. Either \"rest\" or \"rpc\"",
 				Required: false,
+			},
+			&cli.StringFlag{
+				Name:     "topology",
+				Aliases:  []string{"t"},
+				Usage:    "Path to the topology json file",
+				Required: true,
 			},
 			&cli.BoolFlag{
 				Name:     "benchmark",

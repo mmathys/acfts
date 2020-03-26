@@ -18,6 +18,13 @@ func runClient(c *cli.Context) error {
 		log.Fatal(err)
 	}
 
+	file, err :=  os.Open(c.String("topology"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	common.InitAddresses(file)
+
 	adapter := "rest"
 	if c.String("adapter") != "" {
 		adapter = c.String("adapter")
@@ -50,6 +57,12 @@ func main() {
 				Name:    "address",
 				Aliases: []string{"a"},
 				Usage:   "Set own address to `ADDRESS`. Format: e.g. 0x04",
+				Required: true,
+			},
+			&cli.StringFlag{
+				Name:     "topology",
+				Aliases:  []string{"t"},
+				Usage:    "Path to the topology json file",
 				Required: true,
 			},
 			&cli.StringFlag{
