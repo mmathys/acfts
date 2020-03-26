@@ -144,7 +144,7 @@ func GetClients() []Address {
 
 func GetServers() []Address {
 	doOnce.Do(initAddresses)
-	return serverKeys[:1]
+	return serverKeys
 }
 
 func GetNumServers() int {

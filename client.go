@@ -26,7 +26,7 @@ func runClient(c *cli.Context) error {
 
 	port := common.GetPort(addr)
 
-	log.Printf("initialized client; addr = 0x%x, port = %d; adapter=%s\n", addr, port, adapter)
+	log.Printf("initialized client; addr = 0x%x port = %d adapter=%s\n", addr, port, adapter)
 
 	incoming := make(chan common.Value, bufferLen)
 

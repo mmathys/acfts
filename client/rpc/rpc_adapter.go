@@ -12,9 +12,9 @@ import (
 
 var incoming chan common.Value
 
-type Adapter struct {}
-type Client struct {}
-type Empty struct {}
+type Adapter struct{}
+type Client struct{}
+type Empty struct{}
 
 func (c *Client) ForwardSignature(req common.Value, res *Empty) error {
 	incoming <- req
@@ -36,8 +36,25 @@ func (a *Adapter) Init(port int, _incoming chan common.Value) {
 	http.Serve(l, nil)
 }
 
-var once sync.Once
-var client *rpc.Client
+var connectionMutex sync.Mutex
+var connections = make(map[string]*rpc.Client)
+
+func getConnection(net string) (*rpc.Client, error) {
+	connectionMutex.Lock()
+	c, exists := connections[net]
+	if !exists {
+		var err error
+		c, err = rpc.DialHTTP("tcp", net)
+
+		if err != nil {
+			return nil, err
+		}
+		connections[net] = c
+	}
+	connectionMutex.Unlock()
+
+	return c, nil
+}
 
 func (a *Adapter) RequestSignature(serverAddr common.Address, id *common.Identity, t common.Transaction, wg *sync.WaitGroup, sigs *chan common.TransactionSignRes) {
 	net, err := common.GetNetworkAddress(serverAddr)
@@ -48,13 +65,11 @@ func (a *Adapter) RequestSignature(serverAddr common.Address, id *common.Identit
 
 	req := common.TransactionSigReq{Transaction: t}
 	err = common.SignTransactionSigRequest(id.Key, &req)
-	if err != nil{
+	if err != nil {
 		log.Panic(err)
 	}
 
-	once.Do(func() {
-		client, err = rpc.DialHTTP("tcp", net)
-	})
+	client, err := getConnection(net)
 	if err != nil {
 		log.Fatal("dialing:", err)
 	}
