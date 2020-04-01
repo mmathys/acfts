@@ -27,7 +27,7 @@ func runServer(address common.Address, benchmark bool, adapter string, topology 
 	}
 
 	if benchmark {
-		runtime.SetBlockProfileRate(.1)
+		runtime.SetBlockProfileRate(1)
 	}
 
 	id := util.GetIdentity(address)
