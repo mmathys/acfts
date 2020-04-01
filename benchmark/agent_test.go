@@ -39,7 +39,7 @@ func simpleAgent(a common.Agent, wg *sync.WaitGroup) {
 // there are 16 clients
 func testAgentsMultipleParallel(t *testing.T) {
 	clients := common.GetClients()
-	maxClients := int(1 * float64(len(clients)))
+	maxClients := int(.3 * float64(len(clients)))
 	//maxClients = 1000
 
 	for numClients := maxClients; numClients <= maxClients; numClients++ {
