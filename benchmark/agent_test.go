@@ -6,7 +6,6 @@ import (
 	"github.com/mmathys/acfts/common"
 	"github.com/mmathys/acfts/util"
 	"github.com/mmathys/acfts/wallet"
-	"math/big"
 	"os"
 	"strconv"
 	"sync"
@@ -60,7 +59,6 @@ func testAgents(t *testing.T, numClients int) {
 
 		for _, addr := range topology {
 			wg.Add(1)
-			big.Accuracy()
 			go simpleAgent(common.Agent{NumTransactions: numTx, StartDelay: delay, Address: addr, Topology: topology}, &wg)
 		}
 

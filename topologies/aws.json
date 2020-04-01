@@ -1,7 +1,7 @@
 {
   "Servers": [
     {
-      "Net": "ec2-3-127-134-99.eu-central-1.compute.amazonaws.com",
+      "Net": "ec2-54-93-34-73.eu-central-1.compute.amazonaws.com",
       "Port": 6666,
       "Key": [
         "d5830ac0b696931ee3f2e88fbb1b859198aa01d7b49f1fedc239355f9a5752a7",
