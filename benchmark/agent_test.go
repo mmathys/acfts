@@ -6,6 +6,7 @@ import (
 	"github.com/mmathys/acfts/common"
 	"github.com/mmathys/acfts/util"
 	"github.com/mmathys/acfts/wallet"
+	"math/big"
 	"os"
 	"strconv"
 	"sync"
@@ -40,7 +41,7 @@ func simpleAgent(a common.Agent, wg *sync.WaitGroup) {
 func testAgentsMultipleParallel(t *testing.T) {
 	clients := common.GetClients()
 	maxClients := int(1 * float64(len(clients)))
-	maxClients = 1000
+	//maxClients = 1000
 
 	for numClients := maxClients; numClients <= maxClients; numClients++ {
 		testAgents(t, numClients)
@@ -59,6 +60,7 @@ func testAgents(t *testing.T, numClients int) {
 
 		for _, addr := range topology {
 			wg.Add(1)
+			big.Accuracy()
 			go simpleAgent(common.Agent{NumTransactions: numTx, StartDelay: delay, Address: addr, Topology: topology}, &wg)
 		}
 
@@ -80,6 +82,12 @@ func TestAgentsRPC(t *testing.T) {
 func TestAgentsAWS(t *testing.T) {
 	client.SetAdapterMode("rpc")
 	common.InitAddresses("../topologies/aws.json")
+	testAgentsMultipleParallel(t)
+}
+
+func TestAgentsVSOS(t *testing.T) {
+	client.SetAdapterMode("rpc")
+	common.InitAddresses("../topologies/vsos.json")
 	testAgentsMultipleParallel(t)
 }
 
