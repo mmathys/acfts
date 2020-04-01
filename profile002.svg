@@ -311,7 +311,7 @@ function handleMouseUp(evt) {
 <text text-anchor="start" x="24" y="-87.2" font-family="Times,serif" font-size="16.00">Time: Apr 1, 2020 at 7:10pm (CEST)</text>
 <text text-anchor="start" x="24" y="-71.2" font-family="Times,serif" font-size="16.00">Duration: 30.14s, Total samples = 1.30mins (259.21%)</text>
 <text text-anchor="start" x="24" y="-55.2" font-family="Times,serif" font-size="16.00">Active filters:</text>
-<text text-anchor="start" x="24" y="-39.2" font-family="Times,serif" font-size="16.00"> &#160;&#160;focus=vsos</text>
+<text text-anchor="start" x="24" y="-39.2" font-family="Times,serif" font-size="16.00"> &#160;&#160;focus=vsos.svg</text>
 <text text-anchor="start" x="24" y="-23.2" font-family="Times,serif" font-size="16.00">Showing nodes accounting for 0, 0% of 1.30mins total</text>
 </a>
 </g>

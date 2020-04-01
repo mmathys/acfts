@@ -48,7 +48,7 @@ func handleSign(id *common.Identity, debug bool, benchmarkMode bool, TxCounter *
 			for _, input := range tx.Inputs {
 				index := [common.IdentifierLength]byte{}
 				copy(index[:], input.Id[:common.IdentifierLength])
-				_, loaded := SignedUTXO.LoadOrStore(index, input) // single synchronization point
+				loaded := SignedUTXO.Cas(index, true, true) // single synchronization point
 				if loaded {
 					err := errors.New("UTXO already exists: no double spending")
 					fmt.Println(err)

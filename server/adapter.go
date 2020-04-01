@@ -1,9 +1,9 @@
 package server
 
 import (
+	"github.com/cornelk/hashmap"
 	"github.com/mmathys/acfts/common"
 	"log"
-	"sync"
 )
 
 type Adapter interface {
@@ -14,7 +14,7 @@ var restAdapter = &RESTAdapter{}
 var rpcAdapter = &RPCAdapter{}
 var currentAdapter Adapter = restAdapter
 
-var SignedUTXO sync.Map
+var SignedUTXO hashmap.HashMap
 
 func SetAdapterMode(mode string) {
 	if mode == "rest" {

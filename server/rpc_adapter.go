@@ -38,11 +38,8 @@ func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignR
 	tx := req.Transaction
 	if !debug {
 		for _, input := range tx.Inputs {
-			index := [common.IdentifierLength]byte{}
-			copy(index[:], input.Id[:common.IdentifierLength])
-
-			_, loaded := SignedUTXO.LoadOrStore(index, true) // single synchronization point
-			if loaded {
+			found := SignedUTXO.Cas(input.Id, true, true)
+			if found {
 				err := errors.New("UTXO already exists: no double spending")
 				fmt.Println(err)
 				return err
