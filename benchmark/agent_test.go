@@ -39,26 +39,27 @@ func simpleAgent(a common.Agent, wg *sync.WaitGroup) {
 // there are 16 clients
 func testAgentsMultipleParallel(t *testing.T) {
 	clients := common.GetClients()
-	maxClients := len(clients)
+	maxClients := int(1 * float64(len(clients)))
+	maxClients = 1000
 
-	for numClients := 9; numClients <= maxClients; numClients++ {
+	for numClients := maxClients; numClients <= maxClients; numClients++ {
 		testAgents(t, numClients)
 	}
 }
 
 func testAgents(t *testing.T, numClients int) {
 	delay := 500 * time.Millisecond
+	totalTx := 1000000 // 1 million
 	clients := common.GetClients()
 	msg := fmt.Sprintf("numClients: %d", numClients)
 	t.Run(msg, func(t *testing.T) {
-		numTx := 100000
+		numTx := totalTx / numClients
 		var wg sync.WaitGroup
 		topology := clients[:numClients]
 
 		for _, addr := range topology {
-			a := common.Agent{NumTransactions: numTx, StartDelay: delay, Address: addr, Topology: topology}
 			wg.Add(1)
-			go simpleAgent(a, &wg)
+			go simpleAgent(common.Agent{NumTransactions: numTx, StartDelay: delay, Address: addr, Topology: topology}, &wg)
 		}
 
 		wg.Wait()
@@ -73,6 +74,12 @@ func TestAgentsREST(t *testing.T) {
 func TestAgentsRPC(t *testing.T) {
 	client.SetAdapterMode("rpc")
 	common.InitAddresses("../topologies/localSimple.json")
+	testAgentsMultipleParallel(t)
+}
+
+func TestAgentsAWS(t *testing.T) {
+	client.SetAdapterMode("rpc")
+	common.InitAddresses("../topologies/aws.json")
 	testAgentsMultipleParallel(t)
 }
 

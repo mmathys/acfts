@@ -9,6 +9,7 @@ import (
 	"log"
 	_ "net/http/pprof"
 	"os"
+	"runtime"
 )
 
 var TxCounter = new(int32)
@@ -23,6 +24,10 @@ func runServer(address common.Address, benchmark bool, adapter string, topology 
 		log.Printf("initialized server; port = %d; benchmark = %t; adapter=%s\n", port, benchmark, adapter)
 	} else {
 		go util.Ticker(TxCounter)
+	}
+
+	if benchmark {
+		runtime.SetBlockProfileRate(.1)
 	}
 
 	id := util.GetIdentity(address)
