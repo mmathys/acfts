@@ -6,6 +6,7 @@ import (
 	"github.com/mmathys/acfts/common"
 	"github.com/mmathys/acfts/util"
 	"github.com/mmathys/acfts/wallet"
+
 	"os"
 	"strconv"
 	"sync"

@@ -1,11 +1,10 @@
-package client
+package main
 
 import (
-	"encoding/hex"
-	"errors"
 	"fmt"
 	"github.com/c-bata/go-prompt"
 	"github.com/mmathys/acfts/common"
+	"github.com/mmathys/acfts/util"
 	"github.com/mmathys/acfts/wallet"
 	"github.com/olekukonko/tablewriter"
 	"os"
@@ -24,27 +23,13 @@ func help() {
 	fmt.Println("help\t\t\tShow this help section")
 }
 
-func ReadAddress(s string) (common.Address, error) {
-	split := strings.Split(s, "0x")
-	if len(split) != 2 {
-		return common.Address{}, errors.New("hex should look like 0x04\n")
-	}
-
-	addr, err := hex.DecodeString(split[1])
-	if err != nil {
-		return common.Address{}, errors.New("could not decode hex\n")
-	}
-
-	return addr, nil
-}
-
 func send(w *common.Wallet, s []string) {
 	if len(s) != 3 {
 		fmt.Println("invalid format. Sample format: send X 100")
 		return
 	}
 
-	address, err := ReadAddress(s[1])
+	address, err := util.ReadAddress(s[1])
 	if err != nil {
 		fmt.Print("Error: ", err.Error())
 		return
@@ -68,7 +53,7 @@ func send(w *common.Wallet, s []string) {
 func info(w *common.Wallet) {
 	net, _ := common.GetNetworkAddress(w.Address)
 	fmt.Printf("Address (public key):\t0x%x\n", w.Address)
-	fmt.Printf("Private Key:\t\t0x%x\n", common.MarshalKey(w.Key))
+	fmt.Printf("Private Key:\t\t0x%x\n", *common.MarshalKey(w.Key))
 	fmt.Printf("Network:\t\t%s\n", net)
 }
 
@@ -127,7 +112,7 @@ func completer(d prompt.Document) []prompt.Suggest {
 	}
 }
 
-func LaunchClientConsole(w *common.Wallet) {
+func launchClientConsole(w *common.Wallet) {
 	fmt.Println("For help, enter \"help\"")
 	for {
 		t := prompt.Input("> ", completer)

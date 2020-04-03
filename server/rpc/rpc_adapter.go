@@ -1,9 +1,11 @@
-package server
+package rpc
 
 import (
 	"errors"
 	"fmt"
+	"github.com/cornelk/hashmap"
 	"github.com/mmathys/acfts/common"
+	"github.com/mmathys/acfts/server/checks"
 	"github.com/mmathys/acfts/util"
 	"log"
 	"net"
@@ -16,6 +18,7 @@ var id *common.Identity
 var debug bool
 var benchmarkMode bool
 var TxCounter *int32
+var SignedUTXO *hashmap.HashMap
 
 type Server struct {}
 type RPCAdapter struct {}
@@ -28,7 +31,7 @@ func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignR
 	}
 
 	if !debug {
-		err := CheckValidity(&req)
+		err := checks.CheckValidity(&req)
 		if err != nil {
 			fmt.Println(err)
 			return err
@@ -68,11 +71,12 @@ func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignR
 	return nil
 }
 
-func (a *RPCAdapter) Init(port int, _id *common.Identity, _debug bool, _benchmark bool, _TxCounter *int32) {
+func (a *RPCAdapter) Init(port int, _id *common.Identity, _debug bool, _benchmark bool, _TxCounter *int32, _SignedUTXO *hashmap.HashMap) {
 	id = _id
 	debug = _debug
 	benchmarkMode  = _benchmark
 	TxCounter = _TxCounter
+	SignedUTXO = _SignedUTXO
 
 	addr := fmt.Sprintf(":%d", port)
 	server := new(Server)

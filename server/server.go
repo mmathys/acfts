@@ -1,9 +1,7 @@
 package main
 
 import (
-	"github.com/mmathys/acfts/client"
 	"github.com/mmathys/acfts/common"
-	"github.com/mmathys/acfts/server"
 	"github.com/mmathys/acfts/util"
 	"github.com/urfave/cli"
 	"log"
@@ -18,7 +16,7 @@ func runServer(address common.Address, benchmark bool, adapter string, topology 
 	common.InitAddresses(topology)
 
 	port := common.GetPort(address)
-	server.SetAdapterMode(adapter)
+	SetAdapterMode(adapter)
 
 	if !benchmark {
 		log.Printf("initialized server; port = %d; benchmark = %t; adapter=%s\n", port, benchmark, adapter)
@@ -31,7 +29,7 @@ func runServer(address common.Address, benchmark bool, adapter string, topology 
 	}
 
 	id := util.GetIdentity(address)
-	server.Init(port, id, false, benchmark, TxCounter)
+	Init(port, id, false, benchmark, TxCounter)
 
 	return nil
 }
@@ -46,7 +44,7 @@ func main() {
 				adapter = c.String("adapter")
 			}
 
-			addr, err := client.ReadAddress(c.String("address"))
+			addr, err := util.ReadAddress(c.String("address"))
 			if err != nil {
 				log.Fatal(err)
 			}

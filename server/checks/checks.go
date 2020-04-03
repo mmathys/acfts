@@ -1,4 +1,4 @@
-package server
+package checks
 
 import (
 	"github.com/mmathys/acfts/common"
