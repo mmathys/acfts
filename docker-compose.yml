@@ -28,3 +28,5 @@ services:
     environment:
       - TOPOLOGY=aws
       - TEST
+    ports:
+      - "6666:6666"
