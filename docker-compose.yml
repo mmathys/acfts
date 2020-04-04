@@ -21,7 +21,7 @@ services:
       - TOPOLOGY=aws
 
   single_thread:
-    build: ./benchmark/sign_test
+    build: ./benchmark/sign
     depends_on:
       - base
     environment:
