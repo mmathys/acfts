@@ -6,13 +6,54 @@ import (
 	"github.com/mmathys/acfts/server/rpc"
 	"github.com/mmathys/acfts/util"
 	"github.com/mmathys/acfts/wallet"
+	"log"
+	"net/http"
+	_ "net/http/pprof"
 	"os"
+	"runtime"
+	"strconv"
+	"sync"
 	"testing"
 )
 
-func run(N int, b *testing.B) error {
+func TestMain(m *testing.M) {
+	go func() {
+		runtime.SetBlockProfileRate(1)
+		log.Println(http.ListenAndServe("localhost:6666", nil))
+	}()
+	os.Exit(m.Run())
+}
+
+func BenchmarkSignNoNetwork(b *testing.B) {
+	numWorkers, err := strconv.Atoi(os.Args[len(os.Args)-1])
+	if err != nil {
+		panic(err)
+	}
+
+	err = worker(b.N, numWorkers, nil)
+	if err != nil {
+		b.Error(err)
+		b.Fail()
+	}
+}
+/*
+func TestSignNoNetwork(t *testing.T) {
+	numWorkers, err := strconv.Atoi(os.Args[len(os.Args)-1])
+	if err != nil {
+		panic(err)
+	}
+
+	err = worker(1000000, numWorkers, nil)
+	if err != nil {
+		t.Error(err)
+		t.Fail()
+	}
+}
+ */
+
+func worker(N int, numWorkers int, b *testing.B) error {
 	args := os.Args
-	topo := args[len(args)-1]
+	topo := args[len(args)-2]
 	common.InitAddresses(topo)
 	rpc.TxCounter = new(int32)
 	rpc.SignedUTXO = new(hashmap.HashMap)
@@ -25,7 +66,7 @@ func run(N int, b *testing.B) error {
 	clientId := util.GetIdentity(client)
 	target := common.GetClients()[1]
 	w := util.NewWalletWithAmount(client, 1)
-	tx := common.Transaction{Inputs:nil, Outputs:nil}
+	tx := common.Transaction{Inputs: nil, Outputs: nil}
 
 	tx, err := wallet.PrepareTransaction(w, target, 1)
 
@@ -45,27 +86,20 @@ func run(N int, b *testing.B) error {
 	if b != nil {
 		b.ResetTimer()
 	}
-	for i := 0; i < N; i++ {
-		err := server.Sign(req, &res)
-		if err != nil {
-			return err
-		}
+	var wg sync.WaitGroup
+	for i := 0; i < numWorkers; i++ {
+		wg.Add(1)
+		go func() {
+			for j := 0; j < N/numWorkers; j++ {
+				err := server.Sign(req, &res)
+				if err != nil {
+					panic(err)
+				}
+			}
+			wg.Done()
+		}()
 	}
+
+	wg.Wait()
 	return nil
-}
-
-func BenchmarkSignNoNetwork(b *testing.B) {
-	err := run(b.N, b)
-	if err != nil {
-		b.Error(err)
-		b.Fail()
-	}
-}
-
-func TestSignNoNetwork(t *testing.T) {
-	err := run(1000000, nil)
-	if err != nil {
-		t.Error(err)
-		t.Fail()
-	}
 }

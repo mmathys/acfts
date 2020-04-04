@@ -74,7 +74,7 @@ func TestAgentsREST(t *testing.T) {
 func TestAgentsRPC(t *testing.T) {
 	core.SetAdapterMode("rpc")
 	common.InitAddresses("../../topologies/localSimple.json")
-	testAgents(t, 2)
+	testAgents(t, 15)
 }
 
 func TestAgentsAWS(t *testing.T) {

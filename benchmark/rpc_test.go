@@ -76,7 +76,7 @@ func TestMain(m *testing.M) {
 
 func TestRPC(t *testing.T) {
 	numClients := 100
-	numReq := 1000 * 1000 * 1000
+	numReq := 1000 * 1000
 	var wg sync.WaitGroup
 	for i := 0; i < numClients; i++ {
 		wg.Add(1)
