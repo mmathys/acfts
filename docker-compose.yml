@@ -1,8 +1,22 @@
-version: '3'
+version: "3.7"
 services:
   base:
     build: .
+    image: base
+
   server:
     build: ./server
     depends_on:
       - base
+    ports:
+      - "6666:6666"
+    environment:
+      - TOPOLOGY=dockerSimple
+
+  benchmark:
+    build: ./benchmark
+    depends_on:
+      - server
+    environment:
+      - TOPOLOGY=aws
+      - NUM_WORKERS=1

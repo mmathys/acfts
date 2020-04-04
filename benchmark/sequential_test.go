@@ -2,7 +2,7 @@ package benchmark
 
 import (
 	"fmt"
-	"github.com/mmathys/acfts/client"
+	"github.com/mmathys/acfts/client/core"
 	"github.com/mmathys/acfts/common"
 	"github.com/mmathys/acfts/util"
 	"github.com/mmathys/acfts/wallet"
@@ -28,7 +28,7 @@ func BenchmarkSequentialNewWallet(b *testing.B) {
 			b.Error("failed to prepare transaction")
 		}
 
-		_, err = client.SignTransaction(A, tx)
+		_, err = core.SignTransaction(A, tx)
 		if err != nil {
 			fmt.Println("failed to sign transaction")
 			return
@@ -50,7 +50,7 @@ func BenchmarkSequentialSpendSingle(b *testing.B) {
 			b.Error("failed to prepare transaction")
 		}
 
-		_, err = client.SignTransaction(A, tx)
+		_, err = core.SignTransaction(A, tx)
 		if err != nil {
 			fmt.Println("failed to sign transaction")
 			return
@@ -70,7 +70,7 @@ func TestSequentialSpendSingle(t *testing.T) {
 			panic("failed to prepare transaction")
 		}
 
-		_, err = client.SignTransaction(A, tx)
+		_, err = core.SignTransaction(A, tx)
 		if err != nil {
 			fmt.Println("failed to sign transaction")
 			return

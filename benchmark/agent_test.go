@@ -2,11 +2,10 @@ package benchmark
 
 import (
 	"fmt"
-	"github.com/mmathys/acfts/client"
+	"github.com/mmathys/acfts/client/core"
 	"github.com/mmathys/acfts/common"
 	"github.com/mmathys/acfts/util"
 	"github.com/mmathys/acfts/wallet"
-
 	"os"
 	"strconv"
 	"sync"
@@ -33,7 +32,7 @@ func simpleAgent(a common.Agent, wg *sync.WaitGroup) {
 			panic("failed to prepare transaction")
 		}
 
-		client.DoTransaction(w, t, false)
+		core.DoTransaction(w, t, false)
 	}
 }
 
@@ -73,19 +72,19 @@ func TestAgentsREST(t *testing.T) {
 }
 
 func TestAgentsRPC(t *testing.T) {
-	client.SetAdapterMode("rpc")
+	core.SetAdapterMode("rpc")
 	common.InitAddresses("../topologies/localSimple.json")
 	testAgentsMultipleParallel(t)
 }
 
 func TestAgentsAWS(t *testing.T) {
-	client.SetAdapterMode("rpc")
+	core.SetAdapterMode("rpc")
 	common.InitAddresses("../topologies/aws.json")
 	testAgentsMultipleParallel(t)
 }
 
 func TestAgentsVSOS(t *testing.T) {
-	client.SetAdapterMode("rpc")
+	core.SetAdapterMode("rpc")
 	common.InitAddresses("../topologies/vsos.json")
 	testAgentsMultipleParallel(t)
 }
@@ -98,7 +97,7 @@ func TestAgentsRPCFixed(t *testing.T) {
 		panic(err)
 	}
 
-	client.SetAdapterMode("rpc")
+	core.SetAdapterMode("rpc")
 
 	topo := args[len(args)-2]
 	common.InitAddresses(topo)

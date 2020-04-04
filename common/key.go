@@ -17,6 +17,7 @@ func GenerateKey() *ecdsa.PrivateKey {
 
 func MarshalPubkey(pub *ecdsa.PublicKey) Address {
 	encoded := crypto2.FromECDSAPub(pub)
+
 	if len(encoded) != AddressLength {
 		log.Fatalln("key length does not match when marshalling")
 	}

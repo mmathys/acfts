@@ -39,3 +39,4 @@ func BenchmarkVerify(b *testing.B) {
 		ecdsa.Verify(&key.PublicKey, hash, r, s)
 	}
 }
+

@@ -2,7 +2,7 @@ package benchmark
 
 import (
 	"fmt"
-	"github.com/mmathys/acfts/client"
+	"github.com/mmathys/acfts/client/core"
 	"github.com/mmathys/acfts/common"
 	"github.com/mmathys/acfts/util"
 	"github.com/mmathys/acfts/wallet"
@@ -46,7 +46,7 @@ func worker(w *common.Wallet, t *testing.T, jobs <-chan bool, done chan<- bool) 
 			t.Error("failed to prepare transaction")
 		}
 
-		_, err = client.SignTransaction(w, tx)
+		_, err = core.SignTransaction(w, tx)
 		if err != nil {
 			fmt.Println("failed to sign transaction")
 			return

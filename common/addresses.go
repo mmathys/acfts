@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	crypto2 "github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/crypto"
 	"log"
 	"os"
 )
@@ -22,7 +22,7 @@ type Topology struct {
 }
 
 func readKey(keypair []string) *ecdsa.PrivateKey {
-	res, err := crypto2.HexToECDSA(keypair[0])
+	res, err := crypto.HexToECDSA(keypair[0])
 	if err != nil {
 		log.Fatal(err)
 	}
