@@ -27,3 +27,4 @@ services:
       - base
     environment:
       - TOPOLOGY=aws
+      - TEST

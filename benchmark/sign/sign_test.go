@@ -10,7 +10,7 @@ import (
 	"testing"
 )
 
-func BenchmarkSignNoNetwork(t *testing.B) {
+func run(N int, b *testing.B) error {
 	args := os.Args
 	topo := args[len(args)-1]
 	common.InitAddresses(topo)
@@ -30,23 +30,42 @@ func BenchmarkSignNoNetwork(t *testing.B) {
 	tx, err := wallet.PrepareTransaction(w, target, 1)
 
 	if err != nil {
-		t.Error(err)
+		return err
 	}
 
 	req := common.TransactionSigReq{Transaction: tx}
 	err = common.SignTransactionSigRequest(clientId.Key, &req)
 	if err != nil {
-		t.Error(err)
+		return err
 	}
 
 	server := new(rpc.Server)
 
 	res := common.TransactionSignRes{}
-	t.ResetTimer()
-	for i := 0; i < t.N; i++ {
+	if b != nil {
+		b.ResetTimer()
+	}
+	for i := 0; i < N; i++ {
 		err := server.Sign(req, &res)
 		if err != nil {
-			t.Error(err)
+			return err
 		}
+	}
+	return nil
+}
+
+func BenchmarkSignNoNetwork(b *testing.B) {
+	err := run(b.N, b)
+	if err != nil {
+		b.Error(err)
+		b.Fail()
+	}
+}
+
+func TestSignNoNetwork(t *testing.T) {
+	err := run(1000000, nil)
+	if err != nil {
+		t.Error(err)
+		t.Fail()
 	}
 }
