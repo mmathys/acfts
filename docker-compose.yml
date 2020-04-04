@@ -16,7 +16,7 @@ services:
   agents:
     build: ./benchmark/agents
     depends_on:
-      - base
+      - server
     environment:
       - TOPOLOGY=aws
 
@@ -25,4 +25,4 @@ services:
     depends_on:
       - base
     environment:
-      - TOPOLOGY=localSimple
+      - TOPOLOGY=aws

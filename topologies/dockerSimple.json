@@ -11,7 +11,7 @@
   ],
   "Clients": [
     {
-      "Net": "client",
+      "Net": "agents",
       "Port": 5555,
       "Key": [
         "439ffd45a52551b1a5470b618a18b58e70c6f1201422760c02ffab17a1dc73e1",
@@ -19,7 +19,7 @@
       ]
     },
     {
-      "Net": "client",
+      "Net": "agents",
       "Port": 5556,
       "Key": [
         "0401df1f7bdbff562bc87f21c4fcbe9bf09b2ffe8c2e4609b32f9b11bc79b9a0",
@@ -27,7 +27,7 @@
       ]
     },
     {
-      "Net": "client",
+      "Net": "agents",
       "Port": 5557,
       "Key": [
         "7675b8ef1a5ba5cfc037b0d778fc74374aef4b48e8f33d03b0c0236780941988",
@@ -35,7 +35,7 @@
       ]
     },
     {
-      "Net": "client",
+      "Net": "agents",
       "Port": 5558,
       "Key": [
         "6a26d73ecbd72ca5d4c97f3860656ac0bbe73b025f713e13e023bf9311e69c21",
@@ -43,7 +43,7 @@
       ]
     },
     {
-      "Net": "client",
+      "Net": "agents",
       "Port": 5559,
       "Key": [
         "4fecbb37a9fee1857d72e46e9330f0fb012b0c2eab1c89cc7a2d5044b064570b",
@@ -51,7 +51,7 @@
       ]
     },
     {
-      "Net": "client",
+      "Net": "agents",
       "Port": 5560,
       "Key": [
         "b8f360aeb3136db2f27ab44592f05b4cbc50ac8dd8f5f046dee4e64056ece91f",
@@ -59,7 +59,7 @@
       ]
     },
     {
-      "Net": "client",
+      "Net": "agents",
       "Port": 5561,
       "Key": [
         "76c41be05a08e389cb64d1e8cf9423964628e26aa8821703c7d55240b1cf435d",
@@ -67,7 +67,7 @@
       ]
     },
     {
-      "Net": "client",
+      "Net": "agents",
       "Port": 5562,
       "Key": [
         "b799f2efc21900d0985f98112905f98804b99eedaf25716562618e8aec07aea7",
@@ -75,7 +75,7 @@
       ]
     },
     {
-      "Net": "client",
+      "Net": "agents",
       "Port": 5563,
       "Key": [
         "a45ab9fc855b3354f0069083192c907763648c18f0abc699f40a1bb256b4709b",
@@ -83,7 +83,7 @@
       ]
     },
     {
-      "Net": "client",
+      "Net": "agents",
       "Port": 5564,
       "Key": [
         "4c24865b51e00655e6cc383d7e22e8d00d47728a1e5d5f71dca6b9a300c7ea2f",
@@ -91,7 +91,7 @@
       ]
     },
     {
-      "Net": "client",
+      "Net": "agents",
       "Port": 5565,
       "Key": [
         "55f5776bcda3a3e1d8f2810a11e3c3c4ab7ef30bfd3c834625dc7dd9d59f6cd1",
@@ -99,7 +99,7 @@
       ]
     },
     {
-      "Net": "client",
+      "Net": "agents",
       "Port": 5566,
       "Key": [
         "9234da203c4108c9484ee8db64fdc4c0bd59bf3686495768d2d88ed2878c72d2",
@@ -107,7 +107,7 @@
       ]
     },
     {
-      "Net": "client",
+      "Net": "agents",
       "Port": 5567,
       "Key": [
         "e67785183231a26a17b729e6683506aeccf5497c7d6735a729955539b49f0e57",
@@ -115,7 +115,7 @@
       ]
     },
     {
-      "Net": "client",
+      "Net": "agents",
       "Port": 5568,
       "Key": [
         "45734a533232304fce8f98e76aac7f3db9ea1bbaa5f28391416f0537a80ee2e4",
@@ -123,7 +123,7 @@
       ]
     },
     {
-      "Net": "client",
+      "Net": "agents",
       "Port": 5569,
       "Key": [
         "d14cf893a767cf9354ee594afa2eee111391c78f88a34d2074a1ffad2cc01f35",
@@ -131,7 +131,7 @@
       ]
     },
     {
-      "Net": "client",
+      "Net": "agents",
       "Port": 5570,
       "Key": [
         "cab38d74a8311482489c99209604dbba09296be182df069cdebc37f8800962a5",

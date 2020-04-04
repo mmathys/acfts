@@ -72,12 +72,12 @@ func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignR
 	return nil
 }
 
-func (a *RPCAdapter) Init(port int, _id *common.Identity, _debug bool, _benchmark bool, _TxCounter *int32, _SignedUTXO *hashmap.HashMap) {
+func (a *RPCAdapter) Init(port int, _id *common.Identity, debug bool, benchmark bool, txCounter *int32, signedUTXO *hashmap.HashMap) {
 	Id = _id
-	Debug = _debug
-	BenchmarkMode = _benchmark
-	TxCounter = _TxCounter
-	SignedUTXO = _SignedUTXO
+	Debug = debug
+	BenchmarkMode = benchmark
+	TxCounter = txCounter
+	SignedUTXO = signedUTXO
 
 	addr := fmt.Sprintf(":%d", port)
 	server := new(Server)

@@ -49,7 +49,7 @@ func testAgentsMultipleParallel(t *testing.T) {
 
 func testAgents(t *testing.T, numClients int) {
 	delay := 500 * time.Millisecond
-	totalTx := 1000000 // 1 million
+	totalTx := 1000000
 	clients := common.GetClients()
 	msg := fmt.Sprintf("numClients: %d", numClients)
 	t.Run(msg, func(t *testing.T) {
@@ -73,8 +73,8 @@ func TestAgentsREST(t *testing.T) {
 
 func TestAgentsRPC(t *testing.T) {
 	core.SetAdapterMode("rpc")
-	common.InitAddresses("../topologies/localSimple.json")
-	testAgentsMultipleParallel(t)
+	common.InitAddresses("../../topologies/localSimple.json")
+	testAgents(t, 2)
 }
 
 func TestAgentsAWS(t *testing.T) {
