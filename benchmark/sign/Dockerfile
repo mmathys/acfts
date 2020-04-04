@@ -4,4 +4,4 @@ WORKDIR ./benchmark/sign
 
 ENV TOPOLOGY localSimple
 
-CMD ["sh", "-c", "go test ./sign_test.go -bench -run BenchmarkSignNoNetwork -args /go/src/github.com/mmathys/acfts/topologies/${TOPOLOGY}.json"]
+CMD ["sh", "-c", "go test -bench BenchmarkSignNoNetwork ./sign_test.go -args /go/src/github.com/mmathys/acfts/topologies/${TOPOLOGY}.json"]
