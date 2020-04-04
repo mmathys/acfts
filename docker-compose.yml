@@ -11,12 +11,18 @@ services:
     ports:
       - "6666:6666"
     environment:
-      - TOPOLOGY=dockerSimple
+      - TOPOLOGY=aws
 
-  benchmark:
-    build: ./benchmark
+  agents:
+    build: ./benchmark/agents
     depends_on:
       - server
     environment:
       - TOPOLOGY=aws
-      - NUM_WORKERS=1
+
+  single_thread:
+    build: ./benchmark/sign_test
+    depends_on:
+      - base
+    environment:
+      - TOPOLOGY=localSimple

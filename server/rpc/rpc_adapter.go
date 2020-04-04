@@ -14,11 +14,12 @@ import (
 )
 
 
-var id *common.Identity
-var debug bool
-var benchmarkMode bool
+var Id *common.Identity
+var Debug bool
+var BenchmarkMode bool
 var TxCounter *int32
 var SignedUTXO *hashmap.HashMap
+var AllowDoublespend = false
 
 type Server struct {}
 type RPCAdapter struct {}
@@ -26,11 +27,11 @@ type RPCAdapter struct {}
 func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignRes) error {
 	//log.Printf("got sign request: %v", req)
 
-	if benchmarkMode {
+	if BenchmarkMode {
 		defer util.CountTx(TxCounter)
 	}
 
-	if !debug {
+	if !Debug {
 		err := checks.CheckValidity(&req)
 		if err != nil {
 			fmt.Println(err)
@@ -39,10 +40,10 @@ func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignR
 	}
 
 	tx := req.Transaction
-	if !debug {
+	if !Debug {
 		for _, input := range tx.Inputs {
 			found := SignedUTXO.Cas(input.Id, true, true)
-			if found {
+			if found && !AllowDoublespend {
 				err := errors.New("UTXO already exists: no double spending")
 				fmt.Println(err)
 				return err
@@ -52,14 +53,14 @@ func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignR
 
 	// Sign the request
 	var outputs []common.Value
-	if debug {
+	if Debug {
 		outputs = tx.Outputs
 		for i, _ := range outputs {
 			outputs[i].Signatures = []common.ECDSASig{}
 		}
 	} else {
 		var err error = nil
-		outputs, err = common.SignValues(id.Key, tx.Outputs)
+		outputs, err = common.SignValues(Id.Key, tx.Outputs)
 		if err != nil {
 			fmt.Println(err)
 			return err
@@ -72,9 +73,9 @@ func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignR
 }
 
 func (a *RPCAdapter) Init(port int, _id *common.Identity, _debug bool, _benchmark bool, _TxCounter *int32, _SignedUTXO *hashmap.HashMap) {
-	id = _id
-	debug = _debug
-	benchmarkMode  = _benchmark
+	Id = _id
+	Debug = _debug
+	BenchmarkMode = _benchmark
 	TxCounter = _TxCounter
 	SignedUTXO = _SignedUTXO
 

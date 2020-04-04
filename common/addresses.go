@@ -29,9 +29,9 @@ func readKey(keypair []string) *ecdsa.PrivateKey {
 	return res
 }
 
-var clients = map[[AddressLength]byte]Node{}
+var clients map[[AddressLength]byte]Node
 var clientKeys []Address
-var servers = map[[AddressLength]byte]Node{}
+var servers map[[AddressLength]byte]Node
 var serverKeys []Address
 
 func getIndex(addr Address) [AddressLength]byte {
@@ -52,6 +52,10 @@ func InitAddresses(path string) {
 
 	defer file.Close()
 
+	clients = map[[AddressLength]byte]Node{}
+	clientKeys = []Address{}
+	servers = map[[AddressLength]byte]Node{}
+	serverKeys = []Address{}
 
 	var topo Topology
 	dec := json.NewDecoder(file)

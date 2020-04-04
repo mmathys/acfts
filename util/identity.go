@@ -5,6 +5,8 @@ import (
 	"sync"
 )
 
+var utxo sync.Map
+
 func GetIdentity(address common.Address) *common.Identity {
 	key := common.GetKey(address)
 	id := common.Identity{Key: key, Address: address}
@@ -14,8 +16,6 @@ func GetIdentity(address common.Address) *common.Identity {
 func NewWalletWithAmount(address common.Address, value int) *common.Wallet {
 	utxoId := common.RandomIdentifier()
 	id := GetIdentity(address)
-
-	var utxo sync.Map
 
 	addr := common.MarshalPubkey(&id.Key.PublicKey)
 	v := common.Value{Address: addr, Amount: value, Id: utxoId}
@@ -32,6 +32,7 @@ func NewWalletWithAmount(address common.Address, value int) *common.Wallet {
 	index := [common.IdentifierLength]byte{}
 	copy(index[:], utxoId[:common.IdentifierLength])
 
+	utxo.Delete(index)
 	utxo.Store(index, v)
 
 	return &common.Wallet{Identity: id, UTXO: &utxo}

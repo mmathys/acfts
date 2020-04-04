@@ -1,0 +1,8 @@
+FROM base
+
+WORKDIR ./benchmark/agents
+
+ENV TOPOLOGY localSimple
+ENV NUM_WORKERS 11
+
+CMD ["sh", "-c", "go test ./agent_test.go -run TestAgentsRPCFixed -args /go/src/github.com/mmathys/acfts/topologies/topologies/${TOPOLOGY}.json ${NUM_WORKERS}"]
