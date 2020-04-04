@@ -30,12 +30,13 @@ func BenchmarkSignNoNetwork(b *testing.B) {
 		panic(err)
 	}
 
-	err = worker(b.N, numWorkers, nil)
+	err = worker(b.N, numWorkers, b)
 	if err != nil {
 		b.Error(err)
 		b.Fail()
 	}
 }
+
 /*
 func TestSignNoNetwork(t *testing.T) {
 	numWorkers, err := strconv.Atoi(os.Args[len(os.Args)-1])
