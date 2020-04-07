@@ -4,12 +4,13 @@ import (
 	"crypto/ecdsa"
 	"crypto/rand"
 	"github.com/mmathys/acfts/common"
+	"sync"
 	"testing"
 )
 
 /**
 Benchmark for crypto ops
- */
+*/
 
 func BenchmarkSign(b *testing.B) {
 	key := common.GenerateKey()
@@ -17,10 +18,23 @@ func BenchmarkSign(b *testing.B) {
 	hash := make([]byte, 32) // random hash
 	rand.Read(hash)
 
+	numWorkers := 8
+
 	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		ecdsa.Sign(rand.Reader, key, hash)
+
+	var wg sync.WaitGroup
+
+	for i := 0; i < numWorkers; i++ {
+		wg.Add(1)
+		go func() {
+			for j := 0; j < b.N/numWorkers; j++ {
+				ecdsa.Sign(rand.Reader, key, hash)
+			}
+			wg.Done()
+		}()
 	}
+
+	wg.Wait()
 }
 
 func BenchmarkHashValue(b *testing.B) {
@@ -39,4 +53,3 @@ func BenchmarkVerify(b *testing.B) {
 		ecdsa.Verify(&key.PublicKey, hash, r, s)
 	}
 }
-

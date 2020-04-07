@@ -6,21 +6,20 @@ import (
 	"github.com/mmathys/acfts/server/rpc"
 	"github.com/mmathys/acfts/util"
 	"github.com/mmathys/acfts/wallet"
-	"log"
-	"net/http"
 	_ "net/http/pprof"
 	"os"
-	"runtime"
 	"strconv"
 	"sync"
 	"testing"
 )
 
 func TestMain(m *testing.M) {
+	/*
 	go func() {
 		runtime.SetBlockProfileRate(1)
 		log.Println(http.ListenAndServe("localhost:6666", nil))
 	}()
+	 */
 	os.Exit(m.Run())
 }
 
