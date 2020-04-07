@@ -5,7 +5,7 @@ import (
 	"github.com/mmathys/acfts/util"
 	"github.com/urfave/cli"
 	"log"
-
+	_ "net/http/pprof"
 	"os"
 	"runtime"
 )
