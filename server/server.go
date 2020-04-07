@@ -5,26 +5,26 @@ import (
 	"github.com/mmathys/acfts/util"
 	"github.com/urfave/cli"
 	"log"
-	_ "net/http/pprof"
+
 	"os"
 	"runtime"
 )
 
 var TxCounter = new(int32)
 
-func runServer(address common.Address, benchmark bool, adapter string, topology string) error {
+func runServer(address common.Address, benchmark bool, adapter string, topology string, pprof bool) error {
 	common.InitAddresses(topology)
 
 	port := common.GetPort(address)
 	SetAdapterMode(adapter)
 
-	if !benchmark {
-		log.Printf("initialized server; port = %d; benchmark = %t; adapter=%s\n", port, benchmark, adapter)
-	} else {
+	log.Printf("initialized server; port = %d; benchmark = %t; adapter=%s; pprof=%t;\n", port, benchmark, adapter, pprof)
+
+	if benchmark {
 		go util.Ticker(TxCounter)
 	}
 
-	if benchmark {
+	if pprof {
 		runtime.SetBlockProfileRate(1)
 	}
 
@@ -54,8 +54,9 @@ func main() {
 			}
 
 			benchmark := c.Bool("benchmark")
+			pprof := c.Bool("pprof")
 
-			runServer(addr, benchmark, adapter, c.String("topology"))
+			runServer(addr, benchmark, adapter, c.String("topology"), pprof)
 			return nil
 		},
 		Flags: []cli.Flag{
@@ -80,6 +81,11 @@ func main() {
 				Name:     "benchmark",
 				Aliases:  []string{"b"},
 				Usage:    "Enables benchmark mode. If set, then outputs number of tx/s to stdout, separated by a newline.",
+				Required: false,
+			},
+			&cli.BoolFlag{
+				Name:     "pprof",
+				Usage:    "Enables pprof on default http server",
 				Required: false,
 			},
 		},
