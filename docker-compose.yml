@@ -11,14 +11,14 @@ services:
     ports:
       - "6666:6666"
     environment:
-      - TOPOLOGY=aws
+      - TOPOLOGY
 
   agents:
     build: ./benchmark/agents
     depends_on:
       - base
     environment:
-      - TOPOLOGY=aws
+      - TOPOLOGY
       - NUM_WORKERS
 
   single_thread:
@@ -27,7 +27,7 @@ services:
       - base
     environment:
       - TOPOLOGY=aws
-      - TEST
+      - TEST=BenchmarkSignNoNetwork
       - NUM_WORKERS
     ports:
       - "6666:6666"
