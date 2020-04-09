@@ -1,6 +1,7 @@
 package sign
 
 import (
+	"fmt"
 	"github.com/cornelk/hashmap"
 	"github.com/mmathys/acfts/common"
 	"github.com/mmathys/acfts/server/rpc"
@@ -8,7 +9,6 @@ import (
 	"github.com/mmathys/acfts/wallet"
 	_ "net/http/pprof"
 	"os"
-	"strconv"
 	"sync"
 	"testing"
 )
@@ -24,16 +24,18 @@ func TestMain(m *testing.M) {
 }
 
 func BenchmarkSignNoNetwork(b *testing.B) {
-	numWorkers, err := strconv.Atoi(os.Args[len(os.Args)-1])
-	if err != nil {
-		panic(err)
+	for numWorkers := 0; numWorkers < 100; numWorkers++ {
+		name := fmt.Sprintf("num workers = %d", numWorkers)
+		b.Run(name, func(b *testing.B) {
+			err := worker(b.N, numWorkers, b)
+			if err != nil {
+				b.Error(err)
+				b.Fail()
+			}
+		})
 	}
 
-	err = worker(b.N, numWorkers, b)
-	if err != nil {
-		b.Error(err)
-		b.Fail()
-	}
+
 }
 
 /*
@@ -53,7 +55,7 @@ func TestSignNoNetwork(t *testing.T) {
 
 func worker(N int, numWorkers int, b *testing.B) error {
 	args := os.Args
-	topo := args[len(args)-2]
+	topo := args[len(args)-1]
 	common.InitAddresses(topo)
 	rpc.TxCounter = new(int32)
 	rpc.SignedUTXO = new(hashmap.HashMap)
