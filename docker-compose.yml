@@ -34,4 +34,4 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '64'
+          cpus: '16'
