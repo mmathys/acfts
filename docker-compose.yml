@@ -28,6 +28,11 @@ services:
     environment:
       - TOPOLOGY=aws
       - TEST=BenchmarkSignNoNetwork
-      - GOMAXPROCS
     ports:
       - "6666:6666"
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+        reservations:
+          cpus: '1'
