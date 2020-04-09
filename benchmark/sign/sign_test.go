@@ -24,7 +24,7 @@ func TestMain(m *testing.M) {
 }
 
 func BenchmarkSignNoNetwork(b *testing.B) {
-	for numWorkers := 0; numWorkers < 100; numWorkers++ {
+	for numWorkers := 1; numWorkers < 100; numWorkers++ {
 		name := fmt.Sprintf("num workers = %d", numWorkers)
 		b.Run(name, func(b *testing.B) {
 			err := worker(b.N, numWorkers, b)

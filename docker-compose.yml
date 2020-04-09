@@ -28,5 +28,6 @@ services:
     environment:
       - TOPOLOGY=aws
       - TEST=BenchmarkSignNoNetwork
+      - GOMAXPROCS
     ports:
       - "6666:6666"
