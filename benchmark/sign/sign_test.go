@@ -27,8 +27,8 @@ func TestMain(m *testing.M) {
 }
 
 func BenchmarkSignNoNetwork(b *testing.B) {
-	fmt.Println("Benchmarking server routine...")
 	numWorkers, err := strconv.Atoi(os.Args[len(os.Args)-1])
+	fmt.Printf("[numWorkers=%d]Benchmarking server routine...\n", numWorkers)
 	if err != nil {
 		panic(err)
 	}
