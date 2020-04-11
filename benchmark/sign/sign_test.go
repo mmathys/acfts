@@ -1,29 +1,33 @@
 package sign
 
 import (
+	"fmt"
 	"github.com/cornelk/hashmap"
 	"github.com/mmathys/acfts/common"
 	"github.com/mmathys/acfts/server/rpc"
 	"github.com/mmathys/acfts/util"
 	"github.com/mmathys/acfts/wallet"
+	"log"
+	"net/http"
 	_ "net/http/pprof"
 	"os"
+	"runtime"
 	"strconv"
 	"sync"
 	"testing"
 )
 
 func TestMain(m *testing.M) {
-	/*
 	go func() {
 		runtime.SetBlockProfileRate(1)
-		log.Println(http.ListenAndServe("localhost:6666", nil))
+		log.Println(http.ListenAndServe(":6666", nil))
 	}()
-	 */
+
 	os.Exit(m.Run())
 }
 
 func BenchmarkSignNoNetwork(b *testing.B) {
+	fmt.Println("Benchmarking server routine...")
 	numWorkers, err := strconv.Atoi(os.Args[len(os.Args)-1])
 	if err != nil {
 		panic(err)
@@ -36,8 +40,9 @@ func BenchmarkSignNoNetwork(b *testing.B) {
 	}
 }
 
-/*
+
 func TestSignNoNetwork(t *testing.T) {
+	fmt.Println("Server routine for 1 million tx, no benchmark...")
 	numWorkers, err := strconv.Atoi(os.Args[len(os.Args)-1])
 	if err != nil {
 		panic(err)
@@ -49,7 +54,7 @@ func TestSignNoNetwork(t *testing.T) {
 		t.Fail()
 	}
 }
- */
+
 
 func worker(N int, numWorkers int, b *testing.B) error {
 	args := os.Args

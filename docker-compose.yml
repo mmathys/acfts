@@ -21,14 +21,28 @@ services:
       - TOPOLOGY
       - NUM_WORKERS
 
-  single_thread:
+  sign_benchmark:
     build: ./benchmark/sign
     depends_on:
       - base
     environment:
       - TOPOLOGY=aws
-      - TEST=BenchmarkSignNoNetwork
-      - NUM_WORKERS
+      - BENCH=BenchmarkSignNoNetwork
+      - NUM_WORKERS=1
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+
+  # runs for 1 million tx and does not output a benchmark, but exposes pprog
+  sign_test:
+    build: ./benchmark/sign
+    depends_on:
+      - base
+    environment:
+      - TOPOLOGY=aws
+      - TEST=TestSignNoNetwork
+      - NUM_WORKERS=1
     ports:
       - "6666:6666"
     deploy:
