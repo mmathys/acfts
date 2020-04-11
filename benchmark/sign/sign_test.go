@@ -11,7 +11,6 @@ import (
 	"net/http"
 	_ "net/http/pprof"
 	"os"
-	"runtime"
 	"strconv"
 	"sync"
 	"testing"
@@ -25,7 +24,7 @@ func TestMain(m *testing.M) {
 	fmt.Printf("numWorkers = %d\n", numWorkers)
 
 	go func() {
-		runtime.SetBlockProfileRate(1)
+		//runtime.SetBlockProfileRate(1)
 		log.Println(http.ListenAndServe(":6666", nil))
 	}()
 
