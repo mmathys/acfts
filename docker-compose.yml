@@ -114,32 +114,32 @@ services:
 
 
   # runs for 1 million tx and does not output a benchmark, but exposes pprog
-  sign_test_64:
-    build: ./benchmark/sign
-    depends_on:
-      - base
-    environment:
-      - TOPOLOGY=aws
-      - TEST=TestSignNoNetwork
-      - NUM_WORKERS=64
-    ports:
-      - "6666:6666"
-    deploy:
-      resources:
-        limits:
-          cpus: '64'
+sign_test_64:
+  build: ./benchmark/sign
+  depends_on:
+    - base
+  environment:
+    - TOPOLOGY=aws
+    - TEST=TestSignNoNetwork
+    - NUM_WORKERS=64
+  ports:
+    - "6666:6666"
+  deploy:
+    resources:
+      limits:
+        cpus: '64'
 
 sign_test_1:
-    build: ./benchmark/sign
-    depends_on:
-      - base
-    environment:
-      - TOPOLOGY=aws
-      - TEST=TestSignNoNetwork
-      - NUM_WORKERS=1
-    ports:
-      - "6666:6666"
-    deploy:
-      resources:
-        limits:
-          cpus: '1'
+  build: ./benchmark/sign
+  depends_on:
+    - base
+  environment:
+    - TOPOLOGY=aws
+    - TEST=TestSignNoNetwork
+    - NUM_WORKERS=1
+  ports:
+    - "6666:6666"
+  deploy:
+    resources:
+      limits:
+        cpus: '1'
