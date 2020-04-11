@@ -99,7 +99,7 @@ func worker(N int, numWorkers int, b *testing.B) error {
 		b.ResetTimer()
 	}
 
-	startDelay := time.Millisecond / time.Duration(numWorkers)  // distribute start over 1ms
+	startDelay := 10 * time.Millisecond / time.Duration(numWorkers)  // distribute start over 1ms
 	var wg sync.WaitGroup
 	for i := 0; i < numWorkers; i++ {
 		wg.Add(1)
