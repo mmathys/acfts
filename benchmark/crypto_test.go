@@ -37,10 +37,6 @@ func BenchmarkSign(b *testing.B) {
 	wg.Wait()
 }
 
-func BenchmarkHashValue(b *testing.B) {
-	//TODO
-}
-
 func BenchmarkVerify(b *testing.B) {
 	key := common.GenerateKey()
 
