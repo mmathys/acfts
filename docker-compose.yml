@@ -129,6 +129,21 @@ services:
         limits:
           cpus: '64'
 
+  sign_test_16:
+    build: ./benchmark/sign
+    depends_on:
+      - base
+    environment:
+      - TOPOLOGY=aws
+      - TEST=TestSignNoNetwork
+      - NUM_WORKERS=16
+    ports:
+      - "6666:6666"
+    deploy:
+      resources:
+        limits:
+          cpus: '16'
+
   sign_test_1:
     build: ./benchmark/sign
     depends_on:
