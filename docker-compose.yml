@@ -137,6 +137,7 @@ services:
       - TOPOLOGY=aws
       - TEST=TestSignNoNetwork
       - NUM_WORKERS=1
+      - GOMAXPROCS=1
     ports:
       - "6666:6666"
     deploy:
