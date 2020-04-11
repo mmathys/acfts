@@ -3,12 +3,13 @@ package main
 import (
 	"github.com/mmathys/acfts/common"
 	"github.com/mmathys/acfts/util"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 	"log"
 	_ "net/http/pprof"
 	"os"
 	"runtime"
 )
+
 
 var TxCounter = new(int32)
 
