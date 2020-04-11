@@ -15,6 +15,7 @@ import (
 	"strconv"
 	"sync"
 	"testing"
+	"time"
 )
 
 func TestMain(m *testing.M) {
@@ -97,9 +98,12 @@ func worker(N int, numWorkers int, b *testing.B) error {
 	if b != nil {
 		b.ResetTimer()
 	}
+
+	startDelay := time.Millisecond / time.Duration(numWorkers)  // distribute start over 1ms
 	var wg sync.WaitGroup
 	for i := 0; i < numWorkers; i++ {
 		wg.Add(1)
+		time.Sleep(startDelay)
 		go func() {
 			for j := 0; j < N/numWorkers; j++ {
 				err := server.Sign(req, &res)
