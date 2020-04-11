@@ -18,6 +18,12 @@ import (
 )
 
 func TestMain(m *testing.M) {
+	numWorkers, err := strconv.Atoi(os.Args[len(os.Args)-1])
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("numWorkers = %d\n", numWorkers)
+
 	go func() {
 		runtime.SetBlockProfileRate(1)
 		log.Println(http.ListenAndServe(":6666", nil))
@@ -27,8 +33,8 @@ func TestMain(m *testing.M) {
 }
 
 func BenchmarkSignNoNetwork(b *testing.B) {
+	fmt.Println("Benchmarking server routine...")
 	numWorkers, err := strconv.Atoi(os.Args[len(os.Args)-1])
-	fmt.Printf("[numWorkers=%d]Benchmarking server routine...\n", numWorkers)
 	if err != nil {
 		panic(err)
 	}
