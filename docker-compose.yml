@@ -153,6 +153,22 @@ services:
         limits:
           cpus: '16'
 
+  sign_test_8:
+    build: ./benchmark/sign
+    depends_on:
+      - base
+    environment:
+      - TOPOLOGY=aws
+      - TEST=TestSignNoNetwork
+      - NUM_WORKERS=8
+      - GOGC=1000
+    ports:
+      - "6666:6666"
+    deploy:
+      resources:
+        limits:
+          cpus: '8'
+
   sign_test_1:
     build: ./benchmark/sign
     depends_on:
