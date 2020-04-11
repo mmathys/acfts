@@ -113,7 +113,7 @@ services:
       - TOPOLOGY=aws
       - BENCH=BenchmarkSignNoNetwork
       - NUM_WORKERS=64
-      - GOGC=2000
+      - GOGC=1000
     deploy:
       resources:
         limits:
