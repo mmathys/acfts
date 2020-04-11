@@ -42,10 +42,10 @@ services:
     environment:
       - TOPOLOGY=aws
       - TEST=TestSignNoNetwork
-      - NUM_WORKERS=64
+      - NUM_WORKERS=1
     ports:
       - "6666:6666"
     deploy:
       resources:
         limits:
-          cpus: '64'
+          cpus: '1'
