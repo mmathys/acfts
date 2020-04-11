@@ -21,7 +21,7 @@ services:
       - TOPOLOGY
       - NUM_WORKERS
 
-  sign_benchmark:
+  sign_benchmark_1:
     build: ./benchmark/sign
     depends_on:
       - base
@@ -33,6 +33,85 @@ services:
       resources:
         limits:
           cpus: '1'
+
+  sign_benchmark_2:
+    build: ./benchmark/sign
+    depends_on:
+      - base
+    environment:
+      - TOPOLOGY=aws
+      - BENCH=BenchmarkSignNoNetwork
+      - NUM_WORKERS=2
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+
+  sign_benchmark_4:
+    build: ./benchmark/sign
+    depends_on:
+      - base
+    environment:
+      - TOPOLOGY=aws
+      - BENCH=BenchmarkSignNoNetwork
+      - NUM_WORKERS=4
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+
+  sign_benchmark_8:
+    build: ./benchmark/sign
+    depends_on:
+      - base
+    environment:
+      - TOPOLOGY=aws
+      - BENCH=BenchmarkSignNoNetwork
+      - NUM_WORKERS=8
+    deploy:
+      resources:
+        limits:
+          cpus: '8'
+
+  sign_benchmark_16:
+    build: ./benchmark/sign
+    depends_on:
+      - base
+    environment:
+      - TOPOLOGY=aws
+      - BENCH=BenchmarkSignNoNetwork
+      - NUM_WORKERS=16
+    deploy:
+      resources:
+        limits:
+          cpus: '16'
+
+  sign_benchmark_32:
+    build: ./benchmark/sign
+    depends_on:
+      - base
+    environment:
+      - TOPOLOGY=aws
+      - BENCH=BenchmarkSignNoNetwork
+      - NUM_WORKERS=32
+    deploy:
+      resources:
+        limits:
+          cpus: '32'
+
+  sign_benchmark_64:
+    build: ./benchmark/sign
+    depends_on:
+      - base
+    environment:
+      - TOPOLOGY=aws
+      - BENCH=BenchmarkSignNoNetwork
+      - NUM_WORKERS=64
+    deploy:
+      resources:
+        limits:
+          cpus: '64'
+
 
   # runs for 1 million tx and does not output a benchmark, but exposes pprog
   sign_test:
