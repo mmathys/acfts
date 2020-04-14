@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"math"
-	"math/big"
 )
 
 func signHash(key *ecdsa.PrivateKey, hash []byte) (ECDSASig, error) {
@@ -16,7 +15,7 @@ func signHash(key *ecdsa.PrivateKey, hash []byte) (ECDSASig, error) {
 		return ECDSASig{}, err
 	}
 	addr := MarshalPubkey(&key.PublicKey)
-	return ECDSASig{R: r.Bytes(), S: s.Bytes(), Address: addr}, nil
+	return ECDSASig{R: r, S: s, Address: addr}, nil
 }
 
 func SignValue(key *ecdsa.PrivateKey, value *Value) error {
@@ -71,9 +70,7 @@ func VerifyValue(value *Value) error {
 
 	for _, sig := range value.Signatures {
 		pubkey := UnmarshalPubkey(sig.Address)
-		R := new(big.Int).SetBytes(sig.R)
-		S := new(big.Int).SetBytes(sig.S)
-		valid := ecdsa.Verify(pubkey, hash, R, S)
+		valid := ecdsa.Verify(pubkey, hash, sig.R, sig.S)
 		if !valid {
 			return errors.New("value verification failed")
 		}
@@ -123,9 +120,7 @@ func VerifyTransactionSigRequest(req *TransactionSigReq) error {
 
 	hash := HashTransactionSigRequest(*req)
 	pubkey := UnmarshalPubkey(owner)
-	R := new(big.Int).SetBytes(req.Signature.R)
-	S := new(big.Int).SetBytes(req.Signature.S)
-	valid := ecdsa.Verify(pubkey, hash, R, S)
+	valid := ecdsa.Verify(pubkey, hash, req.Signature.R, req.Signature.S)
 	if !valid {
 		return errors.New("sig request verification failed")
 	}

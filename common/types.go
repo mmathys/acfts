@@ -2,6 +2,7 @@ package common
 
 import (
 	"crypto/ecdsa"
+	"math/big"
 	"sync"
 	"time"
 )
@@ -18,8 +19,8 @@ type Identifier = []byte // len = IdentifierLength
 
 type ECDSASig struct {
 	Address		Address // could also use recovery Id "V" like in ethereum
-	R 			[]byte // *big.Int
-	S 			[]byte // *big.Int
+	R 			*big.Int // *big.Int
+	S 			*big.Int // *big.Int
 }
 
 // Defines an Input / Output tuple; with extra fields
