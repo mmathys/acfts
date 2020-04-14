@@ -29,7 +29,7 @@ services:
       - TOPOLOGY=aws
       - BENCH=BenchmarkSignNoNetwork
       - NUM_WORKERS=1
-      - GOGC=1000
+      - GOGC=11000
     deploy:
       resources:
         limits:
@@ -43,7 +43,7 @@ services:
       - TOPOLOGY=aws
       - BENCH=BenchmarkSignNoNetwork
       - NUM_WORKERS=2
-      - GOGC=1000
+      - GOGC=11000
     deploy:
       resources:
         limits:
@@ -57,7 +57,7 @@ services:
       - TOPOLOGY=aws
       - BENCH=BenchmarkSignNoNetwork
       - NUM_WORKERS=4
-      - GOGC=1000
+      - GOGC=11000
     deploy:
       resources:
         limits:
@@ -71,7 +71,7 @@ services:
       - TOPOLOGY=aws
       - BENCH=BenchmarkSignNoNetwork
       - NUM_WORKERS=8
-      - GOGC=1000
+      - GOGC=11000
     deploy:
       resources:
         limits:
@@ -85,7 +85,7 @@ services:
       - TOPOLOGY=aws
       - BENCH=BenchmarkSignNoNetwork
       - NUM_WORKERS=16
-      - GOGC=1000
+      - GOGC=11000
     deploy:
       resources:
         limits:
@@ -99,7 +99,7 @@ services:
       - TOPOLOGY=aws
       - BENCH=BenchmarkSignNoNetwork
       - NUM_WORKERS=32
-      - GOGC=1000
+      - GOGC=11000
     deploy:
       resources:
         limits:
@@ -113,7 +113,7 @@ services:
       - TOPOLOGY=aws
       - BENCH=BenchmarkSignNoNetwork
       - NUM_WORKERS=64
-      - GOGC=1000
+      - GOGC=11000
     deploy:
       resources:
         limits:
@@ -127,7 +127,7 @@ services:
       - TOPOLOGY=aws
       - TEST=TestSignNoNetwork
       - NUM_WORKERS=1
-      - GOGC=1000
+      - GOGC=11000
     ports:
       - "6666:6666"
     deploy:
@@ -143,7 +143,7 @@ services:
       - TOPOLOGY=aws
       - TEST=TestSignNoNetwork
       - NUM_WORKERS=2
-      - GOGC=1000
+      - GOGC=11000
     ports:
       - "6666:6666"
     deploy:
@@ -159,7 +159,7 @@ services:
       - TOPOLOGY=aws
       - TEST=TestSignNoNetwork
       - NUM_WORKERS=4
-      - GOGC=1000
+      - GOGC=11000
       - GOMAXPROCS=4
     ports:
       - "6666:6666"
@@ -176,7 +176,7 @@ services:
       - TOPOLOGY=aws
       - TEST=TestSignNoNetwork
       - NUM_WORKERS=8
-      - GOGC=1000
+      - GOGC=11000
     ports:
       - "6666:6666"
     deploy:
@@ -192,7 +192,7 @@ services:
       - TOPOLOGY=aws
       - TEST=TestSignNoNetwork
       - NUM_WORKERS=16
-      - GOGC=1000
+      - GOGC=11000
     ports:
       - "6666:6666"
     deploy:
@@ -208,7 +208,7 @@ services:
       - TOPOLOGY=aws
       - TEST=TestSignNoNetwork
       - NUM_WORKERS=32
-      - GOGC=1000
+      - GOGC=11000
     ports:
       - "6666:6666"
     deploy:
@@ -224,7 +224,7 @@ services:
       - TOPOLOGY=aws
       - TEST=TestSignNoNetwork
       - NUM_WORKERS=64
-      - GOGC=10000
+      - GOGC=11000
       - GOMAXPROCS=64
     ports:
       - "6666:6666"
