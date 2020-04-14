@@ -105,7 +105,6 @@ func worker(N int, numWorkers int, b *testing.B) error {
 		wg.Add(1)
 		time.Sleep(startDelay)
 		go func() {
-			runtime.LockOSThread()
 			for j := 0; j < N/numWorkers; j++ {
 				err := server.Sign(req, &res)
 				if err != nil {

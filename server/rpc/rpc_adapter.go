@@ -11,6 +11,7 @@ import (
 	"net"
 	"net/http"
 	"net/rpc"
+	"runtime"
 )
 
 
@@ -26,6 +27,7 @@ type RPCAdapter struct {}
 
 func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignRes) error {
 	//log.Printf("got sign request: %v", req)
+	runtime.LockOSThread()
 
 	if BenchmarkMode {
 		defer util.CountTx(TxCounter)
