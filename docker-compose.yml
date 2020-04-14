@@ -119,40 +119,56 @@ services:
         limits:
           cpus: '64'
 
-
-  # runs for 1 million tx and does not output a benchmark, but exposes pprog
-  sign_test_64:
+  sign_test_1:
     build: ./benchmark/sign
     depends_on:
       - base
     environment:
       - TOPOLOGY=aws
       - TEST=TestSignNoNetwork
-      - NUM_WORKERS=64
-      - GOGC=10000
-      - GOMAXPROCS=64
-    ports:
-      - "6666:6666"
-    deploy:
-      resources:
-        limits:
-          cpus: '64'
-
-  sign_test_16:
-    build: ./benchmark/sign
-    depends_on:
-      - base
-    environment:
-      - TOPOLOGY=aws
-      - TEST=TestSignNoNetwork
-      - NUM_WORKERS=16
+      - NUM_WORKERS=1
       - GOGC=1000
+      - GOMAXPROCS=1
     ports:
       - "6666:6666"
     deploy:
       resources:
         limits:
-          cpus: '16'
+          cpus: '1'
+
+  sign_test_2:
+    build: ./benchmark/sign
+    depends_on:
+      - base
+    environment:
+      - TOPOLOGY=aws
+      - TEST=TestSignNoNetwork
+      - NUM_WORKERS=2
+      - GOGC=1000
+      - GOMAXPROCS=2
+    ports:
+      - "6666:6666"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+
+  sign_test_4:
+    build: ./benchmark/sign
+    depends_on:
+      - base
+    environment:
+      - TOPOLOGY=aws
+      - TEST=TestSignNoNetwork
+      - NUM_WORKERS=4
+      - GOGC=1000
+      - GOMAXPROCS=4
+    ports:
+      - "6666:6666"
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
 
   sign_test_8:
     build: ./benchmark/sign
@@ -170,19 +186,51 @@ services:
         limits:
           cpus: '8'
 
-  sign_test_1:
+  sign_test_16:
     build: ./benchmark/sign
     depends_on:
       - base
     environment:
       - TOPOLOGY=aws
       - TEST=TestSignNoNetwork
-      - NUM_WORKERS=1
+      - NUM_WORKERS=16
       - GOGC=1000
-      - GOMAXPROCS=1
     ports:
       - "6666:6666"
     deploy:
       resources:
         limits:
-          cpus: '1'
+          cpus: '16'
+
+  sign_test_32:
+    build: ./benchmark/sign
+    depends_on:
+      - base
+    environment:
+      - TOPOLOGY=aws
+      - TEST=TestSignNoNetwork
+      - NUM_WORKERS=32
+      - GOGC=1000
+    ports:
+      - "6666:6666"
+    deploy:
+      resources:
+        limits:
+          cpus: '32'
+
+  sign_test_64:
+    build: ./benchmark/sign
+    depends_on:
+      - base
+    environment:
+      - TOPOLOGY=aws
+      - TEST=TestSignNoNetwork
+      - NUM_WORKERS=64
+      - GOGC=10000
+      - GOMAXPROCS=64
+    ports:
+      - "6666:6666"
+    deploy:
+      resources:
+        limits:
+          cpus: '64'
