@@ -128,7 +128,6 @@ services:
       - TEST=TestSignNoNetwork
       - NUM_WORKERS=1
       - GOGC=1000
-      - GOMAXPROCS=1
     ports:
       - "6666:6666"
     deploy:
@@ -145,7 +144,6 @@ services:
       - TEST=TestSignNoNetwork
       - NUM_WORKERS=2
       - GOGC=1000
-      - GOMAXPROCS=2
     ports:
       - "6666:6666"
     deploy:
