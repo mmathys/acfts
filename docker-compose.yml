@@ -112,7 +112,7 @@ services:
     environment:
       - TOPOLOGY=aws
       - BENCH=BenchmarkSignNoNetwork
-      - NUM_WORKERS=64
+      - NUM_WORKERS=128
       - GOGC=11000
       - GOMAXPROCS=128
     deploy:
