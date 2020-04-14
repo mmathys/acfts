@@ -15,7 +15,6 @@ import (
 
 
 var TxCounter = new(int32)
-
 type Adapter interface {
 	Init(port int, id *common.Identity, debug bool, benchmark bool, TxCounter *int32, SignedUTXO *hashmap.HashMap)
 }

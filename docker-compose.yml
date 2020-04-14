@@ -58,6 +58,7 @@ services:
       - BENCH=BenchmarkSignNoNetwork
       - NUM_WORKERS=4
       - GOGC=1000
+      - GOMAXPROCS=12
     deploy:
       resources:
         limits:
