@@ -11,25 +11,32 @@ import (
 )
 
 func BenchmarkSyncMap(b *testing.B) {
-	utxos := hashmap.HashMap{}
-	var identifiers []common.Identifier
+	limit := 32768 // 2^15
 
-	for i := 0; i < b.N; i++ {
-		identifiers = append(identifiers, common.RandomIdentifier())
-	}
+	for size := 8; size <= limit; size *= 2 {
+		name := fmt.Sprintf("size: %d", size)
+		b.Run(name, func(b *testing.B) {
+			utxos := hashmap.New(uintptr(size))
+			var identifiers []common.Identifier
 
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		if newItem := utxos.Insert(identifiers[i], true); !newItem {
-			b.Error("should not happen")
-		}
+			for i := 0; i < b.N; i++ {
+				identifiers = append(identifiers, common.RandomIdentifier())
+			}
+
+			b.ResetTimer()
+			for i := 0; i < b.N; i++ {
+				if newItem := utxos.Insert(identifiers[i], true); !newItem {
+					b.Error("should not happen")
+				}
+			}
+		})
 	}
 }
 
 func BenchmarkParallelMap(b *testing.B) {
 	utxos := hashmap.HashMap{}
-	lastParam := os.Args[len(os.Args) - 1]
-	numWorkers := 1
+	lastParam := os.Args[len(os.Args)-1]
+	numWorkers := 2
 	if paramNum, err := strconv.Atoi(lastParam); err == nil {
 		numWorkers = paramNum
 	}
@@ -52,6 +59,45 @@ func BenchmarkParallelMap(b *testing.B) {
 		go func(work []common.Identifier) {
 			for j := 0; j < len(work); j++ {
 				if newItem := utxos.Insert(work[j], true); !newItem {
+					b.Error("should not happen")
+				}
+			}
+			wg.Done()
+		}(identifiers[i])
+	}
+
+	wg.Wait()
+}
+
+func BenchmarkParallelMapGo(b *testing.B) {
+	utxos := sync.Map{}
+	lastParam := os.Args[len(os.Args)-1]
+	numWorkers := 4
+	if paramNum, err := strconv.Atoi(lastParam); err == nil {
+		numWorkers = paramNum
+	}
+
+	fmt.Printf("numWorkers = %d\n", numWorkers)
+
+	var identifiers [][][common.IdentifierLength]byte
+	for i := 0; i < numWorkers; i++ {
+		identifiers = append(identifiers, [][common.IdentifierLength]byte{})
+		for j := 0; j < b.N/numWorkers; j++ {
+			id := common.RandomIdentifier()
+			array := [common.IdentifierLength]byte{}
+			copy(array[:], id[:common.IdentifierLength])
+			identifiers[i] = append(identifiers[i], array)
+		}
+	}
+
+	var wg sync.WaitGroup
+
+	b.ResetTimer()
+	for i := 0; i < numWorkers; i++ {
+		wg.Add(1)
+		go func(work [][common.IdentifierLength]byte) {
+			for j := 0; j < len(work); j++ {
+				if _, loaded := utxos.LoadOrStore(work[j], true); loaded {
 					b.Error("should not happen")
 				}
 			}
