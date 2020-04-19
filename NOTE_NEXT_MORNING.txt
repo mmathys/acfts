@@ -1,6 +1,0 @@
-
-
-  *** DO NOT FORGET ***
-
-  View in version control. I changed the type of R and S in common/types from []bytes to *big.Int so that no conversion
-  has to happen anymore. This could help decrease heap junk.

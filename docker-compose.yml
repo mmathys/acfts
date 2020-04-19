@@ -232,3 +232,99 @@ services:
       resources:
         limits:
           cpus: '64'
+
+  map_benchmark_1:
+    build: ./benchmark/map
+    depends_on:
+      - base
+    environment:
+      - BENCH=BenchmarkParallelMap
+      - NUM_WORKERS=1
+      - GOGC=11000
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+
+  map_benchmark_2:
+    build: ./benchmark/map
+    depends_on:
+      - base
+    environment:
+      - BENCH=BenchmarkParallelMap
+      - NUM_WORKERS=2
+      - GOGC=11000
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+
+  map_benchmark_4:
+    build: ./benchmark/map
+    depends_on:
+      - base
+    environment:
+      - BENCH=BenchmarkParallelMap
+      - NUM_WORKERS=4
+      - GOGC=11000
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+
+
+  map_benchmark_8:
+    build: ./benchmark/map
+    depends_on:
+      - base
+    environment:
+      - BENCH=BenchmarkParallelMap
+      - NUM_WORKERS=8
+      - GOGC=11000
+    deploy:
+      resources:
+        limits:
+          cpus: '8'
+
+
+  map_benchmark_16:
+    build: ./benchmark/map
+    depends_on:
+      - base
+    environment:
+      - BENCH=BenchmarkParallelMap
+      - NUM_WORKERS=16
+      - GOGC=11000
+    deploy:
+      resources:
+        limits:
+          cpus: '16'
+
+
+  map_benchmark_32:
+    build: ./benchmark/map
+    depends_on:
+      - base
+    environment:
+      - BENCH=BenchmarkParallelMap
+      - NUM_WORKERS=32
+      - GOGC=11000
+    deploy:
+      resources:
+        limits:
+          cpus: '32'
+
+
+  map_benchmark_64:
+    build: ./benchmark/map
+    depends_on:
+      - base
+    environment:
+      - BENCH=BenchmarkParallelMap
+      - NUM_WORKERS=64
+      - GOGC=11000
+    deploy:
+      resources:
+        limits:
+          cpus: '64'
+

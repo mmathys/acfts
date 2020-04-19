@@ -42,7 +42,7 @@ func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignR
 	tx := req.Transaction
 	if !Debug && !AllowDoublespend {
 		for _, input := range tx.Inputs {
-			if SignedUTXO.Cas(input.Id, true, true) {
+			if SignedUTXO.Insert(input.Id, true) {
 				err := errors.New("UTXO already exists: no double spending")
 				fmt.Println(err)
 				return err
