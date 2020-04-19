@@ -47,7 +47,6 @@ func BenchmarkSignNoNetwork(b *testing.B) {
 	}
 }
 
-
 func TestSignNoNetwork(t *testing.T) {
 	fmt.Println("Server routine for 1 million tx, no benchmark...")
 	numWorkers, err := strconv.Atoi(os.Args[len(os.Args)-1])
@@ -62,7 +61,6 @@ func TestSignNoNetwork(t *testing.T) {
 	}
 }
 
-
 func worker(N int, numWorkers int, b *testing.B) error {
 	args := os.Args
 	topo := args[len(args)-2]
@@ -72,47 +70,53 @@ func worker(N int, numWorkers int, b *testing.B) error {
 	rpc.Debug = false
 	rpc.BenchmarkMode = false
 	rpc.Id = util.GetIdentity(common.GetServers()[0])
-	rpc.AllowDoublespend = true
+	rpc.AllowDoublespend = false
 
 	client := common.GetClients()[0]
 	clientId := util.GetIdentity(client)
 	target := common.GetClients()[1]
-	w := util.NewWalletWithAmount(client, 1)
-	tx := common.Transaction{Inputs: nil, Outputs: nil}
 
-	tx, err := wallet.PrepareTransaction(w, target, 1)
+	var requests [][]common.TransactionSigReq
+	for i := 0; i < numWorkers; i++ {
+		requests = append(requests, []common.TransactionSigReq{})
+		for j := 0; j < N/numWorkers; j++ {
+			w := util.NewWalletWithAmount(client, 1)
+			tx := common.Transaction{Inputs: nil, Outputs: nil}
+			tx, err := wallet.PrepareTransaction(w, target, 1)
+			if err != nil {
+				return err
+			}
+			req := common.TransactionSigReq{Transaction: tx}
+			err = common.SignTransactionSigRequest(clientId.Key, &req)
+			if err != nil {
+				return err
+			}
 
-	if err != nil {
-		return err
-	}
-
-	req := common.TransactionSigReq{Transaction: tx}
-	err = common.SignTransactionSigRequest(clientId.Key, &req)
-	if err != nil {
-		return err
+			requests[i] = append(requests[i], req)
+		}
 	}
 
 	server := new(rpc.Server)
-
 	res := common.TransactionSignRes{}
+
+	startDelay := 1 * time.Millisecond / time.Duration(numWorkers) // distribute start over 1ms
+	var wg sync.WaitGroup
+
 	if b != nil {
 		b.ResetTimer()
 	}
-
-	startDelay := 1 * time.Millisecond / time.Duration(numWorkers)  // distribute start over 1ms
-	var wg sync.WaitGroup
 	for i := 0; i < numWorkers; i++ {
 		wg.Add(1)
 		time.Sleep(startDelay)
-		go func() {
+		go func(work []common.TransactionSigReq) {
 			for j := 0; j < N/numWorkers; j++ {
-				err := server.Sign(req, &res)
+				err := server.Sign(work[j], &res)
 				if err != nil {
 					panic(err)
 				}
 			}
 			wg.Done()
-		}()
+		}(requests[i])
 	}
 
 	wg.Wait()
