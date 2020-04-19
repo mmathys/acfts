@@ -71,6 +71,7 @@ func worker(N int, numWorkers int, b *testing.B) error {
 	rpc.BenchmarkMode = false
 	rpc.Id = util.GetIdentity(common.GetServers()[0])
 	rpc.AllowDoublespend = false
+	rpc.UseUTXOMap = false
 
 	client := common.GetClients()[0]
 	clientId := util.GetIdentity(client)

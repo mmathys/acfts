@@ -20,6 +20,8 @@ var BenchmarkMode bool
 var TxCounter *int32
 var SignedUTXO *hashmap.HashMap
 var AllowDoublespend = false
+var UseUTXOMap = true
+
 
 type Server struct {}
 type RPCAdapter struct {}
@@ -40,7 +42,7 @@ func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignR
 	}
 
 	tx := req.Transaction
-	if !Debug {
+	if !Debug && UseUTXOMap {
 		for _, input := range tx.Inputs {
 			notSpent := SignedUTXO.Insert(input.Id, true)
 			if !notSpent && !AllowDoublespend {
