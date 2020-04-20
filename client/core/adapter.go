@@ -1,7 +1,6 @@
 package core
 
 import (
-	"github.com/mmathys/acfts/client/rest"
 	"github.com/mmathys/acfts/client/rpc"
 	"github.com/mmathys/acfts/common"
 	"log"
@@ -14,13 +13,12 @@ type Adapter interface {
 	ForwardValue(t common.Value)
 }
 
-var restAdapter = &rest.Adapter{}
 var rpcAdapter = &rpc.Adapter{}
-var currentAdapter Adapter = restAdapter
+var currentAdapter Adapter = rpcAdapter
 
 func SetAdapterMode(mode string) {
 	if mode == "rest" {
-		currentAdapter = restAdapter
+		panic("rest is not supported anymore")
 	} else if mode == "rpc" {
 		currentAdapter = rpcAdapter
 	} else {
