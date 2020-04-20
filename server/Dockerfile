@@ -10,4 +10,5 @@ ENV ADAPTER rpc
 ENV TOPOLOGY dockerSimple
 
 WORKDIR /go/src/github.com/mmathys/acfts
+#CMD ["sh", "-c", "server -b --pprof -a ${ADDRESS} --adapter ${ADAPTER} --topology /go/src/github.com/mmathys/acfts/topologies/${TOPOLOGY}.json"]
 CMD ["sh", "-c", "server -b -a ${ADDRESS} --adapter ${ADAPTER} --topology /go/src/github.com/mmathys/acfts/topologies/${TOPOLOGY}.json"]
