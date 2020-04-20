@@ -60,7 +60,7 @@ func TestSignNoNetwork(t *testing.T) {
 }
 
 func worker(N int, numWorkers int, b *testing.B) error {
-	fmt.Print("preparing... ")
+	fmt.Println("preparing...")
 	args := os.Args
 	topo := args[len(args)-2]
 	common.InitAddresses(topo)
@@ -71,6 +71,7 @@ func worker(N int, numWorkers int, b *testing.B) error {
 	rpc.Id = util.GetIdentity(common.GetServers()[0])
 	rpc.AllowDoublespend = false
 	rpc.UseUTXOMap = false
+	rpc.CheckTransactions = false
 
 	client := common.GetClients()[0]
 	clientId := util.GetIdentity(client)
