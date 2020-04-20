@@ -34,7 +34,6 @@ func TestMain(m *testing.M) {
 }
 
 func BenchmarkSignNoNetwork(b *testing.B) {
-	fmt.Println("Benchmarking server routine...")
 	numWorkers, err := strconv.Atoi(os.Args[len(os.Args)-1])
 	if err != nil {
 		panic(err)
@@ -48,7 +47,6 @@ func BenchmarkSignNoNetwork(b *testing.B) {
 }
 
 func TestSignNoNetwork(t *testing.T) {
-	fmt.Println("Server routine for 1 million tx, no benchmark...")
 	numWorkers, err := strconv.Atoi(os.Args[len(os.Args)-1])
 	if err != nil {
 		panic(err)
@@ -62,6 +60,7 @@ func TestSignNoNetwork(t *testing.T) {
 }
 
 func worker(N int, numWorkers int, b *testing.B) error {
+	fmt.Print("preparing... ")
 	args := os.Args
 	topo := args[len(args)-2]
 	common.InitAddresses(topo)
@@ -103,6 +102,7 @@ func worker(N int, numWorkers int, b *testing.B) error {
 	startDelay := 1 * time.Millisecond / time.Duration(numWorkers) // distribute start over 1ms
 	var wg sync.WaitGroup
 
+	fmt.Println("running tests... ")
 	if b != nil {
 		b.ResetTimer()
 	}
