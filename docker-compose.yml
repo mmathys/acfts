@@ -112,7 +112,7 @@ services:
     environment:
       - TOPOLOGY=aws
       - BENCH=BenchmarkSignNoNetwork
-      - NUM_WORKERS=128
+      - NUM_WORKERS=64
       - GOGC=11000
     deploy:
       resources:
@@ -160,7 +160,6 @@ services:
       - TEST=TestSignNoNetwork
       - NUM_WORKERS=4
       - GOGC=11000
-      - GOMAXPROCS=4
     ports:
       - "6666:6666"
     deploy:

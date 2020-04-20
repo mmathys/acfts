@@ -21,7 +21,7 @@ var TxCounter *int32
 var SignedUTXO *hashmap.HashMap
 var AllowDoublespend = false
 var UseUTXOMap = true
-
+var CheckTransactions = true
 
 type Server struct {}
 type RPCAdapter struct {}
@@ -33,7 +33,7 @@ func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignR
 		defer util.CountTx(TxCounter)
 	}
 
-	if !Debug {
+	if !Debug && CheckTransactions {
 		err := checks.CheckValidity(&req)
 		if err != nil {
 			fmt.Println(err)
