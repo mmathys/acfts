@@ -54,7 +54,7 @@ func runServer(address common.Address, benchmark bool, adapter string, topology 
 	}
 
 	id := util.GetIdentity(address)
-	Init(port, id, false, benchmark, TxCounter)
+	Init(port, id, true, benchmark, TxCounter)
 
 	return nil
 }
