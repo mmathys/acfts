@@ -15,7 +15,7 @@ import (
 
 
 var Id *common.Identity
-var Debug = false
+var Debug = true
 var BenchmarkMode bool
 var TxCounter *int32
 var SignedUTXO *sync.Map
