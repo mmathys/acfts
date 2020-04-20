@@ -2,7 +2,6 @@ package sign
 
 import (
 	"fmt"
-	"github.com/cornelk/hashmap"
 	"github.com/mmathys/acfts/common"
 	"github.com/mmathys/acfts/server/rpc"
 	"github.com/mmathys/acfts/util"
@@ -65,7 +64,7 @@ func worker(N int, numWorkers int, b *testing.B) error {
 	topo := args[len(args)-2]
 	common.InitAddresses(topo)
 	rpc.TxCounter = new(int32)
-	rpc.SignedUTXO = new(hashmap.HashMap)
+	rpc.SignedUTXO = new(sync.Map)
 	rpc.Debug = false
 	rpc.BenchmarkMode = false
 	rpc.Id = util.GetIdentity(common.GetServers()[0])

@@ -3,7 +3,6 @@ package rpc
 import (
 	"errors"
 	"fmt"
-	"github.com/cornelk/hashmap"
 	"github.com/mmathys/acfts/common"
 	"github.com/mmathys/acfts/server/checks"
 	"github.com/mmathys/acfts/util"
@@ -11,6 +10,7 @@ import (
 	"net"
 	"net/http"
 	"net/rpc"
+	"sync"
 )
 
 
@@ -18,7 +18,7 @@ var Id *common.Identity
 var Debug bool
 var BenchmarkMode bool
 var TxCounter *int32
-var SignedUTXO *hashmap.HashMap
+var SignedUTXO *sync.Map
 var AllowDoublespend = false
 var UseUTXOMap = true
 var CheckTransactions = true
@@ -27,8 +27,6 @@ type Server struct {}
 type RPCAdapter struct {}
 
 func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignRes) error {
-	//log.Printf("got sign request: %v", req)
-
 	if BenchmarkMode {
 		defer util.CountTx(TxCounter)
 	}
@@ -44,8 +42,8 @@ func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignR
 	tx := req.Transaction
 	if !Debug && UseUTXOMap {
 		for _, input := range tx.Inputs {
-			notSpent := SignedUTXO.Insert(input.Id, true)
-			if !notSpent && !AllowDoublespend {
+			_ , spent := SignedUTXO.LoadOrStore(input.Id, true)
+			if spent && !AllowDoublespend {
 				err := errors.New("UTXO already exists: no double spending")
 				fmt.Println(err)
 				return err
@@ -74,7 +72,7 @@ func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignR
 	return nil
 }
 
-func (a *RPCAdapter) Init(port int, _id *common.Identity, debug bool, benchmark bool, txCounter *int32, signedUTXO *hashmap.HashMap) {
+func (a *RPCAdapter) Init(port int, _id *common.Identity, debug bool, benchmark bool, txCounter *int32, signedUTXO *sync.Map) {
 	Id = _id
 	Debug = debug
 	BenchmarkMode = benchmark

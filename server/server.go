@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/cornelk/hashmap"
 	"github.com/mmathys/acfts/common"
-	"github.com/mmathys/acfts/server/rest"
 	"github.com/mmathys/acfts/server/rpc"
 	"github.com/mmathys/acfts/util"
 	"github.com/urfave/cli/v2"
@@ -11,23 +10,23 @@ import (
 	_ "net/http/pprof"
 	"os"
 	"runtime"
+	"sync"
 )
 
 
 var TxCounter = new(int32)
 type Adapter interface {
-	Init(port int, id *common.Identity, debug bool, benchmark bool, TxCounter *int32, SignedUTXO *hashmap.HashMap)
+	Init(port int, id *common.Identity, debug bool, benchmark bool, TxCounter *int32, SignedUTXO *sync.Map)
 }
 
-var restAdapter = &rest.RESTAdapter{}
 var rpcAdapter = &rpc.RPCAdapter{}
-var currentAdapter Adapter = restAdapter
+var currentAdapter Adapter = rpcAdapter
 
 var SignedUTXO hashmap.HashMap
 
 func SetAdapterMode(mode string) {
 	if mode == "rest" {
-		currentAdapter = restAdapter
+		panic("rest is not supported anymore")
 	} else if mode == "rpc" {
 		currentAdapter = rpcAdapter
 	} else {
