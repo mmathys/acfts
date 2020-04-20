@@ -52,7 +52,7 @@ func TestSignNoNetwork(t *testing.T) {
 		panic(err)
 	}
 
-	err = worker(1000000, numWorkers, nil)
+	err = worker(50000, numWorkers, nil)
 	if err != nil {
 		t.Error(err)
 		t.Fail()
