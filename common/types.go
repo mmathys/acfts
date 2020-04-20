@@ -15,7 +15,7 @@ const (
 
 type Address = []byte // len = AddressLength
 type PrivateKey = []byte // len = PrivateKeyLength
-type Identifier = []byte // len = IdentifierLength
+type Identifier = [IdentifierLength]byte // len = IdentifierLength
 
 type ECDSASig struct {
 	Address		Address // could also use recovery Id "V" like in ethereum
