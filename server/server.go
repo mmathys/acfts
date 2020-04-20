@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/cornelk/hashmap"
 	"github.com/mmathys/acfts/common"
 	"github.com/mmathys/acfts/server/rpc"
 	"github.com/mmathys/acfts/util"
@@ -22,7 +21,7 @@ type Adapter interface {
 var rpcAdapter = &rpc.RPCAdapter{}
 var currentAdapter Adapter = rpcAdapter
 
-var SignedUTXO hashmap.HashMap
+var SignedUTXO sync.Map
 
 func SetAdapterMode(mode string) {
 	if mode == "rest" {
