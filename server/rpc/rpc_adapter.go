@@ -10,6 +10,7 @@ import (
 	"net"
 	"net/http"
 	"net/rpc"
+	"runtime"
 	"sync"
 )
 
@@ -27,6 +28,7 @@ type Server struct {}
 type RPCAdapter struct {}
 
 func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignRes) error {
+	runtime.LockOSThread()
 	if BenchmarkMode {
 		defer util.CountTx(TxCounter)
 	}
@@ -69,6 +71,7 @@ func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignR
 
 	// Form the response
 	*res = common.TransactionSignRes{Outputs: outputs}
+	runtime.UnlockOSThread()
 	return nil
 }
 
