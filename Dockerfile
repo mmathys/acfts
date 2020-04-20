@@ -1,4 +1,4 @@
-FROM golang:1.14
+FROM golang:1.14.2
 
 WORKDIR /go/src/github.com/mmathys/acfts
 
