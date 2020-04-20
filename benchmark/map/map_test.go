@@ -34,7 +34,7 @@ func BenchmarkSyncMap(b *testing.B) {
 }
 
 func BenchmarkParallelMap(b *testing.B) {
-	utxos := hashmap.New(1000000)
+	utxos := hashmap.New(uintptr(b.N))
 	lastParam := os.Args[len(os.Args)-1]
 	numWorkers := 2
 	if paramNum, err := strconv.Atoi(lastParam); err == nil {
