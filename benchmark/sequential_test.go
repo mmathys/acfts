@@ -14,7 +14,6 @@ This is an easy (synchronous!) benchmark
 Do not expect high numbers from this
 */
 
-
 // in this benchmark, in each iteration, a new wallet gets created. then, the wallet spends all of its cash.
 func BenchmarkSequentialNewWallet(b *testing.B) {
 	for i := 0; i < b.N; i++ {
@@ -35,7 +34,6 @@ func BenchmarkSequentialNewWallet(b *testing.B) {
 		}
 	}
 }
-
 
 // in this benchmark, a wallet gets created once. Then, the wallet spends all of its cash, 1 money per iteration.
 func BenchmarkSequentialSpendSingle(b *testing.B) {

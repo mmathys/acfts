@@ -80,7 +80,7 @@ func TestRPC(t *testing.T) {
 	var wg sync.WaitGroup
 	for i := 0; i < numClients; i++ {
 		wg.Add(1)
-		go runClient(&wg, numReq / numClients)
+		go runClient(&wg, numReq/numClients)
 	}
 	wg.Wait()
 }

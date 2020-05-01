@@ -5,7 +5,6 @@ import (
 	"sync"
 )
 
-
 func GetIdentity(address common.Address) *common.Identity {
 	key := common.GetKey(address)
 	id := common.Identity{Key: key, Address: address}
@@ -21,6 +20,7 @@ func NewWalletWithAmount(address common.Address, value int) *common.Wallet {
 	addr := common.MarshalPubkey(&id.Key.PublicKey)
 	v := common.Value{Address: addr, Amount: value, Id: utxoId}
 
+	// every client gets valid 100 money to their account.
 	// this is for debugging. In production, there would be an origin output or something like that
 	for _, server := range common.GetServers() {
 		key := common.GetKey(server)
@@ -29,6 +29,8 @@ func NewWalletWithAmount(address common.Address, value int) *common.Wallet {
 			panic(err)
 		}
 	}
+
+	// calculate the shardIndex, which is static
 
 	index := [common.IdentifierLength]byte{}
 	copy(index[:], utxoId[:common.IdentifierLength])

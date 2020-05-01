@@ -2,7 +2,6 @@ package common
 
 import (
 	"crypto/ecdsa"
-	"math/big"
 	"sync"
 	"time"
 )
@@ -13,22 +12,16 @@ const (
 	IdentifierLength = 32
 )
 
-type Address = []byte // len = AddressLength
-type PrivateKey = []byte // len = PrivateKeyLength
+type Address = []byte                    // len = AddressLength
+type PrivateKey = []byte                 // len = PrivateKeyLength
 type Identifier = [IdentifierLength]byte // len = IdentifierLength
-
-type ECDSASig struct {
-	Address		Address // could also use recovery Id "V" like in ethereum
-	R 			*big.Int // *big.Int
-	S 			*big.Int // *big.Int
-}
 
 // Defines an Input / Output tuple; with extra fields
 type Value struct {
-	Address    Address    	// The public key = Address (encoded)
-	Amount     int       	// The value itself
-	Id         Identifier	// Unique identifier
-	Signatures []ECDSASig 	// Signatures
+	Address    Address    // The public key = Address (encoded)
+	Amount     int        // The value itself
+	Id         Identifier // Unique identifier
+	Signatures [][]byte // Signatures
 }
 
 type Transaction struct {
@@ -38,7 +31,7 @@ type Transaction struct {
 
 type TransactionSigReq struct {
 	Transaction Transaction
-	Signature   ECDSASig
+	Signature   []byte
 }
 
 type TransactionSignRes struct {
@@ -52,13 +45,22 @@ type Identity struct {
 
 type Wallet struct {
 	*Identity
-	UTXO *sync.Map // of type int --> Value
+	UTXO 		*sync.Map // of type int --> Value
 }
 
-type Node struct {
-	Net      string // network address, with http
-	Port     int    // port
+type Instance struct {
+	Net  string // network address, with http
+	Port int    // port
+}
+
+type ClientNode struct {
+	Instance Instance
 	Key      *ecdsa.PrivateKey
+}
+
+type ServerNode struct {
+	Instances []Instance
+	Key       *ecdsa.PrivateKey
 }
 
 type Agent struct {

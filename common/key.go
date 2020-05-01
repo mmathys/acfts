@@ -8,10 +8,11 @@ import (
 	"log"
 )
 
-
-
 func GenerateKey() *ecdsa.PrivateKey {
-	key, _ := ecdsa.GenerateKey(secp256k1.S256(), rand.Reader)
+	key, err := ecdsa.GenerateKey(secp256k1.S256(), rand.Reader)
+	if err != nil {
+		panic(err)
+	}
 	return key
 }
 
@@ -26,7 +27,7 @@ func MarshalPubkey(pub *ecdsa.PublicKey) Address {
 }
 
 func UnmarshalPubkey(pub Address) *ecdsa.PublicKey {
-	decoded, err := crypto2.UnmarshalPubkey(pub[:])
+	decoded, err := crypto2.UnmarshalPubkey(pub)
 	if err != nil {
 		log.Fatalln("could not unmarshal pubkey")
 	}
@@ -43,7 +44,7 @@ func MarshalKey(key *ecdsa.PrivateKey) *PrivateKey {
 	return &encoded
 }
 
-func UnmarshalPrivateKey(key *PrivateKey) *ecdsa.PrivateKey {
+func UnmarshalKey(key *PrivateKey) *ecdsa.PrivateKey {
 	res, err := crypto2.ToECDSA(*key)
 	if err != nil {
 		log.Fatal(err)
@@ -51,7 +52,7 @@ func UnmarshalPrivateKey(key *PrivateKey) *ecdsa.PrivateKey {
 	return res
 }
 
-func UnmarshalPrivateKeyHex(key string) *ecdsa.PrivateKey {
+func UnmarshalKeyHex(key string) *ecdsa.PrivateKey {
 	res, err := crypto2.HexToECDSA(key)
 	if err != nil {
 		log.Fatal(err)

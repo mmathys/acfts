@@ -108,7 +108,6 @@ func BenchmarkParallelMapGo(b *testing.B) {
 	wg.Wait()
 }
 
-
 func TestStuff(t *testing.T) {
 	utxos := hashmap.HashMap{}
 	id := common.RandomIdentifier()

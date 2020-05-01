@@ -57,7 +57,9 @@ func getConnection(net string) (*rpc.Client, error) {
 }
 
 func (a *Adapter) RequestSignature(serverAddr common.Address, id *common.Identity, t common.Transaction, wg *sync.WaitGroup, sigs *chan common.TransactionSignRes) {
-	net, err := common.GetNetworkAddress(serverAddr)
+	instanceIndex := common.GetServerInstanceIndex(serverAddr, id.Address)
+	net, err := common.GetServerNetworkAddress(serverAddr, instanceIndex)
+
 	if err != nil {
 		fmt.Print(err.Error())
 		return
@@ -87,7 +89,7 @@ func (a *Adapter) RequestSignature(serverAddr common.Address, id *common.Identit
 }
 
 func (a *Adapter) ForwardValue(t common.Value) {
-	net, err := common.GetNetworkAddress(t.Address)
+	net, err := common.GetClientNetworkAddress(t.Address)
 	if err != nil {
 		fmt.Print(err.Error())
 		return

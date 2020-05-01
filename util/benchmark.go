@@ -33,7 +33,6 @@ func printTx(txCounter *int32) {
 		cpuUtil = []float64{0}
 	}
 
-
 	if count > 0 {
 		fmt.Printf("%d,%d,%f\n", timestamp, count, cpuUtil[0])
 	}

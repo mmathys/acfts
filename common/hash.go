@@ -14,7 +14,7 @@ func HashValueSprintf(value Value) []byte {
 }
 
 func HashValue(value Value) []byte {
-	value.Signatures = nil                    		// zero out signatures before hash
+	value.Signatures = nil // zero out signatures before hash
 
 	d := sha3.New256()
 	enc := gob.NewEncoder(d)
@@ -24,7 +24,7 @@ func HashValue(value Value) []byte {
 
 func HashTransactionSigRequestSprintf(req TransactionSigReq) []byte {
 	d := sha3.New256()
-	req.Signature = ECDSASig{}              // zero out signatures before hash
+	req.Signature = []byte{}              // zero out signatures before hash
 	d.Write([]byte(fmt.Sprintf("%v", req))) // this may be slow!
 	return d.Sum(nil)
 }
@@ -32,7 +32,7 @@ func HashTransactionSigRequestSprintf(req TransactionSigReq) []byte {
 func HashTransactionSigRequest(req TransactionSigReq) []byte {
 	d := sha3.New256()
 	enc := gob.NewEncoder(d)
-	req.Signature = ECDSASig{}              // zero out signatures before hash
+	req.Signature = []byte{} // zero out signatures before hash
 	enc.Encode(req)
 	return d.Sum(nil)
 }

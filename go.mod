@@ -13,4 +13,5 @@ require (
 	github.com/urfave/cli v1.22.4
 	github.com/urfave/cli/v2 v2.2.0
 	golang.org/x/crypto v0.0.0-20200406173513-056763e48d71
+	gotest.tools v2.2.0+incompatible
 )

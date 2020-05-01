@@ -12,8 +12,8 @@ import (
 	"sync"
 )
 
-
 var TxCounter = new(int32)
+
 type Adapter interface {
 	Init(port int, id *common.Identity, debug bool, benchmark bool, TxCounter *int32, SignedUTXO *sync.Map)
 }
@@ -37,13 +37,14 @@ func Init(port int, id *common.Identity, debug bool, benchmark bool, TxCounter *
 	currentAdapter.Init(port, id, debug, benchmark, TxCounter, &SignedUTXO)
 }
 
-func runServer(address common.Address, benchmark bool, adapter string, topology string, pprof bool) error {
+func runServer(address common.Address, instanceIndex int, benchmark bool, adapter string, topology string, pprof bool) error {
 	common.InitAddresses(topology)
 
-	port := common.GetPort(address)
+	port := common.GetServerPort(address, instanceIndex)
 	SetAdapterMode(adapter)
 
-	log.Printf("initialized server; port = %d; benchmark = %t; adapter=%s; pprof=%t;\n", port, benchmark, adapter, pprof)
+	log.Println("initialized server")
+	log.Printf("addr=0x%x, instance=%d, port=%d, benchmark = %t, adapter=%s, pprof=%t\n", address, instanceIndex, port, benchmark, adapter, pprof)
 
 	if benchmark {
 		go util.Ticker(TxCounter)
@@ -69,6 +70,8 @@ func main() {
 				adapter = c.String("adapter")
 			}
 
+			instanceIndex := c.Int("instance") // if not set, value is 0
+
 			addr, err := util.ReadAddress(c.String("address"))
 			if err != nil {
 				log.Fatal(err)
@@ -81,7 +84,7 @@ func main() {
 			benchmark := c.Bool("benchmark")
 			pprof := c.Bool("pprof")
 
-			runServer(addr, benchmark, adapter, c.String("topology"), pprof)
+			runServer(addr, instanceIndex, benchmark, adapter, c.String("topology"), pprof)
 			return nil
 		},
 		Flags: []cli.Flag{
@@ -90,6 +93,12 @@ func main() {
 				Aliases:  []string{"a"},
 				Usage:    "Set own address to `ADDRESS`. Format: e.g. 0x04",
 				Required: true,
+			},
+			&cli.StringFlag{
+				Name:     "instance",
+				Aliases:  []string{"i"},
+				Usage:    "Sets the zero-based instance index. This is used for load balancing/sharding. Default: 0",
+				Required: false,
 			},
 			&cli.StringFlag{
 				Name:     "adapter",

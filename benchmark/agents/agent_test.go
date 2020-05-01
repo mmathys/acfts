@@ -83,12 +83,6 @@ func TestAgentsAWS(t *testing.T) {
 	testAgentsMultipleParallel(t)
 }
 
-func TestAgentsVSOS(t *testing.T) {
-	core.SetAdapterMode("rpc")
-	common.InitAddresses("../topologies/vsos.json")
-	testAgentsMultipleParallel(t)
-}
-
 func TestAgentsRPCFixed(t *testing.T) {
 	args := os.Args
 

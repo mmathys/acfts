@@ -10,15 +10,19 @@ import (
 	"os"
 )
 
-type NodeConfig struct {
-	Net      string
-	Port     int
+type ClientNodeConfig struct {
 	Key      []string
+	Instance Instance
 }
 
-type Topology struct {
-	Servers []NodeConfig
-	Clients []NodeConfig
+type ServerNodeConfig struct {
+	Key       []string
+	Instances []Instance
+}
+
+type TopologyConfig struct {
+	Servers []ServerNodeConfig
+	Clients []ClientNodeConfig
 }
 
 func readKey(keypair []string) *ecdsa.PrivateKey {
@@ -26,12 +30,13 @@ func readKey(keypair []string) *ecdsa.PrivateKey {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	return res
 }
 
-var clients map[[AddressLength]byte]Node
+var clients map[[AddressLength]byte]ClientNode
 var clientKeys []Address
-var servers map[[AddressLength]byte]Node
+var servers map[[AddressLength]byte]ServerNode
 var serverKeys []Address
 
 func getIndex(addr Address) [AddressLength]byte {
@@ -52,58 +57,85 @@ func InitAddresses(path string) {
 
 	defer file.Close()
 
-	clients = map[[AddressLength]byte]Node{}
+	clients = map[[AddressLength]byte]ClientNode{}
 	clientKeys = []Address{}
-	servers = map[[AddressLength]byte]Node{}
+	servers = map[[AddressLength]byte]ServerNode{}
 	serverKeys = []Address{}
 
-	var topo Topology
+	var topology TopologyConfig
 	dec := json.NewDecoder(file)
-	dec.Decode(&topo)
+	dec.Decode(&topology)
 
-	for _, client := range topo.Clients {
+	for _, client := range topology.Clients {
 		key := readKey(client.Key)
 		addr := MarshalPubkey(&key.PublicKey)
 		index := getIndex(addr)
-		clients[index] = Node{
-			Net:      client.Net,
-			Port:     client.Port,
+		clients[index] = ClientNode{
+			Instance: client.Instance,
 			Key:      key,
 		}
 		clientKeys = append(clientKeys, addr)
 	}
 
-	for _, server := range topo.Servers {
+	for _, server := range topology.Servers {
 		key := readKey(server.Key)
 		addr := MarshalPubkey(&key.PublicKey)
 		index := getIndex(addr)
-		servers[index] = Node{
-			Net:      server.Net,
-			Port:     server.Port,
-			Key:      key,
+		servers[index] = ServerNode{
+			Instances: server.Instances,
+			Key:       key,
 		}
 		serverKeys = append(serverKeys, addr)
 	}
 }
 
-func lookup(address Address) (Node, error) {
+func lookupClient(address Address) (ClientNode, error) {
 	index := getIndex(address)
 	client, ok := clients[index]
 	if ok {
 		return client, nil
+	} else {
+		msg := fmt.Sprintf("could not find client 0x%x\n", address)
+		return ClientNode{}, errors.New(msg)
 	}
+}
 
+func lookupServer(address Address) (ServerNode, error) {
+	index := getIndex(address)
 	server, ok := servers[index]
 	if ok {
 		return server, nil
+	} else {
+		msg := fmt.Sprintf("could not find server 0x%x\n", address)
+		return ServerNode{}, errors.New(msg)
 	}
-
-	msg := fmt.Sprintf("could not find address 0x%x\n", address)
-	return Node{}, errors.New(msg)
 }
 
-func GetNetworkAddress(address Address) (string, error) {
-	res, err := lookup(address)
+func lookupServerInstance(address Address, instanceIndex int) (Instance, error) {
+	server, err := lookupServer(address)
+	if err != nil {
+		return Instance{}, err
+	}
+
+	if instanceIndex < 0 || instanceIndex > len(server.Instances) {
+		msg := fmt.Sprintf("instance index is out of bounds. got: %d, required: 0..%d", instanceIndex, len(server.Instances)-1)
+		return Instance{}, errors.New(msg)
+	}
+
+	return server.Instances[instanceIndex], nil
+}
+
+func GetClientNetworkAddress(address Address) (string, error) {
+	res, err := lookupClient(address)
+	if err != nil {
+		return "", err
+	} else {
+		return fmt.Sprintf("%s:%d", res.Instance.Net, res.Instance.Port), nil
+	}
+}
+
+func GetServerNetworkAddress(address Address, instanceIndex int) (string, error) {
+	res, err := lookupServerInstance(address, instanceIndex)
 	if err != nil {
 		return "", err
 	} else {
@@ -112,23 +144,56 @@ func GetNetworkAddress(address Address) (string, error) {
 }
 
 func GetKey(address Address) *ecdsa.PrivateKey {
-	res, err := lookup(address)
+	client, err := lookupClient(address)
+	if err == nil {
+		return client.Key
+	}
+
+	server, err := lookupServer(address)
+	if err == nil {
+		return server.Key
+	}
+
+	log.Panicf("could not find address 0x%x\n", address)
+	return nil
+}
+
+func GetClientPort(address Address) int {
+	res, err := lookupClient(address)
 	if err != nil {
-		log.Panicf("could not find address 0x%x\n", address)
-		return nil
+		log.Fatalf("could not find address 0x%x", address)
+		return -1
 	} else {
-		return res.Key
+		return res.Instance.Port
 	}
 }
 
-func GetPort(address Address) int {
-	res, err := lookup(address)
+func GetServerPort(address Address, instanceIndex int) int {
+	res, err := lookupServerInstance(address, instanceIndex)
 	if err != nil {
 		log.Fatalf("could not find address 0x%x", address)
 		return -1
 	} else {
 		return res.Port
 	}
+}
+
+func GetServerInstanceIndex(serverAddr Address, clientAddr Address) int {
+	server, err := lookupServer(serverAddr)
+	if err != nil {
+		panic(err)
+	}
+
+	// get the four most least significant bytes to the address, then mod it with the number of server instances
+	numInstances := uint32(len(server.Instances))
+	var num uint32
+	addrLen := len(clientAddr)
+	num |= uint32(clientAddr[addrLen - 1])
+	num |= uint32(clientAddr[addrLen - 2]) << 8
+	num |= uint32(clientAddr[addrLen - 3]) << 16
+	num |= uint32(clientAddr[addrLen - 4]) << 24
+
+	return int(num % numInstances)
 }
 
 func GetClients() []Address {

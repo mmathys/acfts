@@ -15,7 +15,11 @@ const bufferLen int = 255
 func handleIncoming(w *common.Wallet, incoming chan common.Value) {
 	for {
 		t := <-incoming
-		//fmt.Printf("got tuple %v\n", t)
+		// verify
+		err := common.VerifyValue(&t)
+		if err != nil {
+			panic(err)
+		}
 		wallet.AddUTXO(w, t)
 	}
 }
@@ -34,7 +38,7 @@ func runClient(c *cli.Context) error {
 	}
 	core.SetAdapterMode(adapter)
 
-	port := common.GetPort(addr)
+	port := common.GetClientPort(addr)
 
 	log.Printf("initialized client; addr = 0x%x port = %d adapter=%s\n", addr, port, adapter)
 
@@ -55,11 +59,11 @@ func main() {
 		Name:   "ACFTS client",
 		Usage:  "Asynchronous Consensus-Free Transaction System client",
 		Action: runClient,
-		Flags: []cli.Flag {
+		Flags: []cli.Flag{
 			&cli.StringFlag{
-				Name:    "address",
-				Aliases: []string{"a"},
-				Usage:   "Set own address to `ADDRESS`. Format: e.g. 0x04",
+				Name:     "address",
+				Aliases:  []string{"a"},
+				Usage:    "Set own address to `ADDRESS`. Format: e.g. 0x04",
 				Required: true,
 			},
 			&cli.StringFlag{

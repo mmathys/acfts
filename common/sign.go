@@ -3,26 +3,26 @@ package common
 import (
 	"bytes"
 	"crypto/ecdsa"
-	"crypto/rand"
 	"errors"
 	"fmt"
+	crypto2 "github.com/ethereum/go-ethereum/crypto"
+	"log"
 	"math"
 )
 
-func signHash(key *ecdsa.PrivateKey, hash []byte) (ECDSASig, error) {
-	r, s, err := ecdsa.Sign(rand.Reader, key, hash)
+func signHash(key *ecdsa.PrivateKey, hash []byte) ([]byte, error) {
+	sig, err := crypto2.Sign(hash, key)
 	if err != nil {
-		return ECDSASig{}, err
+		return []byte{}, err
 	}
-	addr := MarshalPubkey(&key.PublicKey)
-	return ECDSASig{R: r, S: s, Address: addr}, nil
+	return sig, nil
 }
 
 func SignValue(key *ecdsa.PrivateKey, value *Value) error {
 	hash := HashValue(*value)
 
 	if value.Signatures == nil {
-		value.Signatures = []ECDSASig{}
+		value.Signatures = [][]byte{}
 	}
 
 	sig, err := signHash(key, hash)
@@ -69,15 +69,21 @@ func VerifyValue(value *Value) error {
 	numSigs := 0
 
 	for _, sig := range value.Signatures {
-		pubkey := UnmarshalPubkey(sig.Address)
-		valid := ecdsa.Verify(pubkey, hash, sig.R, sig.S)
+		pubkey, err := crypto2.Ecrecover(hash, sig)
+		if err != nil {
+			return err
+		}
+
+		sig = sig[:len(sig)-1] // remove recovery bit
+		valid := crypto2.VerifySignature(pubkey, hash, sig)
+
 		if !valid {
 			return errors.New("value verification failed")
 		}
 
 		// look out for duplicates signatures
 		index := [AddressLength]byte{}
-		copy(index[:], sig.Address[:AddressLength])
+		copy(index[:], pubkey[:AddressLength])
 		if origins[index] {
 			return errors.New("duplicate signatures")
 		}
@@ -108,9 +114,14 @@ func VerifyTransaction(value *Transaction) error {
 Verifies a signature request
 - checks if all inputs are owned by the same party
 - checks if party signed the request
- */
+*/
 func VerifyTransactionSigRequest(req *TransactionSigReq) error {
-	owner := req.Transaction.Inputs[0].Address
+	hash := HashTransactionSigRequest(*req)
+
+	owner, err := crypto2.Ecrecover(hash, req.Signature)
+	if err != nil {
+		panic(err)
+	}
 
 	for _, input := range req.Transaction.Inputs {
 		if !bytes.Equal(owner, input.Address) {
@@ -118,12 +129,25 @@ func VerifyTransactionSigRequest(req *TransactionSigReq) error {
 		}
 	}
 
-	hash := HashTransactionSigRequest(*req)
-	pubkey := UnmarshalPubkey(owner)
-	valid := ecdsa.Verify(pubkey, hash, req.Signature.R, req.Signature.S)
+	sig := req.Signature[:len(req.Signature)-1] // remove recovery bit
+	valid := crypto2.VerifySignature(owner, hash, sig)
+
 	if !valid {
 		return errors.New("sig request verification failed")
 	}
 
 	return nil
+}
+
+func RecoverPubkeyBytes(hash []byte, sig []byte) []byte {
+	recoveredPub, err := crypto2.Ecrecover(hash, sig)
+	if err != nil {
+		log.Panicf("ECRecover error: %s", err)
+	}
+	return recoveredPub
+}
+
+func RecoverPubkey(hash []byte, sig []byte) *ecdsa.PublicKey {
+	recoveredPub := RecoverPubkeyBytes(hash, sig)
+	return UnmarshalPubkey(recoveredPub)
 }

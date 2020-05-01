@@ -13,7 +13,6 @@ import (
 	"sync"
 )
 
-
 var Id *common.Identity
 var Debug bool
 var BenchmarkMode bool
@@ -23,8 +22,8 @@ var AllowDoublespend = false
 var UseUTXOMap = true
 var CheckTransactions = true
 
-type Server struct {}
-type RPCAdapter struct {}
+type Server struct{}
+type RPCAdapter struct{}
 
 func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignRes) error {
 	if BenchmarkMode {
@@ -42,7 +41,7 @@ func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignR
 	tx := req.Transaction
 	if !Debug && UseUTXOMap {
 		for _, input := range tx.Inputs {
-			_ , spent := SignedUTXO.LoadOrStore(input.Id, true)
+			_, spent := SignedUTXO.LoadOrStore(input.Id, true)
 			if spent && !AllowDoublespend {
 				err := errors.New("UTXO already exists: no double spending")
 				fmt.Println(err)
@@ -56,7 +55,7 @@ func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignR
 	if Debug {
 		outputs = tx.Outputs
 		for i, _ := range outputs {
-			outputs[i].Signatures = []common.ECDSASig{}
+			outputs[i].Signatures = [][]byte{}
 		}
 	} else {
 		var err error = nil

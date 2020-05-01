@@ -51,7 +51,7 @@ func send(w *common.Wallet, s []string) {
 }
 
 func info(w *common.Wallet) {
-	net, _ := common.GetNetworkAddress(w.Address)
+	net, _ := common.GetClientNetworkAddress(w.Address)
 	fmt.Printf("Address (public key):\t0x%x\n", w.Address)
 	fmt.Printf("Private Key:\t\t0x%x\n", *common.MarshalKey(w.Key))
 	fmt.Printf("Network:\t\t%s\n", net)
