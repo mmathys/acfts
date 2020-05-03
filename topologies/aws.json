@@ -7,23 +7,23 @@
       ],
       "Instances": [
         {
-          "Net": "server",
+          "Net": "ec2-3-120-235-192.eu-central-1.compute.amazonaws.com",
           "Port": 6666
         },
         {
-          "Net": "server",
+          "Net": "ec2-3-120-132-228.eu-central-1.compute.amazonaws.com",
           "Port": 6667
         },
         {
-          "Net": "server",
+          "Net": "ec2-3-120-224-135.eu-central-1.compute.amazonaws.com",
           "Port": 6668
         },
         {
-          "Net": "server",
+          "Net": "ec2-3-120-179-93.eu-central-1.compute.amazonaws.com",
           "Port": 6669
         },
         {
-          "Net": "server",
+          "Net": "ec2-18-185-136-75.eu-central-1.compute.amazonaws.com",
           "Port": 6670
         }
       ]
