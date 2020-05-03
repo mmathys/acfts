@@ -11,7 +11,57 @@ services:
     ports:
       - "6666:6666"
     environment:
+      - TOPOLOGY=dockerSimple
+
+  server_shard_0:
+    build: ./server
+    depends_on:
+      - base
+    ports:
+      - "6666:6666"
+    environment:
       - TOPOLOGY=aws
+      - INSTANCE=0
+
+  server_shard_1:
+    build: ./server
+    depends_on:
+      - base
+    ports:
+      - "6667:6667"
+    environment:
+      - TOPOLOGY=aws
+      - INSTANCE=1
+
+  server_shard_2:
+    build: ./server
+    depends_on:
+      - base
+    ports:
+      - "6668:6668"
+    environment:
+      - TOPOLOGY=aws
+      - INSTANCE=2
+
+  server_shard_3:
+    build: ./server
+    depends_on:
+      - base
+    ports:
+      - "6669:6669"
+    environment:
+      - TOPOLOGY=aws
+      - INSTANCE=3
+
+  server_shard_4:
+    build: ./server
+    depends_on:
+      - base
+    ports:
+      - "6670:6670"
+    environment:
+      - TOPOLOGY=aws
+      - INSTANCE=4
 
   agents:
     build: ./benchmark/agents
