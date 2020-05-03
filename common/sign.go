@@ -51,8 +51,8 @@ func SignTransactionSigRequest(key *ecdsa.PrivateKey, request *TransactionSigReq
 	if err != nil {
 		return err
 	}
-
 	request.Signature = sig
+
 	return nil
 }
 
@@ -118,19 +118,20 @@ Verifies a signature request
 func VerifyTransactionSigRequest(req *TransactionSigReq) error {
 	hash := HashTransactionSigRequest(*req)
 
-	owner, err := crypto2.Ecrecover(hash, req.Signature)
+	owner, err := crypto2.SigToPub(hash, req.Signature)
 	if err != nil {
 		panic(err)
 	}
+	ownerEncoded := MarshalPubkey(owner)
 
 	for _, input := range req.Transaction.Inputs {
-		if !bytes.Equal(owner, input.Address) {
+		if !bytes.Equal(ownerEncoded, input.Address) {
 			return errors.New("inputs are not owned by the same party")
 		}
 	}
 
 	sig := req.Signature[:len(req.Signature)-1] // remove recovery bit
-	valid := crypto2.VerifySignature(owner, hash, sig)
+	valid := crypto2.VerifySignature(ownerEncoded, hash, sig)
 
 	if !valid {
 		return errors.New("sig request verification failed")

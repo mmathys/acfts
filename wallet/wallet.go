@@ -9,6 +9,9 @@ import (
 // prepare transaction mutex
 
 func getIndex(id common.Identifier) [common.IdentifierLength]byte {
+	if len(id) != common.IdentifierLength {
+		panic("identifier length mismatch")
+	}
 	index := [common.IdentifierLength]byte{}
 	copy(index[:], id[:common.IdentifierLength])
 	return index

@@ -55,7 +55,16 @@ func TestRecoverPubkey(t *testing.T) {
 	if err != nil {
 		t.Errorf("ECRecover error: %s", err)
 	}
+
+	if !reflect.DeepEqual(MarshalPubkey(pubKey), recoveredPub) {
+		t.Errorf("pubkey mismatch #0")
+	}
+
 	if !reflect.DeepEqual(MarshalPubkey(pubKey), MarshalPubkey(recoveredPub2)) {
-		t.Errorf("pubkey mismatch")
+		t.Errorf("pubkey mismatch #1")
+	}
+
+	if !reflect.DeepEqual(MarshalPubkey(&key.PublicKey), MarshalPubkey(recoveredPub2)) {
+		t.Errorf("pubkey mismatch #2")
 	}
 }

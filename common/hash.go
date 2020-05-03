@@ -1,9 +1,11 @@
 package common
 
 import (
+	"encoding/binary"
 	"encoding/gob"
 	"fmt"
 	"golang.org/x/crypto/sha3"
+	"hash"
 )
 
 func HashValueSprintf(value Value) []byte {
@@ -22,17 +24,29 @@ func HashValue(value Value) []byte {
 	return d.Sum(nil)
 }
 
-func HashTransactionSigRequestSprintf(req TransactionSigReq) []byte {
-	d := sha3.New256()
-	req.Signature = []byte{}              // zero out signatures before hash
-	d.Write([]byte(fmt.Sprintf("%v", req))) // this may be slow!
-	return d.Sum(nil)
+func writeValue(d *hash.Hash, value *Value) {
+	(*d).Write(value.Address)
+	binary.Write(*d, binary.LittleEndian, value.Amount)
+	(*d).Write(value.Id[:])
+	if value.Signatures != nil {
+		for _, signature := range value.Signatures {
+			(*d).Write(signature)
+		}
+	}
 }
 
 func HashTransactionSigRequest(req TransactionSigReq) []byte {
-	d := sha3.New256()
-	enc := gob.NewEncoder(d)
 	req.Signature = []byte{} // zero out signatures before hash
-	enc.Encode(req)
-	return d.Sum(nil)
+	d := sha3.New256()
+
+	for _, input := range req.Transaction.Inputs {
+		writeValue(&d, &input)
+	}
+
+	for _, output := range req.Transaction.Outputs {
+		writeValue(&d, &output)
+	}
+
+	hash := d.Sum(nil)
+	return hash
 }
