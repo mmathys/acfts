@@ -26,7 +26,7 @@ services:
     depends_on:
       - base
     environment:
-      - TOPOLOGY=aws
+      - TOPOLOGY=dockerSimple
       - BENCH=BenchmarkSignNoNetwork
       - NUM_WORKERS=1
       - GOGC=11000
@@ -40,7 +40,7 @@ services:
     depends_on:
       - base
     environment:
-      - TOPOLOGY=aws
+      - TOPOLOGY=dockerSimple
       - BENCH=BenchmarkSignNoNetwork
       - NUM_WORKERS=2
       - GOGC=11000
@@ -54,7 +54,7 @@ services:
     depends_on:
       - base
     environment:
-      - TOPOLOGY=aws
+      - TOPOLOGY=dockerSimple
       - BENCH=BenchmarkSignNoNetwork
       - NUM_WORKERS=4
       - GOGC=11000
@@ -68,7 +68,7 @@ services:
     depends_on:
       - base
     environment:
-      - TOPOLOGY=aws
+      - TOPOLOGY=dockerSimple
       - BENCH=BenchmarkSignNoNetwork
       - NUM_WORKERS=8
       - GOGC=11000
@@ -82,7 +82,7 @@ services:
     depends_on:
       - base
     environment:
-      - TOPOLOGY=aws
+      - TOPOLOGY=dockerSimple
       - BENCH=BenchmarkSignNoNetwork
       - NUM_WORKERS=16
       - GOGC=11000
@@ -96,7 +96,7 @@ services:
     depends_on:
       - base
     environment:
-      - TOPOLOGY=aws
+      - TOPOLOGY=dockerSimple
       - BENCH=BenchmarkSignNoNetwork
       - NUM_WORKERS=32
       - GOGC=11000
@@ -110,7 +110,7 @@ services:
     depends_on:
       - base
     environment:
-      - TOPOLOGY=aws
+      - TOPOLOGY=dockerSimple
       - BENCH=BenchmarkSignNoNetwork
       - NUM_WORKERS=64
       - GOGC=11000

@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/ethereum/go-ethereum/crypto"
+	"golang.org/x/crypto/sha3"
 	"log"
 	"os"
 )
@@ -184,14 +185,18 @@ func GetServerInstanceIndex(serverAddr Address, clientAddr Address) int {
 		panic(err)
 	}
 
+	d := sha3.New256() // 256 bits / 32 bytes
+	d.Write(clientAddr)
+	hash := d.Sum(nil)
+
 	// get the four most least significant bytes to the address, then mod it with the number of server instances
 	numInstances := uint32(len(server.Instances))
 	var num uint32
-	addrLen := len(clientAddr)
-	num |= uint32(clientAddr[addrLen - 1])
-	num |= uint32(clientAddr[addrLen - 2]) << 8
-	num |= uint32(clientAddr[addrLen - 3]) << 16
-	num |= uint32(clientAddr[addrLen - 4]) << 24
+	hashLen := len(hash)
+	num |= uint32(hash[hashLen - 1])
+	num |= uint32(hash[hashLen - 2]) << 8
+	num |= uint32(hash[hashLen - 3]) << 16
+	num |= uint32(hash[hashLen - 4]) << 24
 
 	return int(num % numInstances)
 }
