@@ -17,10 +17,11 @@ func BenchmarkSyncMap(b *testing.B) {
 		name := fmt.Sprintf("size: %d", size)
 		b.Run(name, func(b *testing.B) {
 			utxos := hashmap.New(uintptr(size))
-			var identifiers []common.Identifier
+			var identifiers [][]byte
 
 			for i := 0; i < b.N; i++ {
-				identifiers = append(identifiers, common.RandomIdentifier())
+				id := common.RandomIdentifier()
+				identifiers = append(identifiers, id[:])
 			}
 
 			b.ResetTimer()
@@ -36,7 +37,7 @@ func BenchmarkSyncMap(b *testing.B) {
 func BenchmarkParallelMap(b *testing.B) {
 	utxos := hashmap.New(uintptr(b.N))
 	lastParam := os.Args[len(os.Args)-1]
-	numWorkers := 2
+	numWorkers := 4
 	if paramNum, err := strconv.Atoi(lastParam); err == nil {
 		numWorkers = paramNum
 	}
@@ -112,11 +113,11 @@ func BenchmarkParallelMapGo(b *testing.B) {
 func TestStuff(t *testing.T) {
 	utxos := hashmap.HashMap{}
 	id := common.RandomIdentifier()
-	newItem := utxos.Insert(id, true)
+	newItem := utxos.Insert(id[:], true)
 	if !newItem {
 		t.Error("fail: should not exist")
 	}
-	newItem = utxos.Insert(id, true)
+	newItem = utxos.Insert(id[:], true)
 	if newItem {
 		t.Error("fail: should exist")
 	}
