@@ -43,11 +43,12 @@ func BenchmarkParallelMap(b *testing.B) {
 
 	fmt.Printf("numWorkers = %d\n", numWorkers)
 
-	var identifiers [][]common.Identifier
+	var identifiers [][][]byte
 	for i := 0; i < numWorkers; i++ {
-		identifiers = append(identifiers, []common.Identifier{})
+		identifiers = append(identifiers, [][]byte{})
 		for j := 0; j < b.N/numWorkers; j++ {
-			identifiers[i] = append(identifiers[i], common.RandomIdentifier())
+			id := common.RandomIdentifier()
+			identifiers[i] = append(identifiers[i], id[:])
 		}
 	}
 
@@ -56,7 +57,7 @@ func BenchmarkParallelMap(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < numWorkers; i++ {
 		wg.Add(1)
-		go func(work []common.Identifier) {
+		go func(work [][]byte) {
 			for j := 0; j < len(work); j++ {
 				if newItem := utxos.Insert(work[j], true); !newItem {
 					b.Error("should not happen")
