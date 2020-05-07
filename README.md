@@ -32,7 +32,7 @@ Add `$GOPATH/bin` to your `$PATH`
 # Add this line to your .bashrc, .zshrc or similar
 export PATH=$PATH:$GOPATH/bin
 
-# reload the .bashrc
+# reload .bashrc
 source ~/.bashrc
 ```
 
@@ -47,30 +47,30 @@ go install ./...
 ## Introduction
 
 ACFTS is a asynchronous consensus-free transaction system. It consists of trusted servers and untrusted clients. Each server
-and client have a unique ECDSA key. The address of each server and client is its public key.
+and client have a unique ECDSA key. The address is derived from its public key.
 
-The client has a CLI which allows easy transfer of currency. In this setup, each client automatically gets 100 valid credits.
-The client CLI can be accessed after starting the client executable. 
+The client has a CLI which allows easy transfer of credits. In this setup, each client automatically gets 100 valid credits.
+The client CLI can be accessed by starting the client executable.
 
 ### Topologies
 
 Topologies are defined as JSON configuration files in `topologies/`.
 
 Topologies encode all necessary information about server and clients, for example: address, keys, network address,
-replication instances. In a system, every server and client have to use the same topology.
+replication instances. In a system, a server and client must always use the same topology.
 
-When launching a server or a client, its configuration can be given with a topology, an assigned address (which
-must correspond to a node in the topology). When server shard replication is used, and replication instance index is
-passed additionally.
+When launching a server or a client, its configuration can be given by a topology, an address (which
+must correspond to a node in the topology). When server shard replication is used, and replication instance index can
+additionally be passed.
 
 ## Executables
 
-The CLIs are installed in `$GOPATH/bin` and are called `server` and `client` respectively.
+The CLIs are installed in `$GOPATH/bin`.
 
 ### Server
 
 ```bash
-server                      # CLI executable
+server                      # Executable
     --address <address>     # Address assigned to server. Format: 0x...
     --topology <file>       # Topology configuration file
     --benchmark             # Outputs number of tx/s to stdout
@@ -82,10 +82,10 @@ server                      # CLI executable
 
 ### Client
 
-Start the CLI:
+Launch the CLI:
 
 ```bash
-client                      # CLI executable
+client                      # Executable
     --address <address>     # Address assigned to client. Format: 0x...
     --topology <file>       # Topology configuration file
     --benchmark             # If set: outputs benchmark
