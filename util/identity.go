@@ -20,7 +20,7 @@ func NewWalletWithAmount(address common.Address, value int) *common.Wallet {
 	addr := common.MarshalPubkey(&id.Key.PublicKey)
 	v := common.Value{Address: addr, Amount: value, Id: utxoId}
 
-	// every client gets valid 100 money to their account.
+	// every client gets valid 100 credits to their account.
 	// this is for debugging. In production, there would be an origin output or something like that
 	for _, server := range common.GetServers() {
 		key := common.GetKey(server)

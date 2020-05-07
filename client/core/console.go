@@ -15,7 +15,7 @@ import (
 
 // Show help
 func help() {
-	fmt.Println("send 0x00 100\t\tSend 100 money to 0x00")
+	fmt.Println("send <address> 100\t\tSend 100 credits to <address>. Format: 0x....")
 	fmt.Println("utxo\t\t\tShow local UTXOs")
 	fmt.Println("balance\t\t\tShow balance")
 	fmt.Println("info\t\t\tShow client information")

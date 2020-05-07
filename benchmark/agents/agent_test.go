@@ -14,7 +14,7 @@ import (
 )
 
 /**
-Clients send 1 money to random other clients
+Clients send 1 credit to random other clients
 */
 func simpleAgent(a common.Agent, wg *sync.WaitGroup) {
 	defer wg.Done()
