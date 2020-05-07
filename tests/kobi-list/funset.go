@@ -1,4 +1,4 @@
-package _map
+package kobi_list
 
 const arrayLength = 10000000
 
@@ -10,7 +10,7 @@ func NewFunSet() *FunSet {
 	table := [arrayLength]*LinkedList{}
 
 	for i := 0; i < arrayLength; i++ {
-		table[i] = Newlist()
+		table[i] = NewList()
 	}
 	return &FunSet{
 		table,

@@ -1,4 +1,4 @@
-package _map
+package kobi_list
 
 import (
 	"sync"
@@ -6,7 +6,7 @@ import (
 
 // LinkedList : Data structure
 type LinkedList struct {
-	mu sync.Mutex
+	mu   sync.Mutex
 	Head *Node
 }
 
@@ -17,7 +17,7 @@ type Node struct {
 }
 
 // New : Create a new Linked List
-func Newlist() *LinkedList {
+func NewList() *LinkedList {
 	emptyNode := &Node{
 		Next: nil,
 		Data: nil,
@@ -29,8 +29,10 @@ func Newlist() *LinkedList {
 
 // If two thingies to be stored are equal.
 func Equals(a *[32]byte, b *[32]byte) bool {
-	for i:=0;i<32;i++{
-		if a[i]!=b[i] {return false}
+	for i := 0; i < 32; i++ {
+		if a[i] != b[i] {
+			return false
+		}
 	}
 	return true
 }
