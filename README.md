@@ -16,7 +16,7 @@
 
 ## Install
 
-**Prerequisites**: ACFTS requires [Go](https://golang.org/doc/install).
+**Prerequisites**: [Go](https://golang.org/doc/install) is required.
 
 Clone the repo:
 
