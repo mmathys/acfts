@@ -107,7 +107,7 @@ Run CLI commands:
 
 ## Testing
 
-For Benchmarks and testing, it is recommended that Tests are run with an IDE, for example [Goland](https://www.jetbrains.com/go/).
+For Benchmarks and testing, it is recommended that tests are run with an IDE, for example [Goland](https://www.jetbrains.com/go/).
 
 ## Code
 
