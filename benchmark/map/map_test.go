@@ -74,7 +74,7 @@ func BenchmarkParallelMap(b *testing.B) {
 func BenchmarkParallelMapGo(b *testing.B) {
 	utxos := sync.Map{}
 	lastParam := os.Args[len(os.Args)-1]
-	numWorkers := 4
+	numWorkers := 8
 	if paramNum, err := strconv.Atoi(lastParam); err == nil {
 		numWorkers = paramNum
 	}
