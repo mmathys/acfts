@@ -11,7 +11,8 @@
 1. [Install](#install)
 2. [Introduction](#introduction)
 3. [Executables](#executables)
-4. [Mirroring](#mirroring)
+4. [Code](#code)
+5. [Mirroring](#mirroring)
 
 ## Install
 
@@ -102,6 +103,21 @@ Run CLI commands:
 > info                    # Show client information
 > clear                   # Clear console
 ```
+
+## Code
+
+| Folder | Description |
+| :---: | :---: |
+| `benchmark` | code for running benchmarks |
+| `client` | Client specific code |
+| `common` | Code which is used in both server and client, for example ECDSA-related code. |
+| `docs` | Documentation |
+| `server` | Server specific code |
+| `tests` | Tests (not used in the executables) |
+| `topologies` | Topology config files |
+| `util` | Utility functions |
+| `wallet` | Wallet specific code |
+
 
 ## Mirroring
 
