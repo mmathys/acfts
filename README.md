@@ -11,8 +11,9 @@
 1. [Install](#install)
 2. [Introduction](#introduction)
 3. [Executables](#executables)
-4. [Code](#code)
-5. [Mirroring](#mirroring)
+4. [Testing](#testing)
+5. [Code](#code)
+6. [Mirroring](#mirroring)
 
 ## Install
 
@@ -103,6 +104,10 @@ Run CLI commands:
 > info                    # Show client information
 > clear                   # Clear console
 ```
+
+## Testing
+
+It is recommended that Tests are run with an IDE, for example [Goland](https://www.jetbrains.com/go/).
 
 ## Code
 
