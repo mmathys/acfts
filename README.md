@@ -111,15 +111,12 @@ For Benchmarks and testing, it is recommended that tests are run with an IDE, fo
 
 | Folder | Description |
 | :---: | :---: |
-| `benchmark` | code for running benchmarks |
 | `client` | Client specific code |
 | `common` | Code which is used in both server and client, for example ECDSA-related code. |
 | `docs` | Documentation |
 | `server` | Server specific code |
-| `tests` | Tests (not used in the executables) |
+| `test` | Tests and benchmarks |
 | `topologies` | Topology config files |
-| `util` | Utility functions |
-| `wallet` | Wallet specific code |
 
 
 ## Mirroring
