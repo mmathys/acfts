@@ -1,16 +1,27 @@
 package checks
 
 import (
-	client "github.com/mmathys/acfts/client"
 	"github.com/mmathys/acfts/client/core"
 	"github.com/mmathys/acfts/common"
+	"github.com/mmathys/acfts/common/test_util"
+	"os"
 	"testing"
 )
 
+var A common.Address
+var B common.Address
+
+func TestMain(m *testing.M) {
+	test_util.TestEnvironment()
+	A = test_util.TestClient(0)
+	B = test_util.TestClient(1)
+	os.Exit(m.Run())
+}
+
 func TestValidSig(t *testing.T) {
-	w := common.NewWallet(common.Address{0})
-	tx, _ := cli.PrepareTransaction(w, common.Address{1}, 1)
-	_, err := client.SignTransaction(w, tx)
+	w := common.NewWallet(A)
+	tx, _ := core.PrepareTransaction(w, B, 1)
+	_, err := core.SignTransaction(w, tx)
 
 	if err != nil {
 		t.Error(err)
@@ -18,17 +29,17 @@ func TestValidSig(t *testing.T) {
 }
 
 func TestMinZero(t *testing.T) {
-	w := common.NewWallet(common.Address{0})
+	w := common.NewWallet(A)
 
-	tx, _ := cli.PrepareTransaction(w, common.Address{1}, 0)
-	_, err := client.SignTransaction(w, tx)
+	tx, _ := core.PrepareTransaction(w, B, 0)
+	_, err := core.SignTransaction(w, tx)
 
 	if err == nil {
 		t.Error("should throw an error")
 	}
 
-	tx, _ = cli.PrepareTransaction(w, common.Address{1}, -1)
-	_, err = client.SignTransaction(w, tx)
+	tx, _ = core.PrepareTransaction(w, B, -1)
+	_, err = core.SignTransaction(w, tx)
 
 	if err == nil {
 		t.Error("should throw an error")

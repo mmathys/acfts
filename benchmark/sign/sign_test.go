@@ -2,7 +2,6 @@ package sign
 
 import (
 	"fmt"
-	"github.com/mmathys/acfts/client/core"
 	"github.com/mmathys/acfts/common"
 	"log"
 	"net/http"

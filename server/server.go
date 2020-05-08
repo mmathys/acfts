@@ -1,10 +1,9 @@
 package main
 
 import (
-	"github.com/mmathys/acfts/client/util"
 	"github.com/mmathys/acfts/common"
 	serverAdapter "github.com/mmathys/acfts/server/adapter"
-	util2 "github.com/mmathys/acfts/server/util"
+	"github.com/mmathys/acfts/server/util"
 	"github.com/urfave/cli/v2"
 	"log"
 	_ "net/http/pprof"
@@ -25,7 +24,7 @@ func runServer(address common.Address, instanceIndex int, benchmark bool, topolo
 	log.Printf("addr=0x%x, instance=%d, port=%d, benchmark = %t, pprof=%t\n", address, instanceIndex, port, benchmark, pprof)
 
 	if benchmark {
-		go util2.Ticker(TxCounter)
+		go util.Ticker(TxCounter)
 	}
 
 	if pprof {
@@ -45,7 +44,7 @@ func main() {
 		Action: func(c *cli.Context) error {
 			instanceIndex := c.Int("instance") // if not set, value is 0
 
-			addr, err := util.ReadAddress(c.String("address"))
+			addr, err := common.ReadAddress(c.String("address"))
 			if err != nil {
 				log.Fatal(err)
 			}

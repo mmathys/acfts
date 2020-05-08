@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/c-bata/go-prompt"
 	"github.com/mmathys/acfts/client/core"
-	"github.com/mmathys/acfts/client/util"
 	"github.com/mmathys/acfts/common"
 	"github.com/olekukonko/tablewriter"
 	"os"
@@ -29,7 +28,7 @@ func send(w *common.Wallet, s []string) {
 		return
 	}
 
-	address, err := util.ReadAddress(s[1])
+	address, err := common.ReadAddress(s[1])
 	if err != nil {
 		fmt.Print("Error: ", err.Error())
 		return

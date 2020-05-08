@@ -4,7 +4,6 @@ import (
 	clientAdapter "github.com/mmathys/acfts/client/adapter"
 	"github.com/mmathys/acfts/client/cli"
 	"github.com/mmathys/acfts/client/core"
-	"github.com/mmathys/acfts/client/util"
 	"github.com/mmathys/acfts/common"
 	urfaveCli "github.com/urfave/cli/v2"
 	"log"
@@ -26,7 +25,7 @@ func handleIncoming(w *common.Wallet, incoming chan common.Value) {
 }
 
 func runClient(c *urfaveCli.Context) error {
-	addr, err := util.ReadAddress(c.String("address"))
+	addr, err := common.ReadAddress(c.String("address"))
 	if err != nil {
 		log.Fatal(err)
 	}

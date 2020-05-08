@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/mmathys/acfts/common"
 	"github.com/mmathys/acfts/server/checks"
-	util2 "github.com/mmathys/acfts/server/util"
+	"github.com/mmathys/acfts/server/util"
 	"log"
 	"net"
 	"net/http"
@@ -14,22 +14,24 @@ import (
 )
 
 var Id *common.Identity
-var Debug bool
-var BenchmarkMode bool
+var NoSigning bool
+var Benchmark bool
 var TxCounter *int32
 var SignedUTXO *sync.Map
 var AllowDoublespend = false
 var UseUTXOMap = true
 var CheckTransactions = true
 
+// struct for RPC
 type Server struct{}
 
 func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignRes) error {
-	if BenchmarkMode {
-		defer util2.CountTx(TxCounter)
+	if Benchmark {
+		defer util.CountTx(TxCounter)
 	}
 
-	if !Debug && CheckTransactions {
+	// Perform checks
+	if !NoSigning && CheckTransactions {
 		err := checks.CheckValidity(&req)
 		if err != nil {
 			fmt.Println(err)
@@ -37,8 +39,9 @@ func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignR
 		}
 	}
 
+	// Sign transaction
 	tx := req.Transaction
-	if !Debug && UseUTXOMap {
+	if !NoSigning && UseUTXOMap {
 		for _, input := range tx.Inputs {
 			_, spent := SignedUTXO.LoadOrStore(input.Id, true)
 			if spent && !AllowDoublespend {
@@ -49,31 +52,31 @@ func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignR
 		}
 	}
 
-	// Sign the request
+	// Sign the transaction request
 	var outputs []common.Value
-	if Debug {
-		outputs = tx.Outputs
-		for i, _ := range outputs {
-			outputs[i].Signatures = [][]byte{}
-		}
-	} else {
+	if !NoSigning {
 		var err error = nil
 		outputs, err = common.SignValues(Id.Key, tx.Outputs)
 		if err != nil {
 			fmt.Println(err)
 			return err
 		}
+	} else {
+		outputs = tx.Outputs
+		for i, _ := range outputs {
+			outputs[i].Signatures = [][]byte{}
+		}
 	}
 
-	// Form the response
+	// Respond
 	*res = common.TransactionSignRes{Outputs: outputs}
 	return nil
 }
 
-func Init(port int, _id *common.Identity, debug bool, benchmark bool, txCounter *int32, signedUTXO *sync.Map) {
-	Id = _id
-	Debug = debug
-	BenchmarkMode = benchmark
+func Init(port int, id *common.Identity, noSigning bool, benchmark bool, txCounter *int32, signedUTXO *sync.Map) {
+	Id = id
+	NoSigning = noSigning
+	Benchmark = benchmark
 	TxCounter = txCounter
 	SignedUTXO = signedUTXO
 

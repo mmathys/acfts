@@ -5,19 +5,47 @@ import (
 	"crypto/ecdsa"
 	"errors"
 	"fmt"
-	crypto2 "github.com/ethereum/go-ethereum/crypto"
-	"log"
+	ethereum "github.com/ethereum/go-ethereum/crypto"
 	"math"
 )
 
+/**
+Signature Recovery
+ */
+
+// Recovers a ECDSA public key (bytes, uncompressed) from a hash and signature. Using ethereum/go-ethereum crypto.
+func recoverPubkeyBytes(hash []byte, sig []byte) ([]byte, error) {
+	return ethereum.Ecrecover(hash, sig)
+}
+
+// Recovers a ECDSA public key (*ecdsa.PublicKey) from a hash and signature. Using ethereum/go-ethereum crypto.
+func recoverPubkey(hash []byte, sig []byte) (*ecdsa.PublicKey, error) {
+	return ethereum.SigToPub(hash, sig)
+}
+
+// Recovers a an address from a hash and signature. Using ethereum/go-ethereum crypto.
+func recoverAddress(hash []byte, sig []byte) (Address, error) {
+	owner, err := recoverPubkey(hash, sig)
+	if err != nil {
+		return nil, err
+	}
+	return MarshalPubkey(owner), nil
+}
+
+/**
+Signing
+ */
+
+// Signs a hash
 func signHash(key *ecdsa.PrivateKey, hash []byte) ([]byte, error) {
-	sig, err := crypto2.Sign(hash, key)
+	sig, err := ethereum.Sign(hash, key)
 	if err != nil {
 		return []byte{}, err
 	}
 	return sig, nil
 }
 
+// Signs a value
 func SignValue(key *ecdsa.PrivateKey, value *Value) error {
 	hash := HashValue(*value)
 
@@ -34,6 +62,7 @@ func SignValue(key *ecdsa.PrivateKey, value *Value) error {
 	return nil
 }
 
+// Signs multiple values
 func SignValues(key *ecdsa.PrivateKey, outputs []Value) ([]Value, error) {
 	var signed []Value
 
@@ -45,6 +74,7 @@ func SignValues(key *ecdsa.PrivateKey, outputs []Value) ([]Value, error) {
 	return signed, nil
 }
 
+// Signs transaction signature request, which is requested by a client
 func SignTransactionSigRequest(key *ecdsa.PrivateKey, request *TransactionSigReq) error {
 	hash := HashTransactionSigRequest(*request)
 	sig, err := signHash(key, hash)
@@ -57,25 +87,32 @@ func SignTransactionSigRequest(key *ecdsa.PrivateKey, request *TransactionSigReq
 }
 
 /**
-Verifies single value
-- Verifies all signatures
-- Checks whether there are duplicate signatures
-- Checks whether the signature are from valid severs
-- Checks whether there are enough signatures to satisfy the validity constraint. (> 2/3 of all sigs)
+Signature Verification
 */
+
+// Verifies a signature. Using ethereum/go-ethereum crypto
+func verify(pubkey []byte, hash []byte, sig []byte) bool {
+	return ethereum.VerifySignature(pubkey, hash, sig)
+}
+
+// Verifies single value
+// - Verifies all signatures
+// - Checks whether there are duplicate signatures
+// - Checks whether the signature are from valid severs
+// - Checks whether there are enough signatures to satisfy the validity constraint. (> 2/3 of all sigs)
 func VerifyValue(value *Value) error {
 	hash := HashValue(*value)
 	origins := make(map[[AddressLength]byte]bool)
 	numSigs := 0
 
 	for _, sig := range value.Signatures {
-		pubkey, err := crypto2.Ecrecover(hash, sig)
+		pubkey, err := recoverPubkeyBytes(hash, sig)
 		if err != nil {
 			return err
 		}
 
 		sig = sig[:len(sig)-1] // remove recovery bit
-		valid := crypto2.VerifySignature(pubkey, hash, sig)
+		valid := verify(pubkey, hash, sig)
 
 		if !valid {
 			return errors.New("value verification failed")
@@ -102,53 +139,29 @@ func VerifyValue(value *Value) error {
 	return nil
 }
 
-/*
-Checks validity of a *completed* transaction. It's only used in the client.
-- verifies inputs and outputs
-*/
-func VerifyTransaction(value *Transaction) error {
-	return nil
-}
-
-/*
-Verifies a signature request
-- checks if all inputs are owned by the same party
-- checks if party signed the request
-*/
+// Verifies a signature request
+// - checks if all inputs are owned by the same party
+// - checks if party signed the request
 func VerifyTransactionSigRequest(req *TransactionSigReq) error {
 	hash := HashTransactionSigRequest(*req)
 
-	owner, err := crypto2.SigToPub(hash, req.Signature)
+	ownerAddress, err := recoverAddress(hash, req.Signature)
 	if err != nil {
 		panic(err)
 	}
-	ownerEncoded := MarshalPubkey(owner)
 
 	for _, input := range req.Transaction.Inputs {
-		if !bytes.Equal(ownerEncoded, input.Address) {
+		if !bytes.Equal(ownerAddress, input.Address) {
 			return errors.New("inputs are not owned by the same party")
 		}
 	}
 
 	sig := req.Signature[:len(req.Signature)-1] // remove recovery bit
-	valid := crypto2.VerifySignature(ownerEncoded, hash, sig)
+	valid := verify(ownerAddress, hash, sig)
 
 	if !valid {
 		return errors.New("sig request verification failed")
 	}
 
 	return nil
-}
-
-func RecoverPubkeyBytes(hash []byte, sig []byte) []byte {
-	recoveredPub, err := crypto2.Ecrecover(hash, sig)
-	if err != nil {
-		log.Panicf("ECRecover error: %s", err)
-	}
-	return recoveredPub
-}
-
-func RecoverPubkey(hash []byte, sig []byte) *ecdsa.PublicKey {
-	recoveredPub := RecoverPubkeyBytes(hash, sig)
-	return UnmarshalPubkey(recoveredPub)
 }
