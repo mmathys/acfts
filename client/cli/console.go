@@ -95,7 +95,7 @@ func clear() {
 
 func completer(d prompt.Document) []prompt.Suggest {
 	s := []prompt.Suggest{
-		{Text: "send", Description: "Send money to X"},
+		{Text: "send", Description: "Send credits to X"},
 		{Text: "utxo", Description: "Show local UTXOs"},
 		{Text: "balance", Description: "Show balance"},
 		{Text: "info", Description: "Show client information"},

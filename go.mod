@@ -12,5 +12,6 @@ require (
 	github.com/shirou/gopsutil v2.20.3+incompatible
 	github.com/urfave/cli/v2 v2.2.0
 	golang.org/x/crypto v0.0.0-20200406173513-056763e48d71
+	golang.org/x/sync v0.0.0-20200317015054-43a5402ce75a // indirect
 	gotest.tools v2.2.0+incompatible
 )

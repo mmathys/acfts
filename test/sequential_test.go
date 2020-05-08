@@ -1,7 +1,6 @@
 package test
 
 import (
-	"fmt"
 	"github.com/mmathys/acfts/client/core"
 	"github.com/mmathys/acfts/common"
 	"github.com/mmathys/acfts/test/environment"
@@ -24,7 +23,7 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
-// in this benchmark, in each iteration, a new wallet gets created. then, the wallet spends all of its cash.
+// in this benchmark, in each iteration, a new wallet gets created. then, the wallet spends all of its credits.
 func BenchmarkSequentialNewWallet(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		walletA := common.NewWallet(A)
@@ -36,49 +35,43 @@ func BenchmarkSequentialNewWallet(b *testing.B) {
 
 		_, err = core.SignTransaction(walletA, tx)
 		if err != nil {
-			fmt.Println("failed to sign transaction")
-			return
+			b.Error(err)
 		}
 	}
 }
 
-// in this benchmark, a wallet gets created once. Then, the wallet spends all of its cash, 1 money per iteration.
+// in this benchmark, a wallet gets created once. Then, the wallet spends all of its credits, 1 credit per iteration.
+// the server
 func BenchmarkSequentialSpendSingle(b *testing.B) {
-	var addrA = common.GetClients()[0]
-	var addrB = common.GetClients()[1]
-	A := common.NewWalletWithAmount(addrA, b.N)
+	walletA := common.NewWalletWithAmount(A, b.N)
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		tx, err := core.PrepareTransaction(A, addrB, 1)
+		tx, err := core.PrepareTransaction(walletA, B, 1)
 		if err != nil {
 			b.Error("failed to prepare transaction")
 		}
 
-		_, err = core.SignTransaction(A, tx)
+		_, err = core.SignTransaction(walletA, tx)
 		if err != nil {
-			fmt.Println("failed to sign transaction")
-			return
+			b.Error(err)
 		}
 	}
 }
 
 func TestSequentialSpendSingle(t *testing.T) {
 	N := 10000
-	var addrA = common.GetClients()[0]
-	var addrB = common.GetClients()[1]
-	A := common.NewWalletWithAmount(addrA, N)
+	walletA := common.NewWalletWithAmount(A, N)
 
 	for i := 0; i < N; i++ {
-		tx, err := core.PrepareTransaction(A, addrB, 1)
+		tx, err := core.PrepareTransaction(walletA, B, 1)
 		if err != nil {
 			panic("failed to prepare transaction")
 		}
 
-		_, err = core.SignTransaction(A, tx)
+		_, err = core.SignTransaction(walletA, tx)
 		if err != nil {
-			fmt.Println("failed to sign transaction")
-			return
+			t.Error(err)
 		}
 	}
 }

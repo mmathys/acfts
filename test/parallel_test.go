@@ -11,7 +11,7 @@ import (
 This is parallel benchmark
 */
 
-// in this benchmark, a wallet gets created once. Then, the wallet spends all of its cash, 1 money per iteration.
+// in this benchmark, a wallet gets created once. Then, the wallet spends all of its credits, 1 credit per iteration.
 func TestParallelSpendSingle(t *testing.T) {
 	var numWorkers uint8 = 3
 	N := 10000

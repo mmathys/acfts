@@ -39,7 +39,7 @@ func NewWalletWithAmount(address Address, value int) *Wallet {
 	return &Wallet{Identity: id, UTXO: &utxo}
 }
 
-// creates test wallet with 100 money
+// creates test wallet with 100 credits
 func NewWallet(address Address) *Wallet {
 	return NewWalletWithAmount(address, 100)
 }
