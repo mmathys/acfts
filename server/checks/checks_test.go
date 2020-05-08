@@ -3,7 +3,7 @@ package checks
 import (
 	"github.com/mmathys/acfts/client/core"
 	"github.com/mmathys/acfts/common"
-	"github.com/mmathys/acfts/common/test_util"
+	"github.com/mmathys/acfts/test/environment"
 	"os"
 	"testing"
 )
@@ -12,9 +12,9 @@ var A common.Address
 var B common.Address
 
 func TestMain(m *testing.M) {
-	test_util.TestEnvironment()
-	A = test_util.TestClient(0)
-	B = test_util.TestClient(1)
+	common.InitAddresses("../../topologies/localSimple.json")
+	A = environment.TestClient(0)
+	B = environment.TestClient(1)
 	os.Exit(m.Run())
 }
 

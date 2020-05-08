@@ -1,4 +1,4 @@
-package benchmark
+package rpc
 
 import (
 	"errors"

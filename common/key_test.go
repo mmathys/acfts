@@ -1,6 +1,7 @@
 package common
 
 import (
+	"crypto/rand"
 	"encoding/gob"
 	"golang.org/x/crypto/sha3"
 	"reflect"
@@ -67,5 +68,30 @@ func TestRecoverPubkey(t *testing.T) {
 
 	if !reflect.DeepEqual(MarshalPubkey(&key.PublicKey), MarshalPubkey(recoveredPub2)) {
 		t.Errorf("pubkey mismatch #2")
+	}
+}
+
+
+func TestGenerateParseKey(t *testing.T) {
+	key := GenerateKey()
+
+	hash := make([]byte, 32) // random hash
+	rand.Read(hash)
+
+	sig, err := signHash(hash, key)
+	if err != nil {
+		t.Error(err)
+	}
+
+	encoded := MarshalKey(key)
+	decoded := UnmarshalKey(encoded)
+	encodedPub2 := MarshalPubkey(&decoded.PublicKey)
+
+	valid, err := verify(encodedPub2, hash, sig)
+	if err != nil {
+		panic(err)
+	}
+	if !valid {
+		t.Error("verification failed")
 	}
 }

@@ -1,31 +1,40 @@
-package benchmark
+package test
 
 import (
 	"fmt"
 	"github.com/mmathys/acfts/client/core"
 	"github.com/mmathys/acfts/common"
+	"github.com/mmathys/acfts/test/environment"
+	"os"
 	"testing"
 )
 
 /**
-This is an easy (synchronous!) benchmark
+Easy synchronous benchmark
 Do not expect high numbers from this
 */
+
+var A common.Address
+var B common.Address
+
+func TestMain(m *testing.M) {
+	common.InitAddresses("../topologies/localSimple.json")
+	A = environment.TestClient(0)
+	B = environment.TestClient(1)
+	os.Exit(m.Run())
+}
 
 // in this benchmark, in each iteration, a new wallet gets created. then, the wallet spends all of its cash.
 func BenchmarkSequentialNewWallet(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		var addrA = common.GetClients()[0]
-		var addrB = common.GetClients()[1]
+		walletA := common.NewWallet(A)
 
-		A := common.NewWallet(addrA)
-
-		tx, err := core.PrepareTransaction(A, addrB, 100)
+		tx, err := core.PrepareTransaction(walletA, B, 100)
 		if err != nil {
 			b.Error("failed to prepare transaction")
 		}
 
-		_, err = core.SignTransaction(A, tx)
+		_, err = core.SignTransaction(walletA, tx)
 		if err != nil {
 			fmt.Println("failed to sign transaction")
 			return

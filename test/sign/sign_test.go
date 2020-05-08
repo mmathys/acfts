@@ -3,6 +3,7 @@ package sign
 import (
 	"fmt"
 	"github.com/mmathys/acfts/common"
+	"github.com/mmathys/acfts/server/adapter"
 	"log"
 	"net/http"
 	_ "net/http/pprof"
