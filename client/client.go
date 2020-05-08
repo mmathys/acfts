@@ -1,11 +1,12 @@
 package main
 
 import (
+	clientAdapter "github.com/mmathys/acfts/client/adapter"
+	"github.com/mmathys/acfts/client/cli"
 	"github.com/mmathys/acfts/client/core"
+	"github.com/mmathys/acfts/client/util"
 	"github.com/mmathys/acfts/common"
-	"github.com/mmathys/acfts/util"
-	"github.com/mmathys/acfts/wallet"
-	"github.com/urfave/cli/v2"
+	urfaveCli "github.com/urfave/cli/v2"
 	"log"
 	"os"
 )
@@ -20,11 +21,11 @@ func handleIncoming(w *common.Wallet, incoming chan common.Value) {
 		if err != nil {
 			panic(err)
 		}
-		wallet.AddUTXO(w, t)
+		core.AddUTXO(w, t)
 	}
 }
 
-func runClient(c *cli.Context) error {
+func runClient(c *urfaveCli.Context) error {
 	addr, err := util.ReadAddress(c.String("address"))
 	if err != nil {
 		log.Fatal(err)
@@ -32,50 +33,39 @@ func runClient(c *cli.Context) error {
 
 	common.InitAddresses(c.String("topology"))
 
-	adapter := "rest"
-	if c.String("adapter") != "" {
-		adapter = c.String("adapter")
-	}
-	core.SetAdapterMode(adapter)
-
 	port := common.GetClientPort(addr)
 
-	log.Printf("initialized client; addr = 0x%x port = %d adapter=%s\n", addr, port, adapter)
+	log.Printf("initialized client; addr = 0x%x port = %d", addr, port)
 
 	incoming := make(chan common.Value, bufferLen)
 
-	w := util.NewWallet(addr)
+	w := common.NewWallet(addr)
 
 	go handleIncoming(w, incoming)
-	go core.LaunchClientConsole(w)
+	go cli.LaunchClientConsole(w)
 
-	core.Init(port, incoming)
+	clientAdapter.Init(port, incoming)
 
 	return nil
 }
 
 func main() {
-	app := &cli.App{
+	app := &urfaveCli.App{
 		Name:   "ACFTS client",
 		Usage:  "Asynchronous Consensus-Free Transaction System client",
 		Action: runClient,
-		Flags: []cli.Flag{
-			&cli.StringFlag{
+		Flags: []urfaveCli.Flag{
+			&urfaveCli.StringFlag{
 				Name:     "address",
 				Aliases:  []string{"a"},
 				Usage:    "Set own address to `ADDRESS`. Format: e.g. 0x04",
 				Required: true,
 			},
-			&cli.StringFlag{
+			&urfaveCli.StringFlag{
 				Name:     "topology",
 				Aliases:  []string{"t"},
 				Usage:    "Path to the topology json file",
 				Required: true,
-			},
-			&cli.StringFlag{
-				Name:     "adapter",
-				Usage:    "Set the adapter. Either \"rest\" or \"rpc\"",
-				Required: false,
 			},
 		},
 	}

@@ -1,9 +1,8 @@
-package wallet
+package core
 
 import (
 	"errors"
 	"github.com/mmathys/acfts/common"
-	"github.com/mmathys/acfts/util"
 )
 
 // prepare transaction mutex
@@ -38,7 +37,7 @@ func PrepareTransaction(w *common.Wallet, target common.Address, val int) (commo
 	}
 
 	addressOwn := common.MarshalPubkey(&w.Key.PublicKey)
-	counterpart := util.GetIdentity(target)
+	counterpart := common.GetIdentity(target)
 
 	addressCounterpart := common.MarshalPubkey(&counterpart.Key.PublicKey)
 

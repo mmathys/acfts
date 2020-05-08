@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"github.com/mmathys/acfts/client/core"
 	"github.com/mmathys/acfts/common"
-	"github.com/mmathys/acfts/util"
-	"github.com/mmathys/acfts/wallet"
 	"testing"
 )
 
@@ -20,9 +18,9 @@ func BenchmarkSequentialNewWallet(b *testing.B) {
 		var addrA = common.GetClients()[0]
 		var addrB = common.GetClients()[1]
 
-		A := util.NewWallet(addrA)
+		A := common.NewWallet(addrA)
 
-		tx, err := wallet.PrepareTransaction(A, addrB, 100)
+		tx, err := core.PrepareTransaction(A, addrB, 100)
 		if err != nil {
 			b.Error("failed to prepare transaction")
 		}
@@ -39,11 +37,11 @@ func BenchmarkSequentialNewWallet(b *testing.B) {
 func BenchmarkSequentialSpendSingle(b *testing.B) {
 	var addrA = common.GetClients()[0]
 	var addrB = common.GetClients()[1]
-	A := util.NewWalletWithAmount(addrA, b.N)
+	A := common.NewWalletWithAmount(addrA, b.N)
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		tx, err := wallet.PrepareTransaction(A, addrB, 1)
+		tx, err := core.PrepareTransaction(A, addrB, 1)
 		if err != nil {
 			b.Error("failed to prepare transaction")
 		}
@@ -60,10 +58,10 @@ func TestSequentialSpendSingle(t *testing.T) {
 	N := 10000
 	var addrA = common.GetClients()[0]
 	var addrB = common.GetClients()[1]
-	A := util.NewWalletWithAmount(addrA, N)
+	A := common.NewWalletWithAmount(addrA, N)
 
 	for i := 0; i < N; i++ {
-		tx, err := wallet.PrepareTransaction(A, addrB, 1)
+		tx, err := core.PrepareTransaction(A, addrB, 1)
 		if err != nil {
 			panic("failed to prepare transaction")
 		}

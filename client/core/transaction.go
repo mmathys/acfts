@@ -3,8 +3,8 @@ package core
 import (
 	"bytes"
 	"fmt"
+	"github.com/mmathys/acfts/client/adapter"
 	"github.com/mmathys/acfts/common"
-	"github.com/mmathys/acfts/wallet"
 	"sync"
 )
 
@@ -16,7 +16,7 @@ func DoTransaction(w *common.Wallet, t common.Transaction, forward bool) {
 	}
 
 	// own UTXOs, (is spent at this point)
-	wallet.RemoveUTXOMultiple(w, &t.Inputs)
+	RemoveUTXOMultiple(w, &t.Inputs)
 
 	sig := combineSignatures(res)
 
@@ -26,11 +26,11 @@ func DoTransaction(w *common.Wallet, t common.Transaction, forward bool) {
 		if bytes.Equal(v.Address, w.Identity.Address) {
 			ownOutputs = append(ownOutputs, v)
 		} else if forward {
-			go ForwardValue(v)
+			go adapter.ForwardValue(v)
 		}
 	}
 
-	wallet.AddUTXOMultiple(w, &ownOutputs)
+	AddUTXOMultiple(w, &ownOutputs)
 }
 
 // TODO Only wait for Math.ceil(2/3 * n) of n servers!
@@ -43,7 +43,7 @@ func SignTransaction(w *common.Wallet, t common.Transaction) (*[]common.Transact
 
 	for _, server := range common.GetServers() {
 		wg.Add(1)
-		go RequestSignature(server, w.Identity, t, &wg, &sigs)
+		go adapter.RequestSignature(server, w.Identity, t, &wg, &sigs)
 	}
 
 	wg.Wait()

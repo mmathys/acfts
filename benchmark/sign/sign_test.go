@@ -2,10 +2,8 @@ package sign
 
 import (
 	"fmt"
+	"github.com/mmathys/acfts/client/core"
 	"github.com/mmathys/acfts/common"
-	"github.com/mmathys/acfts/server/rpc"
-	"github.com/mmathys/acfts/util"
-	"github.com/mmathys/acfts/wallet"
 	"log"
 	"net/http"
 	_ "net/http/pprof"
@@ -63,26 +61,26 @@ func worker(N int, numWorkers int, b *testing.B) error {
 	args := os.Args
 	topo := args[len(args)-2]
 	common.InitAddresses(topo)
-	rpc.TxCounter = new(int32)
-	rpc.SignedUTXO = new(sync.Map)
-	rpc.Debug = false
-	rpc.BenchmarkMode = false
-	rpc.Id = util.GetIdentity(common.GetServers()[0])
-	rpc.AllowDoublespend = false
-	rpc.UseUTXOMap = true
-	rpc.CheckTransactions = true
+	adapter.TxCounter = new(int32)
+	adapter.SignedUTXO = new(sync.Map)
+	adapter.Debug = false
+	adapter.BenchmarkMode = false
+	adapter.Id = common.GetIdentity(common.GetServers()[0])
+	adapter.AllowDoublespend = false
+	adapter.UseUTXOMap = true
+	adapter.CheckTransactions = true
 
 	client := common.GetClients()[0]
-	clientId := util.GetIdentity(client)
+	clientId := common.GetIdentity(client)
 	target := common.GetClients()[1]
 
 	var requests [][]common.TransactionSigReq
 	for i := 0; i < numWorkers; i++ {
 		requests = append(requests, []common.TransactionSigReq{})
 		for j := 0; j < N/numWorkers; j++ {
-			w := util.NewWalletWithAmount(client, 1)
+			w := common.NewWalletWithAmount(client, 1)
 			tx := common.Transaction{Inputs: nil, Outputs: nil}
-			tx, err := wallet.PrepareTransaction(w, target, 1)
+			tx, err := cli.PrepareTransaction(w, target, 1)
 			if err != nil {
 				return err
 			}
@@ -96,7 +94,7 @@ func worker(N int, numWorkers int, b *testing.B) error {
 		}
 	}
 
-	server := new(rpc.Server)
+	server := new(adapter.Server)
 	res := common.TransactionSignRes{}
 
 	startDelay := 1 * time.Millisecond / time.Duration(numWorkers) // distribute start over 1ms

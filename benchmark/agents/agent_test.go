@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"github.com/mmathys/acfts/client/core"
 	"github.com/mmathys/acfts/common"
-	"github.com/mmathys/acfts/util"
-	"github.com/mmathys/acfts/wallet"
 	"os"
 	"strconv"
 	"sync"
@@ -19,20 +17,20 @@ Clients send 1 credit to random other clients
 func simpleAgent(a common.Agent, wg *sync.WaitGroup) {
 	defer wg.Done()
 
-	w := util.NewWalletWithAmount(a.Address, a.NumTransactions)
+	w := common.NewWalletWithAmount(a.Address, a.NumTransactions)
 
 	time.Sleep(a.StartDelay) // wait before starting tx
 
 	for i := 0; i < a.NumTransactions; i++ {
 		to := a.Topology[0]
 
-		t, err := wallet.PrepareTransaction(w, to, 1)
+		t, err := cli.PrepareTransaction(w, to, 1)
 		if err != nil {
 			fmt.Println(err)
 			panic("failed to prepare transaction")
 		}
 
-		core.DoTransaction(w, t, false)
+		cli.DoTransaction(w, t, false)
 	}
 }
 
@@ -72,13 +70,13 @@ func TestAgentsREST(t *testing.T) {
 }
 
 func TestAgentsRPC(t *testing.T) {
-	core.SetAdapterMode("rpc")
+	cli.SetAdapterMode("rpc")
 	common.InitAddresses("../../topologies/localSimple.json")
 	testAgents(t, 15)
 }
 
 func TestAgentsAWS(t *testing.T) {
-	core.SetAdapterMode("rpc")
+	cli.SetAdapterMode("rpc")
 	common.InitAddresses("../topologies/aws.json")
 	testAgentsMultipleParallel(t)
 }
@@ -91,7 +89,7 @@ func TestAgentsRPCFixed(t *testing.T) {
 		panic(err)
 	}
 
-	core.SetAdapterMode("rpc")
+	cli.SetAdapterMode("rpc")
 
 	topo := args[len(args)-2]
 	common.InitAddresses(topo)

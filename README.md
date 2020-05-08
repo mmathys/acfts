@@ -76,7 +76,6 @@ server                      # Executable
     --topology <file>       # Topology configuration file
     --benchmark             # Outputs number of tx/s to stdout
     --pprof                 # Enables pprof profiler
-    --adapter rpc           # Network adapter    
     --instance <number>     # Replication instance (used for sharding)
     --help                  # Prints help
 ```
@@ -90,7 +89,6 @@ client                      # Executable
     --address <address>     # Address assigned to client. Format: 0x...
     --topology <file>       # Topology configuration file
     --benchmark             # If set: outputs benchmark
-    --adapter rpc           # Network adapter  
     --help                  # Prints help  
 ```
 

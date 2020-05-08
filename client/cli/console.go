@@ -1,11 +1,11 @@
-package core
+package cli
 
 import (
 	"fmt"
 	"github.com/c-bata/go-prompt"
+	"github.com/mmathys/acfts/client/core"
+	"github.com/mmathys/acfts/client/util"
 	"github.com/mmathys/acfts/common"
-	"github.com/mmathys/acfts/util"
-	"github.com/mmathys/acfts/wallet"
 	"github.com/olekukonko/tablewriter"
 	"os"
 	"os/exec"
@@ -41,13 +41,13 @@ func send(w *common.Wallet, s []string) {
 		return
 	}
 
-	t, err := wallet.PrepareTransaction(w, address, value)
+	t, err := core.PrepareTransaction(w, address, value)
 	if err != nil {
 		fmt.Println("failed to prepare transaction")
 		return
 	}
 
-	DoTransaction(w, t, true)
+	core.DoTransaction(w, t, true)
 }
 
 func info(w *common.Wallet) {

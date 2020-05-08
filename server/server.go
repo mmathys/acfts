@@ -1,9 +1,10 @@
 package main
 
 import (
+	"github.com/mmathys/acfts/client/util"
 	"github.com/mmathys/acfts/common"
-	"github.com/mmathys/acfts/server/rpc"
-	"github.com/mmathys/acfts/util"
+	serverAdapter "github.com/mmathys/acfts/server/adapter"
+	util2 "github.com/mmathys/acfts/server/util"
 	"github.com/urfave/cli/v2"
 	"log"
 	_ "net/http/pprof"
@@ -13,49 +14,26 @@ import (
 )
 
 var TxCounter = new(int32)
-
-type Adapter interface {
-	Init(port int, id *common.Identity, debug bool, benchmark bool, TxCounter *int32, SignedUTXO *sync.Map)
-}
-
-var rpcAdapter = &rpc.RPCAdapter{}
-var currentAdapter Adapter = rpcAdapter
-
 var SignedUTXO sync.Map
 
-func SetAdapterMode(mode string) {
-	if mode == "rest" {
-		panic("rest is not supported anymore")
-	} else if mode == "rpc" {
-		currentAdapter = rpcAdapter
-	} else {
-		log.Fatalf("unrecognized mode %s", mode)
-	}
-}
-
-func Init(port int, id *common.Identity, debug bool, benchmark bool, TxCounter *int32) {
-	currentAdapter.Init(port, id, debug, benchmark, TxCounter, &SignedUTXO)
-}
-
-func runServer(address common.Address, instanceIndex int, benchmark bool, adapter string, topology string, pprof bool) error {
+func runServer(address common.Address, instanceIndex int, benchmark bool, topology string, pprof bool) error {
 	common.InitAddresses(topology)
 
 	port := common.GetServerPort(address, instanceIndex)
-	SetAdapterMode(adapter)
 
 	log.Println("initialized server")
-	log.Printf("addr=0x%x, instance=%d, port=%d, benchmark = %t, adapter=%s, pprof=%t\n", address, instanceIndex, port, benchmark, adapter, pprof)
+	log.Printf("addr=0x%x, instance=%d, port=%d, benchmark = %t, pprof=%t\n", address, instanceIndex, port, benchmark, pprof)
 
 	if benchmark {
-		go util.Ticker(TxCounter)
+		go util2.Ticker(TxCounter)
 	}
 
 	if pprof {
 		runtime.SetBlockProfileRate(1)
 	}
 
-	id := util.GetIdentity(address)
-	Init(port, id, false, benchmark, TxCounter)
+	id := common.GetIdentity(address)
+	serverAdapter.Init(port, id, false, benchmark, TxCounter, &SignedUTXO)
 
 	return nil
 }
@@ -65,11 +43,6 @@ func main() {
 		Name:  "ACFTS server",
 		Usage: "Asynchronous Consensus-Free Transaction System server",
 		Action: func(c *cli.Context) error {
-			adapter := "rest"
-			if c.String("adapter") != "" {
-				adapter = c.String("adapter")
-			}
-
 			instanceIndex := c.Int("instance") // if not set, value is 0
 
 			addr, err := util.ReadAddress(c.String("address"))
@@ -84,7 +57,7 @@ func main() {
 			benchmark := c.Bool("benchmark")
 			pprof := c.Bool("pprof")
 
-			runServer(addr, instanceIndex, benchmark, adapter, c.String("topology"), pprof)
+			runServer(addr, instanceIndex, benchmark, c.String("topology"), pprof)
 			return nil
 		},
 		Flags: []cli.Flag{
@@ -98,11 +71,6 @@ func main() {
 				Name:     "instance",
 				Aliases:  []string{"i"},
 				Usage:    "Sets the zero-based instance index. This is used for load balancing/sharding. Default: 0",
-				Required: false,
-			},
-			&cli.StringFlag{
-				Name:     "adapter",
-				Usage:    "Set the adapter. Either \"rest\" or \"rpc\"",
 				Required: false,
 			},
 			&cli.StringFlag{

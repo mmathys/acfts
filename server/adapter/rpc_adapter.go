@@ -1,11 +1,11 @@
-package rpc
+package adapter
 
 import (
 	"errors"
 	"fmt"
 	"github.com/mmathys/acfts/common"
 	"github.com/mmathys/acfts/server/checks"
-	"github.com/mmathys/acfts/util"
+	util2 "github.com/mmathys/acfts/server/util"
 	"log"
 	"net"
 	"net/http"
@@ -23,11 +23,10 @@ var UseUTXOMap = true
 var CheckTransactions = true
 
 type Server struct{}
-type RPCAdapter struct{}
 
 func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignRes) error {
 	if BenchmarkMode {
-		defer util.CountTx(TxCounter)
+		defer util2.CountTx(TxCounter)
 	}
 
 	if !Debug && CheckTransactions {
@@ -71,7 +70,7 @@ func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignR
 	return nil
 }
 
-func (a *RPCAdapter) Init(port int, _id *common.Identity, debug bool, benchmark bool, txCounter *int32, signedUTXO *sync.Map) {
+func Init(port int, _id *common.Identity, debug bool, benchmark bool, txCounter *int32, signedUTXO *sync.Map) {
 	Id = _id
 	Debug = debug
 	BenchmarkMode = benchmark

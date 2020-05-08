@@ -1,4 +1,4 @@
-package rpc
+package adapter
 
 import (
 	"fmt"
@@ -12,7 +12,6 @@ import (
 
 var incoming chan common.Value
 
-type Adapter struct{}
 type Client struct{}
 type Empty struct{}
 
@@ -22,7 +21,7 @@ func (c *Client) ForwardSignature(req common.Value, res *Empty) error {
 	return nil
 }
 
-func (a *Adapter) Init(port int, _incoming chan common.Value) {
+func Init(port int, _incoming chan common.Value) {
 	incoming = _incoming
 
 	client := new(Client)
@@ -56,7 +55,7 @@ func getConnection(net string) (*rpc.Client, error) {
 	return c, nil
 }
 
-func (a *Adapter) RequestSignature(serverAddr common.Address, id *common.Identity, t common.Transaction, wg *sync.WaitGroup, sigs *chan common.TransactionSignRes) {
+func RequestSignature(serverAddr common.Address, id *common.Identity, t common.Transaction, wg *sync.WaitGroup, sigs *chan common.TransactionSignRes) {
 	instanceIndex := common.GetServerInstanceIndex(serverAddr, id.Address)
 	net, err := common.GetServerNetworkAddress(serverAddr, instanceIndex)
 
@@ -88,7 +87,7 @@ func (a *Adapter) RequestSignature(serverAddr common.Address, id *common.Identit
 	wg.Done()
 }
 
-func (a *Adapter) ForwardValue(t common.Value) {
+func ForwardValue(t common.Value) {
 	net, err := common.GetClientNetworkAddress(t.Address)
 	if err != nil {
 		fmt.Print(err.Error())

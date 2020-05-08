@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"github.com/mmathys/acfts/client/core"
 	"github.com/mmathys/acfts/common"
-	"github.com/mmathys/acfts/util"
-	"github.com/mmathys/acfts/wallet"
 	"testing"
 )
 
@@ -24,7 +22,7 @@ func TestParallelSpendSingle(t *testing.T) {
 	var i uint8 = 0
 	for ; i < numWorkers; i++ {
 		addr := common.GetClients()[i]
-		w := util.NewWalletWithAmount(addr, N)
+		w := common.NewWalletWithAmount(addr, N)
 		go worker(w, t, jobs, done)
 	}
 
@@ -41,7 +39,7 @@ func TestParallelSpendSingle(t *testing.T) {
 func worker(w *common.Wallet, t *testing.T, jobs <-chan bool, done chan<- bool) {
 	targetAddr := common.GetClients()[0]
 	for _ = range jobs {
-		tx, err := wallet.PrepareTransaction(w, targetAddr, 1)
+		tx, err := core.PrepareTransaction(w, targetAddr, 1)
 		if err != nil {
 			t.Error("failed to prepare transaction")
 		}
