@@ -37,7 +37,7 @@ Signing
  */
 
 // Signs a hash
-func signHash(key *ecdsa.PrivateKey, hash []byte) ([]byte, error) {
+func signHash(hash []byte, key *ecdsa.PrivateKey) ([]byte, error) {
 	sig, err := ethereum.Sign(hash, key)
 	if err != nil {
 		return []byte{}, err
@@ -53,7 +53,7 @@ func SignValue(key *ecdsa.PrivateKey, value *Value) error {
 		value.Signatures = [][]byte{}
 	}
 
-	sig, err := signHash(key, hash)
+	sig, err := signHash(hash, key)
 	if err != nil {
 		return err
 	}
@@ -77,7 +77,7 @@ func SignValues(key *ecdsa.PrivateKey, outputs []Value) ([]Value, error) {
 // Signs transaction signature request, which is requested by a client
 func SignTransactionSigRequest(key *ecdsa.PrivateKey, request *TransactionSigReq) error {
 	hash := HashTransactionSigRequest(*request)
-	sig, err := signHash(key, hash)
+	sig, err := signHash(hash, key)
 	if err != nil {
 		return err
 	}
@@ -91,8 +91,13 @@ Signature Verification
 */
 
 // Verifies a signature. Using ethereum/go-ethereum crypto
-func verify(pubkey []byte, hash []byte, sig []byte) bool {
-	return ethereum.VerifySignature(pubkey, hash, sig)
+func verify(pubkey []byte, hash []byte, sig []byte) (bool, error) {
+	if len(sig) != ethereum.SignatureLength { // 64 + 1
+		msg := fmt.Sprintf("invalid signature length. wanted: %d, got: %d", ethereum.SignatureLength, len(sig))
+		return false, errors.New(msg)
+	}
+	sig = sig[:len(sig)-1] // remove recovery bit
+	return ethereum.VerifySignature(pubkey, hash, sig), nil
 }
 
 // Verifies single value
@@ -111,8 +116,10 @@ func VerifyValue(value *Value) error {
 			return err
 		}
 
-		sig = sig[:len(sig)-1] // remove recovery bit
-		valid := verify(pubkey, hash, sig)
+		valid, err := verify(pubkey, hash, sig)
+		if err != nil {
+			return err
+		}
 
 		if !valid {
 			return errors.New("value verification failed")
@@ -147,7 +154,7 @@ func VerifyTransactionSigRequest(req *TransactionSigReq) error {
 
 	ownerAddress, err := recoverAddress(hash, req.Signature)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	for _, input := range req.Transaction.Inputs {
@@ -156,8 +163,10 @@ func VerifyTransactionSigRequest(req *TransactionSigReq) error {
 		}
 	}
 
-	sig := req.Signature[:len(req.Signature)-1] // remove recovery bit
-	valid := verify(ownerAddress, hash, sig)
+	valid, err := verify(ownerAddress, hash, req.Signature)
+	if err != nil {
+		return err
+	}
 
 	if !valid {
 		return errors.New("sig request verification failed")

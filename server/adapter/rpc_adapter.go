@@ -25,6 +25,7 @@ var CheckTransactions = true
 // struct for RPC
 type Server struct{}
 
+// Signs a Transaction Request
 func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignRes) error {
 	if Benchmark {
 		defer util.CountTx(TxCounter)
@@ -73,6 +74,7 @@ func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignR
 	return nil
 }
 
+// Initialises the adapter
 func Init(port int, id *common.Identity, noSigning bool, benchmark bool, txCounter *int32, signedUTXO *sync.Map) {
 	Id = id
 	NoSigning = noSigning

@@ -21,7 +21,7 @@ type Value struct {
 	Address    Address    // The public key = Address (encoded)
 	Amount     int        // The value itself
 	Id         Identifier // Unique identifier
-	Signatures [][]byte // Signatures
+	Signatures [][]byte   // Signatures
 }
 
 type Transaction struct {
@@ -45,8 +45,12 @@ type Identity struct {
 
 type Wallet struct {
 	*Identity
-	UTXO 		*sync.Map // of type int --> Value
+	UTXO *sync.Map // of type int --> Value
 }
+
+/**
+Topology configuration
+*/
 
 type Instance struct {
 	Net  string // network address, with http
