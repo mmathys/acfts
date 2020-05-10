@@ -58,13 +58,14 @@ type Instance struct {
 }
 
 type ClientNode struct {
-	Instance Instance
-	Key      *ecdsa.PrivateKey
+	Instance	Instance
+	Key      	*ecdsa.PrivateKey
+	Balance		int
 }
 
 type ServerNode struct {
-	Instances []Instance
-	Key       *ecdsa.PrivateKey
+	Instances	[]Instance
+	Key       	*ecdsa.PrivateKey
 }
 
 type Agent struct {

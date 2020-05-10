@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	clientAdapter "github.com/mmathys/acfts/client/adapter"
 	"github.com/mmathys/acfts/client/cli"
 	"github.com/mmathys/acfts/client/core"
@@ -33,12 +34,18 @@ func runClient(c *urfaveCli.Context) error {
 	common.InitAddresses(c.String("topology"))
 
 	port := common.GetClientPort(addr)
+	balance := common.GetClientBalance(addr)
+	if balance == 0 {
+		newBalance := 100
+		fmt.Printf("Warning: no balance set for client. Initializing balance to %d.\n", newBalance)
+		balance = newBalance
+	}
 
-	log.Printf("initialized client; addr = %x port = %d", addr, port)
+	log.Printf("initialized client; addr = %x port = %d balance = %d", addr, port, balance)
 
 	incoming := make(chan common.Value, bufferLen)
 
-	w := common.NewWallet(addr)
+	w := common.NewWalletWithAmount(addr, balance)
 
 	go handleIncoming(w, incoming)
 	go cli.LaunchClientConsole(w)

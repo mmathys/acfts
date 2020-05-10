@@ -179,6 +179,17 @@ func GetServerPort(address Address, instanceIndex int) int {
 	}
 }
 
+func GetClientBalance(address Address) int {
+	res, err := lookupClient(address)
+	if err != nil {
+		log.Fatalf("could not find address %x", address)
+		return -1
+	} else {
+		return res.Balance
+	}
+}
+
+
 func GetServerInstanceIndex(serverAddr Address, clientAddr Address) int {
 	server, err := lookupServer(serverAddr)
 	if err != nil {

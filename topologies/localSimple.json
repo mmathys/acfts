@@ -19,6 +19,7 @@
         "439ffd45a52551b1a5470b618a18b58e70c6f1201422760c02ffab17a1dc73e1",
         "04ae9c97b237b6dc65081c41bbbb45419933353a848867b4ea61bd92fa202669532ccac6cd35324ef47c5c402847f74f6e6d0873a81a9cee9290bf796ae0348ca2"
       ],
+      "Balance": 100,
       "Instance": {
         "Net": "localhost",
         "Port": 5555
@@ -29,6 +30,7 @@
         "0401df1f7bdbff562bc87f21c4fcbe9bf09b2ffe8c2e4609b32f9b11bc79b9a0",
         "04799fb6d7685ea7fb7a0477db235dcebf4ec7b871a26287df9552a2ba035a46d00d538409e3d5ad4834d0cfa2f82c5426ebc78ee8d1bacd4d4783ad19c56c123c"
       ],
+      "Balance": 100,
       "Instance": {
         "Net": "localhost",
         "Port": 5556
@@ -39,6 +41,7 @@
         "7675b8ef1a5ba5cfc037b0d778fc74374aef4b48e8f33d03b0c0236780941988",
         "048dadeefa70cfeb43f9e15a7df924cf1bb7878b081039ec2b9bce593252fe732ca043ec91ba4dcb639d7e70d778ecadd4ad2aadb11963c1206d3a6b62a8c0ee04"
       ],
+      "Balance": 100,
       "Instance": {
         "Net": "localhost",
         "Port": 5557
