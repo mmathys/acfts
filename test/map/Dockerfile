@@ -2,7 +2,7 @@ FROM base
 
 EXPOSE 6666
 
-WORKDIR ./benchmark/map
+WORKDIR ./test/map
 
 ENV TEST none
 ENV BENCH none

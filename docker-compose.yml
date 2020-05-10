@@ -64,7 +64,7 @@ services:
       - INSTANCE=4
 
   agents:
-    build: ./benchmark/agents
+    build: ./test/agents
     depends_on:
       - base
     environment:
@@ -72,7 +72,7 @@ services:
       - NUM_WORKERS=64
 
   sign_benchmark_1:
-    build: ./benchmark/sign
+    build: ./test/sign
     depends_on:
       - base
     environment:
@@ -86,7 +86,7 @@ services:
           cpus: '1'
 
   sign_benchmark_2:
-    build: ./benchmark/sign
+    build: ./test/sign
     depends_on:
       - base
     environment:
@@ -100,7 +100,7 @@ services:
           cpus: '2'
 
   sign_benchmark_4:
-    build: ./benchmark/sign
+    build: ./test/sign
     depends_on:
       - base
     environment:
@@ -114,7 +114,7 @@ services:
           cpus: '4'
 
   sign_benchmark_8:
-    build: ./benchmark/sign
+    build: ./test/sign
     depends_on:
       - base
     environment:
@@ -128,7 +128,7 @@ services:
           cpus: '8'
 
   sign_benchmark_16:
-    build: ./benchmark/sign
+    build: ./test/sign
     depends_on:
       - base
     environment:
@@ -142,7 +142,7 @@ services:
           cpus: '16'
 
   sign_benchmark_32:
-    build: ./benchmark/sign
+    build: ./test/sign
     depends_on:
       - base
     environment:
@@ -156,7 +156,7 @@ services:
           cpus: '32'
 
   sign_benchmark_64:
-    build: ./benchmark/sign
+    build: ./test/sign
     depends_on:
       - base
     environment:
@@ -170,7 +170,7 @@ services:
           cpus: '64'
 
   sign_test_1:
-    build: ./benchmark/sign
+    build: ./test/sign
     depends_on:
       - base
     environment:
@@ -186,7 +186,7 @@ services:
           cpus: '1'
 
   sign_test_2:
-    build: ./benchmark/sign
+    build: ./test/sign
     depends_on:
       - base
     environment:
@@ -202,7 +202,7 @@ services:
           cpus: '2'
 
   sign_test_4:
-    build: ./benchmark/sign
+    build: ./test/sign
     depends_on:
       - base
     environment:
@@ -218,7 +218,7 @@ services:
           cpus: '4'
 
   sign_test_8:
-    build: ./benchmark/sign
+    build: ./test/sign
     depends_on:
       - base
     environment:
@@ -234,7 +234,7 @@ services:
           cpus: '8'
 
   sign_test_16:
-    build: ./benchmark/sign
+    build: ./test/sign
     depends_on:
       - base
     environment:
@@ -250,7 +250,7 @@ services:
           cpus: '16'
 
   sign_test_32:
-    build: ./benchmark/sign
+    build: ./test/sign
     depends_on:
       - base
     environment:
@@ -266,7 +266,7 @@ services:
           cpus: '32'
 
   sign_test_64:
-    build: ./benchmark/sign
+    build: ./test/sign
     depends_on:
       - base
     environment:
@@ -283,7 +283,7 @@ services:
           cpus: '64'
 
   map_benchmark_1:
-    build: ./benchmark/map
+    build: ./test/map
     depends_on:
       - base
     environment:
@@ -296,7 +296,7 @@ services:
           cpus: '1'
 
   map_benchmark_2:
-    build: ./benchmark/map
+    build: ./test/map
     depends_on:
       - base
     environment:
@@ -309,7 +309,7 @@ services:
           cpus: '2'
 
   map_benchmark_4:
-    build: ./benchmark/map
+    build: ./test/map
     depends_on:
       - base
     environment:
@@ -323,7 +323,7 @@ services:
 
 
   map_benchmark_8:
-    build: ./benchmark/map
+    build: ./test/map
     depends_on:
       - base
     environment:
@@ -337,7 +337,7 @@ services:
 
 
   map_benchmark_16:
-    build: ./benchmark/map
+    build: ./test/map
     depends_on:
       - base
     environment:
@@ -351,7 +351,7 @@ services:
 
 
   map_benchmark_32:
-    build: ./benchmark/map
+    build: ./test/map
     depends_on:
       - base
     environment:
@@ -365,7 +365,7 @@ services:
 
 
   map_benchmark_64:
-    build: ./benchmark/map
+    build: ./test/map
     depends_on:
       - base
     environment:

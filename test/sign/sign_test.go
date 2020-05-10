@@ -2,6 +2,7 @@ package sign
 
 import (
 	"fmt"
+	"github.com/mmathys/acfts/client/core"
 	"github.com/mmathys/acfts/common"
 	"github.com/mmathys/acfts/server/adapter"
 	"log"
@@ -15,9 +16,13 @@ import (
 	"time"
 )
 
+var numWorkers = 8
+
+// This sets up the environment and the profiler.
 func TestMain(m *testing.M) {
 	numWorkers, err := strconv.Atoi(os.Args[len(os.Args)-1])
 	if err != nil {
+		fmt.Printf("numWorkers must be supplied")
 		panic(err)
 	}
 	fmt.Printf("numWorkers = %d\n", numWorkers)
@@ -30,41 +35,38 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
+// Benchmarks the speed of the whole server (without network) for a variable number of workers. The topolpgy and the
+// number of workers is passed as the last argument in the command line.
+// Hint: this easiest way to run this test is with docker-compose.
 func BenchmarkSignNoNetwork(b *testing.B) {
-	numWorkers, err := strconv.Atoi(os.Args[len(os.Args)-1])
-	if err != nil {
-		panic(err)
-	}
-
-	err = worker(b.N, numWorkers, b)
+	err := worker(b.N, numWorkers, b)
 	if err != nil {
 		b.Error(err)
 		b.Fail()
 	}
 }
 
+// Benchmarks the speed of the whole server (without network) for 50k transactions and for a variable number of workers.
+// The topolpogy and the number of workers are passed as the last argument in the command line.
+// Hint: this easiest way to run this test is with docker-compose.
 func TestSignNoNetwork(t *testing.T) {
-	numWorkers, err := strconv.Atoi(os.Args[len(os.Args)-1])
-	if err != nil {
-		panic(err)
-	}
-
-	err = worker(50000, numWorkers, nil)
+	err := worker(50000, numWorkers, nil)
 	if err != nil {
 		t.Error(err)
 		t.Fail()
 	}
 }
 
+// This function is used by the test and benchmarks. It contains some tests about whether a delay/distribution has an
+// effect on the profile
 func worker(N int, numWorkers int, b *testing.B) error {
-	fmt.Println("preparing...")
 	args := os.Args
 	topo := args[len(args)-2]
 	common.InitAddresses(topo)
 	adapter.TxCounter = new(int32)
 	adapter.SignedUTXO = new(sync.Map)
-	adapter.Debug = false
-	adapter.BenchmarkMode = false
+	adapter.CheckTransactions = true
+	adapter.Benchmark = false
 	adapter.Id = common.GetIdentity(common.GetServers()[0])
 	adapter.AllowDoublespend = false
 	adapter.UseUTXOMap = true
@@ -80,7 +82,7 @@ func worker(N int, numWorkers int, b *testing.B) error {
 		for j := 0; j < N/numWorkers; j++ {
 			w := common.NewWalletWithAmount(client, 1)
 			tx := common.Transaction{Inputs: nil, Outputs: nil}
-			tx, err := cli.PrepareTransaction(w, target, 1)
+			tx, err := core.PrepareTransaction(w, target, 1)
 			if err != nil {
 				return err
 			}
@@ -100,7 +102,6 @@ func worker(N int, numWorkers int, b *testing.B) error {
 	startDelay := 1 * time.Millisecond / time.Duration(numWorkers) // distribute start over 1ms
 	var wg sync.WaitGroup
 
-	fmt.Println("running tests... ")
 	if b != nil {
 		b.ResetTimer()
 	}

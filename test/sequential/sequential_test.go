@@ -38,7 +38,7 @@ func BenchmarkSequentialNewWallet(b *testing.B) {
 }
 
 // in this benchmark, a wallet gets created once. Then, the wallet spends all of its credits, 1 credit per iteration.
-// the server
+// a server must be run on port 6666.
 func BenchmarkSequentialSpendSingle(b *testing.B) {
 	walletA := common.NewWalletWithAmount(A, b.N)
 
@@ -56,6 +56,8 @@ func BenchmarkSequentialSpendSingle(b *testing.B) {
 	}
 }
 
+// an alternative version of the previous test.
+// a server must be run on port 6666.
 func TestSequentialSpendSingle(t *testing.T) {
 	N := 10000
 	walletA := common.NewWalletWithAmount(A, N)

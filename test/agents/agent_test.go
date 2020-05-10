@@ -24,13 +24,13 @@ func simpleAgent(a common.Agent, wg *sync.WaitGroup) {
 	for i := 0; i < a.NumTransactions; i++ {
 		to := a.Topology[0]
 
-		t, err := cli.PrepareTransaction(w, to, 1)
+		t, err := core.PrepareTransaction(w, to, 1)
 		if err != nil {
 			fmt.Println(err)
 			panic("failed to prepare transaction")
 		}
 
-		cli.DoTransaction(w, t, false)
+		core.DoTransaction(w, t, false)
 	}
 }
 
@@ -47,7 +47,7 @@ func testAgentsMultipleParallel(t *testing.T) {
 
 func testAgents(t *testing.T, numClients int) {
 	delay := 500 * time.Millisecond
-	totalTx := 1000000
+	totalTx := 1000
 	clients := common.GetClients()
 	msg := fmt.Sprintf("numClients: %d", numClients)
 	t.Run(msg, func(t *testing.T) {
@@ -64,23 +64,13 @@ func testAgents(t *testing.T, numClients int) {
 	})
 }
 
-func TestAgentsREST(t *testing.T) {
-	common.InitAddresses("../topologies/localSimple.json")
-	testAgentsMultipleParallel(t)
-}
-
+// test agents with a given numClients
 func TestAgentsRPC(t *testing.T) {
-	cli.SetAdapterMode("rpc")
-	common.InitAddresses("../../topologies/localSimple.json")
+	common.InitAddresses("../../topologies/localSimpleExtended.json")
 	testAgents(t, 15)
 }
 
-func TestAgentsAWS(t *testing.T) {
-	cli.SetAdapterMode("rpc")
-	common.InitAddresses("../topologies/aws.json")
-	testAgentsMultipleParallel(t)
-}
-
+// works with the command line only
 func TestAgentsRPCFixed(t *testing.T) {
 	args := os.Args
 
@@ -88,8 +78,6 @@ func TestAgentsRPCFixed(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-
-	cli.SetAdapterMode("rpc")
 
 	topo := args[len(args)-2]
 	common.InitAddresses(topo)

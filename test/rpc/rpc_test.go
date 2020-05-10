@@ -74,9 +74,10 @@ func TestMain(m *testing.M) {
 	os.Exit(code)
 }
 
+// Used to test the performance of RPC communication
 func TestRPC(t *testing.T) {
 	numClients := 100
-	numReq := 1000 * 1000
+	numReq := int(10e6)
 	var wg sync.WaitGroup
 	for i := 0; i < numClients; i++ {
 		wg.Add(1)

@@ -1,6 +1,6 @@
 FROM base
 
-WORKDIR ./benchmark/agents
+WORKDIR ./test/agents
 
 ENV TOPOLOGY dockerSimple
 ENV NUM_WORKERS 11

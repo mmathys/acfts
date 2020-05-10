@@ -2,7 +2,7 @@ FROM base
 
 EXPOSE 6666
 
-WORKDIR ./benchmark/sign
+WORKDIR ./test/sign
 
 ENV TEST none
 ENV BENCH none
