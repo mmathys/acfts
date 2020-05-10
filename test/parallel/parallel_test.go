@@ -1,9 +1,11 @@
-package test
+package parallel
 
 import (
 	"fmt"
 	"github.com/mmathys/acfts/client/core"
 	"github.com/mmathys/acfts/common"
+	"github.com/mmathys/acfts/test/environment"
+	"os"
 	"testing"
 )
 
@@ -11,17 +13,28 @@ import (
 This is parallel benchmark
 */
 
+
+var A common.Address
+var B common.Address
+
+func TestMain(m *testing.M) {
+	common.InitAddresses("../../topologies/localSimple.json")
+	A = environment.TestClient(0)
+	B = environment.TestClient(1)
+	os.Exit(m.Run())
+}
+
 // in this benchmark, a wallet gets created once. Then, the wallet spends all of its credits, 1 credit per iteration.
 func TestParallelSpendSingle(t *testing.T) {
-	var numWorkers uint8 = 3
+	var numWorkers = 3
 	N := 10000
 
 	jobs := make(chan bool, N)
 	done := make(chan bool, N)
 
-	var i uint8 = 0
+	var i = 0
 	for ; i < numWorkers; i++ {
-		addr := common.GetClients()[i]
+		addr := environment.TestClient(i)
 		w := common.NewWalletWithAmount(addr, N)
 		go worker(w, t, jobs, done)
 	}
@@ -44,7 +57,7 @@ func worker(w *common.Wallet, t *testing.T, jobs <-chan bool, done chan<- bool) 
 			t.Error("failed to prepare transaction")
 		}
 
-		_, err = core.SignTransaction(w, tx)
+		core.DoTransaction(w, tx, false)
 		if err != nil {
 			fmt.Println("failed to sign transaction")
 			return

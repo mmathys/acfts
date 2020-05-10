@@ -1,4 +1,4 @@
-package test
+package sequential
 
 import (
 	"github.com/mmathys/acfts/client/core"
@@ -17,7 +17,7 @@ var A common.Address
 var B common.Address
 
 func TestMain(m *testing.M) {
-	common.InitAddresses("../topologies/localSimple.json")
+	common.InitAddresses("../../topologies/localSimple.json")
 	A = environment.TestClient(0)
 	B = environment.TestClient(1)
 	os.Exit(m.Run())

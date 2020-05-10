@@ -33,6 +33,16 @@
         "Net": "localhost",
         "Port": 5556
       }
+    },
+    {
+      "Key": [
+        "7675b8ef1a5ba5cfc037b0d778fc74374aef4b48e8f33d03b0c0236780941988",
+        "048dadeefa70cfeb43f9e15a7df924cf1bb7878b081039ec2b9bce593252fe732ca043ec91ba4dcb639d7e70d778ecadd4ad2aadb11963c1206d3a6b62a8c0ee04"
+      ],
+      "Instance": {
+        "Net": "localhost",
+        "Port": 5557
+      }
     }
   ]
 }
