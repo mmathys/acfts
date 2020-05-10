@@ -30,13 +30,10 @@ func BenchmarkSequentialNewWallet(b *testing.B) {
 
 		tx, err := core.PrepareTransaction(walletA, B, 100)
 		if err != nil {
-			b.Error("failed to prepare transaction")
+			b.Fatal("failed to prepare transaction")
 		}
 
-		_, err = core.SignTransaction(walletA, tx)
-		if err != nil {
-			b.Error(err)
-		}
+		core.DoTransaction(walletA, tx, false)
 	}
 }
 
@@ -49,12 +46,12 @@ func BenchmarkSequentialSpendSingle(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		tx, err := core.PrepareTransaction(walletA, B, 1)
 		if err != nil {
-			b.Error("failed to prepare transaction")
+			b.Fatal("failed to prepare transaction")
 		}
 
-		_, err = core.SignTransaction(walletA, tx)
+		core.DoTransaction(walletA, tx, false)
 		if err != nil {
-			b.Error(err)
+			b.Fatal(err)
 		}
 	}
 }
@@ -69,9 +66,6 @@ func TestSequentialSpendSingle(t *testing.T) {
 			panic("failed to prepare transaction")
 		}
 
-		_, err = core.SignTransaction(walletA, tx)
-		if err != nil {
-			t.Error(err)
-		}
+		core.DoTransaction(walletA, tx, false)
 	}
 }

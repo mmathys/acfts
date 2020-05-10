@@ -55,36 +55,39 @@ func getConnection(net string) (*rpc.Client, error) {
 	return c, nil
 }
 
-func RequestSignature(serverAddr common.Address, id *common.Identity, t common.Transaction, wg *sync.WaitGroup, sigs *chan common.TransactionSignRes) {
+func RequestSignature(serverAddr common.Address, id *common.Identity, t common.Transaction, wg *sync.WaitGroup, sigs chan common.TransactionSignRes, errs chan error) {
+	defer wg.Done()
+
 	instanceIndex := common.GetServerInstanceIndex(serverAddr, id.Address)
 	net, err := common.GetServerNetworkAddress(serverAddr, instanceIndex)
-
 	if err != nil {
-		fmt.Print(err.Error())
+		errs <- err
 		return
 	}
 
 	req := common.TransactionSigReq{Transaction: t}
 	err = common.SignTransactionSigRequest(id.Key, &req)
 	if err != nil {
-		log.Panic(err)
+		errs <- err
+		return
 	}
 
 	client, err := getConnection(net)
 	if err != nil {
-		log.Fatal("dialing:", err)
+		errs <- err
+		return
 	}
 
 	var res common.TransactionSignRes
 	err = client.Call("Server.Sign", req, &res)
 	if err != nil {
 		msg := fmt.Sprintf("could not fetch sig at %s\n", net)
-		fmt.Println(err)
-		log.Panic(msg)
+		log.Println(msg)
+		errs <- err
+		return
 	}
 
-	*sigs <- res
-	wg.Done()
+	sigs <- res
 }
 
 func ForwardValue(t common.Value) {

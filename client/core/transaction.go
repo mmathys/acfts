@@ -38,20 +38,28 @@ func SignTransaction(w *common.Wallet, t common.Transaction) (*[]common.Transact
 	n := len(common.GetServers())
 
 	sigs := make(chan common.TransactionSignRes, n)
+	errs := make(chan error, n)
 
 	var wg sync.WaitGroup
-
+	wg.Add(n)
 	for _, server := range common.GetServers() {
-		wg.Add(1)
-		go adapter.RequestSignature(server, w.Identity, t, &wg, &sigs)
+		go adapter.RequestSignature(server, w.Identity, t, &wg, sigs, errs)
 	}
-
 	wg.Wait()
 
-	// TODO validate and store sigs
+	close(sigs)
+	close(errs)
+
+	var errors []error
+	for err := range errs {
+		errors = append(errors, err)
+	}
+	if len(errors) > 0 {
+		return nil, errors[0]
+	}
+
 	var res []common.TransactionSignRes
-	for i := 0; i < n; i++ {
-		sig := <-sigs
+	for sig := range sigs {
 		res = append(res, sig)
 	}
 
