@@ -72,7 +72,7 @@ The CLIs are installed in `$GOPATH/bin`.
 
 ```bash
 server                      # Executable
-    --address <address>     # Address assigned to server. Format: 0x...
+    --address <address>     # Address assigned to server. Must be in hexadecimal.
     --topology <file>       # Topology configuration file
     --benchmark             # Outputs number of tx/s to stdout
     --pprof                 # Enables pprof profiler
@@ -86,7 +86,7 @@ Launch the CLI:
 
 ```bash
 client                      # Executable
-    --address <address>     # Address assigned to client. Format: 0x...
+    --address <address>     # Address assigned to client. Must be in hexadecimal.
     --topology <file>       # Topology configuration file
     --benchmark             # If set: outputs benchmark
     --help                  # Prints help  
@@ -96,7 +96,7 @@ Run CLI commands:
 
 ```bash
 > help                    # Show the help section
-> send <address> 100      # Send 100 credits to <address>. Format: 0x...
+> send <address> 100      # Send 100 credits to <address>. Must be in hexadecimal.
 > utxo                    # Show local UTXOs
 > balance                 # Show balance
 > info                    # Show client information

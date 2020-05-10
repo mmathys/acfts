@@ -96,7 +96,7 @@ func lookupClient(address Address) (ClientNode, error) {
 	if ok {
 		return client, nil
 	} else {
-		msg := fmt.Sprintf("could not find client 0x%x\n", address)
+		msg := fmt.Sprintf("could not find client %x\n", address)
 		return ClientNode{}, errors.New(msg)
 	}
 }
@@ -107,7 +107,7 @@ func lookupServer(address Address) (ServerNode, error) {
 	if ok {
 		return server, nil
 	} else {
-		msg := fmt.Sprintf("could not find server 0x%x\n", address)
+		msg := fmt.Sprintf("could not find server %x\n", address)
 		return ServerNode{}, errors.New(msg)
 	}
 }
@@ -155,14 +155,14 @@ func GetKey(address Address) *ecdsa.PrivateKey {
 		return server.Key
 	}
 
-	log.Panicf("could not find address 0x%x\n", address)
+	log.Panicf("could not find address %x\n", address)
 	return nil
 }
 
 func GetClientPort(address Address) int {
 	res, err := lookupClient(address)
 	if err != nil {
-		log.Fatalf("could not find address 0x%x", address)
+		log.Fatalf("could not find address %x", address)
 		return -1
 	} else {
 		return res.Instance.Port
@@ -172,7 +172,7 @@ func GetClientPort(address Address) int {
 func GetServerPort(address Address, instanceIndex int) int {
 	res, err := lookupServerInstance(address, instanceIndex)
 	if err != nil {
-		log.Fatalf("could not find address 0x%x", address)
+		log.Fatalf("could not find address %x", address)
 		return -1
 	} else {
 		return res.Port

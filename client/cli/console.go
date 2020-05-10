@@ -14,7 +14,7 @@ import (
 
 // Show help
 func help() {
-	fmt.Println("send <address> 100\t\tSend 100 credits to <address>. Format: 0x....")
+	fmt.Println("send <address> 100\t\tSend 100 credits to <address>. Must be encoded in hexadecimal.")
 	fmt.Println("utxo\t\t\tShow local UTXOs")
 	fmt.Println("balance\t\t\tShow balance")
 	fmt.Println("info\t\t\tShow client information")
@@ -51,8 +51,8 @@ func send(w *common.Wallet, s []string) {
 
 func info(w *common.Wallet) {
 	net, _ := common.GetClientNetworkAddress(w.Address)
-	fmt.Printf("Address (public key):\t0x%x\n", w.Address)
-	fmt.Printf("Private Key:\t\t0x%x\n", *common.MarshalKey(w.Key))
+	fmt.Printf("Address (public key):\t%x\n", w.Address)
+	fmt.Printf("Private Key:\t\t%x\n", *common.MarshalKey(w.Key))
 	fmt.Printf("Network:\t\t%s\n", net)
 }
 
@@ -62,8 +62,8 @@ func utxo(w *common.Wallet) {
 	table.SetHeader([]string{"address", "amount", "id", "sig count"})
 	w.UTXO.Range(func(_ interface{}, value interface{}) bool {
 		v := value.(common.Value)
-		trimmedAddr := fmt.Sprintf("0x%x", v.Address)[:10]
-		trimmedId := fmt.Sprintf("0x%x", v.Id)[:10]
+		trimmedAddr := fmt.Sprintf("%x", v.Address)[:10]
+		trimmedId := fmt.Sprintf("%x", v.Id)[:10]
 		table.Append([]string{
 			fmt.Sprintf("%s...", trimmedAddr),
 			fmt.Sprintf("%d", v.Amount),

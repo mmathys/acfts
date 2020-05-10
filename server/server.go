@@ -21,7 +21,7 @@ func runServer(address common.Address, instanceIndex int, benchmark bool, topolo
 	port := common.GetServerPort(address, instanceIndex)
 
 	log.Println("initialized server")
-	log.Printf("addr=0x%x, instance=%d, port=%d, benchmark = %t, pprof=%t\n", address, instanceIndex, port, benchmark, pprof)
+	log.Printf("addr=%x, instance=%d, port=%d, benchmark = %t, pprof=%t\n", address, instanceIndex, port, benchmark, pprof)
 
 	if benchmark {
 		go util.Ticker(TxCounter)

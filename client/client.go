@@ -34,7 +34,7 @@ func runClient(c *urfaveCli.Context) error {
 
 	port := common.GetClientPort(addr)
 
-	log.Printf("initialized client; addr = 0x%x port = %d", addr, port)
+	log.Printf("initialized client; addr = %x port = %d", addr, port)
 
 	incoming := make(chan common.Value, bufferLen)
 
