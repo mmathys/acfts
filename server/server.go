@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/mmathys/acfts/common"
+	"github.com/mmathys/acfts/common/funset"
 	serverAdapter "github.com/mmathys/acfts/server/adapter"
 	"github.com/mmathys/acfts/server/util"
 	"github.com/urfave/cli/v2"
@@ -9,11 +10,10 @@ import (
 	_ "net/http/pprof"
 	"os"
 	"runtime"
-	"sync"
 )
 
 var TxCounter = new(int32)
-var SignedUTXO sync.Map
+var SignedUTXO = funset.NewFunSet()
 
 func runServer(address common.Address, instanceIndex int, benchmark bool, topology string, pprof bool) error {
 	common.InitAddresses(topology)
@@ -32,7 +32,7 @@ func runServer(address common.Address, instanceIndex int, benchmark bool, topolo
 	}
 
 	id := common.GetIdentity(address)
-	serverAdapter.Init(port, id, false, benchmark, TxCounter, &SignedUTXO)
+	serverAdapter.Init(port, id, false, benchmark, TxCounter, SignedUTXO)
 
 	return nil
 }

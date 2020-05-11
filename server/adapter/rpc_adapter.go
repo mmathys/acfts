@@ -4,20 +4,20 @@ import (
 	"errors"
 	"fmt"
 	"github.com/mmathys/acfts/common"
+	"github.com/mmathys/acfts/common/funset"
 	"github.com/mmathys/acfts/server/checks"
 	"github.com/mmathys/acfts/server/util"
 	"log"
 	"net"
 	"net/http"
 	"net/rpc"
-	"sync"
 )
 
 var Id *common.Identity
 var NoSigning bool
 var Benchmark bool
 var TxCounter *int32
-var SignedUTXO *sync.Map
+var SignedUTXO *funset.FunSet
 var AllowDoublespend = false
 var UseUTXOMap = true
 var CheckTransactions = true
@@ -44,8 +44,8 @@ func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignR
 	tx := req.Transaction
 	if !NoSigning && UseUTXOMap {
 		for _, input := range tx.Inputs {
-			_, spent := SignedUTXO.LoadOrStore(input.Id, true)
-			if spent && !AllowDoublespend {
+			inserted := SignedUTXO.Insert(input.Id)
+			if !inserted && !AllowDoublespend {
 				err := errors.New("UTXO already exists: no double spending")
 				fmt.Println(err)
 				return err
@@ -75,7 +75,7 @@ func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignR
 }
 
 // Initialises the adapter
-func Init(port int, id *common.Identity, noSigning bool, benchmark bool, txCounter *int32, signedUTXO *sync.Map) {
+func Init(port int, id *common.Identity, noSigning bool, benchmark bool, txCounter *int32, signedUTXO *funset.FunSet) {
 	Id = id
 	NoSigning = noSigning
 	Benchmark = benchmark
