@@ -1,4 +1,4 @@
-package kobi_list
+package _map
 
 const arrayLength = 10000000
 
