@@ -1,4 +1,4 @@
-package _map
+package funset
 
 const arrayLength = 10000000
 

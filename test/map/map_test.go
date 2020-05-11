@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/cornelk/hashmap"
 	"github.com/mmathys/acfts/common"
+	"github.com/mmathys/acfts/common/funset"
 	"gotest.tools/assert"
 	"os"
 	"strconv"
@@ -131,7 +132,7 @@ Fun Set
 Basic Test
 */
 func TestFunSetBasic(t *testing.T) {
-	set := NewFunSet()
+	set := funset.NewFunSet()
 	var data [32]byte
 
 	inserted := set.Insert(data)
@@ -150,7 +151,7 @@ func TestFunSetRaceCondition(t *testing.T) {
 	id := common.RandomIdentifier()
 
 	for i := 0; i < 10; i++ {
-		set := NewFunSet()
+		set := funset.NewFunSet()
 		var wg sync.WaitGroup
 		wg.Add(numWorkers)
 
@@ -176,7 +177,7 @@ func TestFunSetRaceCondition(t *testing.T) {
 This tests whether 1 million identifiers can be inserted into Fun Set
 */
 func TestFunSet100MillionInserts(t *testing.T) {
-	set := NewFunSet()
+	set := funset.NewFunSet()
 
 	for i := 0; i < 100e6; i++ {
 		id := common.RandomIdentifier()
@@ -189,7 +190,7 @@ func TestFunSet100MillionInserts(t *testing.T) {
 
 
 func BenchmarkFunSetSingleIdentifier(b *testing.B) {
-	utxos := NewFunSet()
+	utxos := funset.NewFunSet()
 
 	lastParam := os.Args[len(os.Args)-1]
 	numWorkers := 64
@@ -220,7 +221,7 @@ func BenchmarkFunSetSingleIdentifier(b *testing.B) {
 
 
 func BenchmarkFunSet(b *testing.B) {
-	utxos := NewFunSet()
+	utxos := funset.NewFunSet()
 
 	lastParam := os.Args[len(os.Args)-1]
 	numWorkers := 64
