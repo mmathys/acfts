@@ -182,7 +182,7 @@ func TestFunSetInserts(t *testing.T) {
 	set := funset.NewFunSet()
 	fmt.Println("running...")
 
-	var N int = 1e6
+	var N int = 100e6
 
 	start := time.Now()
 	for i := 0; i < N; i++ {
@@ -194,7 +194,7 @@ func TestFunSetInserts(t *testing.T) {
 	}
 	end := time.Now()
 	elapsed := end.Sub(start)
-	fmt.Printf("executed %d inserts in %v\n", N, float64(elapsed) / float64(time.Second))
+	fmt.Printf("executed %v inserts in %v\n", N, float64(elapsed) / float64(time.Second))
 	txps := float64(N) / (float64(elapsed) / float64(time.Second))
 	fmt.Printf("= %v tx/s\n", txps)
 }
