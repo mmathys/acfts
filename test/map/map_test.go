@@ -181,7 +181,7 @@ func TestFunSet100MillionInserts(t *testing.T) {
 	set := funset.NewFunSet()
 	fmt.Println("running...")
 
-	for i := 0; i < 100e6; i++ {
+	for i := 0; i < 1e6; i++ {
 		id := common.RandomIdentifier()
 		inserted := set.Insert(id)
 		if !inserted {
