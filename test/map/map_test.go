@@ -125,9 +125,10 @@ func TestStuff(t *testing.T) {
 		t.Error("fail: should exist")
 	}
 }
+
 /**
 Fun Set
- */
+*/
 
 /**
 Basic Test
@@ -173,32 +174,14 @@ func TestFunSetRaceCondition(t *testing.T) {
 	}
 }
 
-
 /**
 This tests whether 1 million identifiers can be inserted into Fun Set
 */
 func TestFunSetInserts(t *testing.T) {
-	fmt.Println("initializing...")
-	set := funset.NewFunSet()
-	fmt.Println("running...")
-
 	var N int = 100e6
 
-	start := time.Now()
-	for i := 0; i < N; i++ {
-		id := common.RandomIdentifier()
-		inserted := set.Insert(id)
-		if !inserted {
-			t.Error("failed to insert")
-		}
-	}
-	end := time.Now()
-	elapsed := end.Sub(start)
-	fmt.Printf("executed %v inserts in %v\n", N, float64(elapsed) / float64(time.Second))
-	txps := float64(N) / (float64(elapsed) / float64(time.Second))
-	fmt.Printf("= %v tx/s\n", txps)
+	insert(nil, 64, N)
 }
-
 
 func BenchmarkFunSetSingleIdentifier(b *testing.B) {
 	utxos := funset.NewFunSet()
@@ -220,7 +203,7 @@ func BenchmarkFunSetSingleIdentifier(b *testing.B) {
 	for i := 0; i < numWorkers; i++ {
 		wg.Add(1)
 		go func() {
-			for j := 0; j < b.N / numWorkers; j++ {
+			for j := 0; j < b.N/numWorkers; j++ {
 				utxos.Insert(id)
 			}
 			wg.Done()
@@ -230,10 +213,7 @@ func BenchmarkFunSetSingleIdentifier(b *testing.B) {
 	wg.Wait()
 }
 
-
 func BenchmarkFunSet(b *testing.B) {
-	utxos := funset.NewFunSet()
-
 	lastParam := os.Args[len(os.Args)-1]
 	numWorkers := 64
 
@@ -241,12 +221,24 @@ func BenchmarkFunSet(b *testing.B) {
 		numWorkers = paramNum
 	}
 
+	insert(b, numWorkers, -1)
+}
+
+func insert(b *testing.B, numWorkers int, overrideN int) {
+	utxos := funset.NewFunSet()
 	fmt.Printf("numWorkers = %d\n", numWorkers)
+
+	N := 0
+	if b == nil {
+		N = overrideN
+	} else {
+		N = b.N
+	}
 
 	var identifiers [][][common.IdentifierLength]byte
 	for i := 0; i < numWorkers; i++ {
 		identifiers = append(identifiers, [][common.IdentifierLength]byte{})
-		for j := 0; j < b.N/numWorkers; j++ {
+		for j := 0; j < N/numWorkers; j++ {
 			id := common.RandomIdentifier()
 			array := [common.IdentifierLength]byte{}
 			copy(array[:], id[:common.IdentifierLength])
@@ -256,7 +248,10 @@ func BenchmarkFunSet(b *testing.B) {
 
 	var wg sync.WaitGroup
 
-	b.ResetTimer()
+	start := time.Now()
+	if b != nil {
+		b.ResetTimer()
+	}
 	for i := 0; i < numWorkers; i++ {
 		wg.Add(1)
 		go func(work [][common.IdentifierLength]byte) {
@@ -270,5 +265,12 @@ func BenchmarkFunSet(b *testing.B) {
 	}
 
 	wg.Wait()
-}
 
+	if b == nil {
+		end := time.Now()
+		elapsed := end.Sub(start)
+		fmt.Printf("executed %v inserts in %v\n", N, float64(elapsed)/float64(time.Second))
+		txps := float64(N) / (float64(elapsed) / float64(time.Second))
+		fmt.Printf("= %v tx/s\n", txps)
+	}
+}
