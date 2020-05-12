@@ -225,6 +225,7 @@ func BenchmarkFunSet(b *testing.B) {
 }
 
 func insert(b *testing.B, numWorkers int, overrideN int) {
+	fmt.Println("initializing set...")
 	utxos := funset.NewFunSet()
 	fmt.Printf("numWorkers = %d\n", numWorkers)
 
@@ -235,6 +236,7 @@ func insert(b *testing.B, numWorkers int, overrideN int) {
 		N = b.N
 	}
 
+	fmt.Println("initializing transactions...")
 	var identifiers [][][common.IdentifierLength]byte
 	for i := 0; i < numWorkers; i++ {
 		identifiers = append(identifiers, [][common.IdentifierLength]byte{})
@@ -248,6 +250,7 @@ func insert(b *testing.B, numWorkers int, overrideN int) {
 
 	var wg sync.WaitGroup
 
+	fmt.Println("inserting transactions...")
 	start := time.Now()
 	if b != nil {
 		b.ResetTimer()
