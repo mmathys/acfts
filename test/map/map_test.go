@@ -242,9 +242,7 @@ func insert(b *testing.B, numWorkers int, overrideN int) {
 		identifiers = append(identifiers, [][common.IdentifierLength]byte{})
 		for j := 0; j < N/numWorkers; j++ {
 			id := common.RandomIdentifier()
-			array := [common.IdentifierLength]byte{}
-			copy(array[:], id[:common.IdentifierLength])
-			identifiers[i] = append(identifiers[i], array)
+			identifiers[i] = append(identifiers[i], id)
 		}
 	}
 
