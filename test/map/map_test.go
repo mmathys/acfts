@@ -236,15 +236,22 @@ func insert(b *testing.B, numWorkers int, overrideN int) {
 		N = b.N
 	}
 
+	var ig sync.WaitGroup
 	fmt.Println("initializing transactions...")
 	var identifiers [][][common.IdentifierLength]byte
 	for i := 0; i < numWorkers; i++ {
 		identifiers = append(identifiers, [][common.IdentifierLength]byte{})
-		for j := 0; j < N/numWorkers; j++ {
-			id := common.RandomIdentifier()
-			identifiers[i] = append(identifiers[i], id)
-		}
+		ig.Add(1)
+		go func() {
+			for j := 0; j < N/numWorkers; j++ {
+				id := common.RandomIdentifier()
+				identifiers[i] = append(identifiers[i], id)
+			}
+			ig.Done()
+		}()
 	}
+
+	ig.Wait()
 
 	var wg sync.WaitGroup
 
