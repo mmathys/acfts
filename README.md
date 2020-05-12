@@ -40,7 +40,6 @@ source ~/.bashrc
 Build source and install executables:
 
 ```bash
-cd acfts
 go build ./...
 go install ./...
 ```
