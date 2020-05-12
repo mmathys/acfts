@@ -177,7 +177,9 @@ func TestFunSetRaceCondition(t *testing.T) {
 This tests whether 1 million identifiers can be inserted into Fun Set
 */
 func TestFunSet100MillionInserts(t *testing.T) {
+	fmt.Println("initializing...")
 	set := funset.NewFunSet()
+	fmt.Println("running...")
 
 	for i := 0; i < 100e6; i++ {
 		id := common.RandomIdentifier()
