@@ -40,14 +40,13 @@ source ~/.bashrc
 Build source and install executables:
 
 ```bash
-cd acfts
 go build ./...
 go install ./...
 ```
 
 ## Introduction
 
-ACFTS is a asynchronous consensus-free transaction system. It consists of trusted servers and untrusted clients. Each server
+ACFTS is an asynchronous consensus-free transaction system. It consists of trusted servers and untrusted clients. Each server
 and client have a unique ECDSA key. The address is derived from its public key.
 
 The client has a CLI which allows easy transfer of credits. In this setup, each client automatically gets 100 valid credits.
@@ -61,7 +60,7 @@ Topologies encode all necessary information about server and clients, for exampl
 replication instances. In a system, a server and client must always use the same topology.
 
 When launching a server or a client, its configuration can be given by a topology, an address (which
-must correspond to a node in the topology). When server shard replication is used, and replication instance index can
+must correspond to a node in the topology). When server shard replication is used, a replication instance index can
 additionally be passed.
 
 ## Executables
@@ -89,7 +88,7 @@ client                      # Executable
     --address <address>     # Address assigned to client. Must be in hexadecimal.
     --topology <file>       # Topology configuration file
     --benchmark             # If set: outputs benchmark
-    --help                  # Prints help  
+    --help                  # Prints help
 ```
 
 Run CLI commands:
