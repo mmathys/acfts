@@ -194,9 +194,9 @@ func TestFunSetInserts(t *testing.T) {
 	}
 	end := time.Now()
 	elapsed := end.Sub(start)
-	fmt.Printf("executed %d inserts in %v \n", N, float64(elapsed) / float64(time.Second))
+	fmt.Printf("executed %d inserts in %v\n", N, float64(elapsed) / float64(time.Second))
 	txps := float64(N) / (float64(elapsed) / float64(time.Second))
-	fmt.Printf("%v = tx/s\n", txps)
+	fmt.Printf("= %v tx/s\n", txps)
 }
 
 
