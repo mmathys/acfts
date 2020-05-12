@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/mmathys/acfts/client/core"
 	"github.com/mmathys/acfts/common"
-	"github.com/mmathys/acfts/common/funset"
 	"github.com/mmathys/acfts/server/adapter"
 	"log"
 	"net/http"
@@ -65,7 +64,8 @@ func worker(N int, numWorkers int, b *testing.B) error {
 	topo := args[len(args)-2]
 	common.InitAddresses(topo)
 	adapter.TxCounter = new(int32)
-	adapter.SignedUTXO = funset.NewFunSet()
+	//adapter.SignedUTXO = funset.NewFunSet()
+	adapter.SignedUTXO = new(sync.Map)
 	adapter.CheckTransactions = true
 	adapter.Benchmark = false
 	adapter.Id = common.GetIdentity(common.GetServers()[0])
