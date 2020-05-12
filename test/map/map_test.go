@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"sync"
 	"testing"
+	"time"
 )
 
 func BenchmarkSyncMap(b *testing.B) {
@@ -176,18 +177,26 @@ func TestFunSetRaceCondition(t *testing.T) {
 /**
 This tests whether 1 million identifiers can be inserted into Fun Set
 */
-func TestFunSet100MillionInserts(t *testing.T) {
+func TestFunSetInserts(t *testing.T) {
 	fmt.Println("initializing...")
 	set := funset.NewFunSet()
 	fmt.Println("running...")
 
-	for i := 0; i < 1e6; i++ {
+	var N int = 1e6
+
+	start := time.Now()
+	for i := 0; i < N; i++ {
 		id := common.RandomIdentifier()
 		inserted := set.Insert(id)
 		if !inserted {
 			t.Error("failed to insert")
 		}
 	}
+	end := time.Now()
+	elapsed := end.Sub(start)
+	fmt.Printf("executed %d inserts in %v \n", N, float64(elapsed) / float64(time.Second))
+	txps := float64(N) / (float64(elapsed) / float64(time.Second))
+	fmt.Printf("%v = tx/s\n", txps)
 }
 
 
