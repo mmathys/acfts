@@ -288,6 +288,7 @@ services:
       - base
     environment:
       - BENCH
+      - TEST
       - NUM_WORKERS=1
       - GOGC=11000
     deploy:
@@ -301,6 +302,7 @@ services:
       - base
     environment:
       - BENCH
+      - TEST
       - NUM_WORKERS=2
       - GOGC=11000
     deploy:
@@ -314,6 +316,7 @@ services:
       - base
     environment:
       - BENCH
+      - TEST
       - NUM_WORKERS=4
       - GOGC=11000
     deploy:
@@ -328,6 +331,7 @@ services:
       - base
     environment:
       - BENCH
+      - TEST
       - NUM_WORKERS=8
       - GOGC=11000
     deploy:
@@ -342,6 +346,7 @@ services:
       - base
     environment:
       - BENCH
+      - TEST
       - NUM_WORKERS=16
       - GOGC=11000
     deploy:
@@ -356,6 +361,7 @@ services:
       - base
     environment:
       - BENCH
+      - TEST
       - NUM_WORKERS=32
       - GOGC=11000
     deploy:
@@ -370,6 +376,7 @@ services:
       - base
     environment:
       - BENCH
+      - TEST
       - NUM_WORKERS=64
       - GOGC=11000
     deploy:
