@@ -14,7 +14,7 @@ Signature Recovery
  */
 
 // Recovers a ECDSA public key (bytes, uncompressed) from a hash and signature. Using ethereum/go-ethereum crypto.
-func recoverPubkeyBytes(hash []byte, sig []byte) ([]byte, error) {
+func RecoverPubkeyBytes(hash []byte, sig []byte) ([]byte, error) {
 	return ethereum.Ecrecover(hash, sig)
 }
 
@@ -37,7 +37,7 @@ Signing
  */
 
 // Signs a hash
-func signHash(hash []byte, key *ecdsa.PrivateKey) ([]byte, error) {
+func SignHash(hash []byte, key *ecdsa.PrivateKey) ([]byte, error) {
 	sig, err := ethereum.Sign(hash, key)
 	if err != nil {
 		return []byte{}, err
@@ -53,7 +53,7 @@ func SignValue(key *ecdsa.PrivateKey, value *Value) error {
 		value.Signatures = [][]byte{}
 	}
 
-	sig, err := signHash(hash, key)
+	sig, err := SignHash(hash, key)
 	if err != nil {
 		return err
 	}
@@ -77,7 +77,7 @@ func SignValues(key *ecdsa.PrivateKey, outputs []Value) ([]Value, error) {
 // Signs transaction signature request, which is requested by a client
 func SignTransactionSigRequest(key *ecdsa.PrivateKey, request *TransactionSigReq) error {
 	hash := HashTransactionSigRequest(*request)
-	sig, err := signHash(hash, key)
+	sig, err := SignHash(hash, key)
 	if err != nil {
 		return err
 	}
@@ -91,7 +91,7 @@ Signature Verification
 */
 
 // Verifies a signature. Using ethereum/go-ethereum crypto
-func verify(pubkey []byte, hash []byte, sig []byte) (bool, error) {
+func Verify(pubkey []byte, hash []byte, sig []byte) (bool, error) {
 	if len(sig) != ethereum.SignatureLength { // 64 + 1
 		msg := fmt.Sprintf("invalid signature length. wanted: %d, got: %d", ethereum.SignatureLength, len(sig))
 		return false, errors.New(msg)
@@ -111,12 +111,12 @@ func VerifyValue(value *Value) error {
 	numSigs := 0
 
 	for _, sig := range value.Signatures {
-		pubkey, err := recoverPubkeyBytes(hash, sig)
+		pubkey, err := RecoverPubkeyBytes(hash, sig)
 		if err != nil {
 			return err
 		}
 
-		valid, err := verify(pubkey, hash, sig)
+		valid, err := Verify(pubkey, hash, sig)
 		if err != nil {
 			return err
 		}
@@ -163,7 +163,7 @@ func VerifyTransactionSigRequest(req *TransactionSigReq) error {
 		}
 	}
 
-	valid, err := verify(ownerAddress, hash, req.Signature)
+	valid, err := Verify(ownerAddress, hash, req.Signature)
 	if err != nil {
 		return err
 	}

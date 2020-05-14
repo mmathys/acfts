@@ -18,12 +18,12 @@ func TestPubkeyMarshal(t *testing.T) {
 	enc.Encode(msg)
 	hash := d.Sum(nil)
 
-	sig, err := signHash(hash, key)
+	sig, err := SignHash(hash, key)
 	if err != nil {
 		panic(err)
 	}
 
-	valid, err := verify(encoded, hash, sig)
+	valid, err := Verify(encoded, hash, sig)
 	if err != nil {
 		panic(err)
 	}
@@ -41,12 +41,12 @@ func TestRecoverPubkey(t *testing.T) {
 	enc.Encode(msg)
 	hash := d.Sum(nil)
 
-	sig, err := signHash(hash, key)
+	sig, err := SignHash(hash, key)
 	if err != nil {
 		t.Errorf("Sign error: %s", err)
 	}
 
-	recoveredPub, err := recoverPubkeyBytes(hash, sig)
+	recoveredPub, err := RecoverPubkeyBytes(hash, sig)
 	if err != nil {
 		t.Errorf("ECRecover error: %s", err)
 	}
@@ -78,7 +78,7 @@ func TestGenerateParseKey(t *testing.T) {
 	hash := make([]byte, 32) // random hash
 	rand.Read(hash)
 
-	sig, err := signHash(hash, key)
+	sig, err := SignHash(hash, key)
 	if err != nil {
 		t.Error(err)
 	}
@@ -87,7 +87,7 @@ func TestGenerateParseKey(t *testing.T) {
 	decoded := UnmarshalKey(encoded)
 	encodedPub2 := MarshalPubkey(&decoded.PublicKey)
 
-	valid, err := verify(encodedPub2, hash, sig)
+	valid, err := Verify(encodedPub2, hash, sig)
 	if err != nil {
 		panic(err)
 	}
