@@ -30,13 +30,14 @@ func writeValue(d *hash.Hash, value *Value) {
 	(*d).Write(value.Id[:])
 	if value.Signatures != nil {
 		for _, signature := range value.Signatures {
-			(*d).Write(signature)
+			(*d).Write(signature.Address)
+			(*d).Write(signature.RS)
 		}
 	}
 }
 
 func HashTransactionSigRequest(req TransactionSigReq) []byte {
-	req.Signature = []byte{} // zero out signatures before hash
+	req.Signature = ECDSASig{} // zero out signature before hash
 	d := sha3.New256()
 
 	for _, input := range req.Transaction.Inputs {

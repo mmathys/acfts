@@ -16,12 +16,17 @@ type Address = []byte                    // len = AddressLength
 type PrivateKey = []byte                 // len = PrivateKeyLength
 type Identifier = [IdentifierLength]byte // len = IdentifierLength
 
+type ECDSASig struct {
+	Address	Address
+	RS 		[]byte
+}
+
 // Defines an Input / Output tuple; with extra fields
 type Value struct {
-	Address    Address    // The public key = Address (encoded)
-	Amount     int        // The value itself
-	Id         Identifier // Unique identifier
-	Signatures [][]byte   // Signatures
+	Address    Address    	// The public key = Address (encoded)
+	Amount     int        	// The value itself
+	Id         Identifier 	// Unique identifier
+	Signatures []ECDSASig	// Signatures
 }
 
 type Transaction struct {
@@ -31,7 +36,7 @@ type Transaction struct {
 
 type TransactionSigReq struct {
 	Transaction Transaction
-	Signature   []byte
+	Signature   ECDSASig
 }
 
 type TransactionSignRes struct {

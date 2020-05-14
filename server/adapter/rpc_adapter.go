@@ -68,7 +68,7 @@ func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignR
 	} else {
 		outputs = tx.Outputs
 		for i, _ := range outputs {
-			outputs[i].Signatures = [][]byte{}
+			outputs[i].Signatures = []common.ECDSASig{}
 		}
 	}
 

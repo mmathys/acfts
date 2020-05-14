@@ -12,7 +12,7 @@ import (
 /**
 Signature Recovery
  */
-
+/*
 // Recovers a ECDSA public key (bytes, uncompressed) from a hash and signature. Using ethereum/go-ethereum crypto.
 func RecoverPubkeyBytes(hash []byte, sig []byte) ([]byte, error) {
 	return ethereum.Ecrecover(hash, sig)
@@ -24,6 +24,7 @@ func recoverPubkey(hash []byte, sig []byte) (*ecdsa.PublicKey, error) {
 }
 
 // Recovers a an address from a hash and signature. Using ethereum/go-ethereum crypto.
+
 func recoverAddress(hash []byte, sig []byte) (Address, error) {
 	owner, err := recoverPubkey(hash, sig)
 	if err != nil {
@@ -31,6 +32,7 @@ func recoverAddress(hash []byte, sig []byte) (Address, error) {
 	}
 	return MarshalPubkey(owner), nil
 }
+ */
 
 /**
 Signing
@@ -50,15 +52,20 @@ func SignValue(key *ecdsa.PrivateKey, value *Value) error {
 	hash := HashValue(*value)
 
 	if value.Signatures == nil {
-		value.Signatures = [][]byte{}
+		value.Signatures = []ECDSASig{}
 	}
+
+	addr := MarshalPubkey(&key.PublicKey)
 
 	sig, err := SignHash(hash, key)
 	if err != nil {
 		return err
 	}
 
-	value.Signatures = append(value.Signatures, sig)
+	value.Signatures = append(value.Signatures, ECDSASig{
+		Address: addr,
+		RS:      sig,
+	})
 	return nil
 }
 
@@ -76,12 +83,16 @@ func SignValues(key *ecdsa.PrivateKey, outputs []Value) ([]Value, error) {
 
 // Signs transaction signature request, which is requested by a client
 func SignTransactionSigRequest(key *ecdsa.PrivateKey, request *TransactionSigReq) error {
+	addr := MarshalPubkey(&key.PublicKey)
 	hash := HashTransactionSigRequest(*request)
 	sig, err := SignHash(hash, key)
 	if err != nil {
 		return err
 	}
-	request.Signature = sig
+	request.Signature = ECDSASig{
+		Address: addr,
+		RS:      sig,
+	}
 
 	return nil
 }
@@ -111,12 +122,7 @@ func VerifyValue(value *Value) error {
 	numSigs := 0
 
 	for _, sig := range value.Signatures {
-		pubkey, err := RecoverPubkeyBytes(hash, sig)
-		if err != nil {
-			return err
-		}
-
-		valid, err := Verify(pubkey, hash, sig)
+		valid, err := Verify(sig.Address, hash, sig.RS)
 		if err != nil {
 			return err
 		}
@@ -127,7 +133,7 @@ func VerifyValue(value *Value) error {
 
 		// look out for duplicates signatures
 		index := [AddressLength]byte{}
-		copy(index[:], pubkey[:AddressLength])
+		copy(index[:], sig.Address[:AddressLength])
 		if origins[index] {
 			return errors.New("duplicate signatures")
 		}
@@ -152,10 +158,7 @@ func VerifyValue(value *Value) error {
 func VerifyTransactionSigRequest(req *TransactionSigReq) error {
 	hash := HashTransactionSigRequest(*req)
 
-	ownerAddress, err := recoverAddress(hash, req.Signature)
-	if err != nil {
-		return err
-	}
+	ownerAddress := req.Signature.Address
 
 	for _, input := range req.Transaction.Inputs {
 		if !bytes.Equal(ownerAddress, input.Address) {
@@ -163,7 +166,7 @@ func VerifyTransactionSigRequest(req *TransactionSigReq) error {
 		}
 	}
 
-	valid, err := Verify(ownerAddress, hash, req.Signature)
+	valid, err := Verify(ownerAddress, hash, req.Signature.RS)
 	if err != nil {
 		return err
 	}

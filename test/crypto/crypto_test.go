@@ -59,13 +59,13 @@ func BenchmarkVerifyEth(b *testing.B) {
 	if err != nil {
 		b.Fatal(err)
 	}
-	pubkey, err := common.RecoverPubkeyBytes(hash, sig)
-	if err != nil {
-		b.Fatal(err)
-	}
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
+		pubkey, err := common.RecoverPubkeyBytes(hash, sig)
+		if err != nil {
+			b.Fatal(err)
+		}
 		valid, err := common.Verify(pubkey, hash, sig)
 		if err != nil {
 			b.Fatal(err)
@@ -75,3 +75,23 @@ func BenchmarkVerifyEth(b *testing.B) {
 		}
 	}
 }
+
+func BenchmarkRecoverEth(b *testing.B) {
+	key := common.GenerateKey()
+
+	hash := make([]byte, 32) // random hash
+	rand.Read(hash)
+	sig, err := common.SignHash(hash, key)
+	if err != nil {
+		b.Fatal(err)
+	}
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_, err := common.RecoverPubkeyBytes(hash, sig)
+		if err != nil {
+			b.Fatal(err)
+		}
+	}
+}
+
