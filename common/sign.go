@@ -5,25 +5,24 @@ import (
 	"crypto/ecdsa"
 	"errors"
 	"fmt"
-	ethereum "github.com/ethereum/go-ethereum/crypto"
+	secp256k1 "github.com/ethereum/go-ethereum/crypto"
 	"math"
 )
 
 /**
 Signature Recovery
  */
-// Recovers a ECDSA public key (bytes, uncompressed) from a hash and signature. Using ethereum/go-ethereum crypto.
+// Recovers a ECDSA public key (bytes, uncompressed) from a hash and signature. Using secp256k1 C-bindings crypto.
 func RecoverPubkeyBytes(hash []byte, sig []byte) ([]byte, error) {
-	return ethereum.Ecrecover(hash, sig)
+	return secp256k1.Ecrecover(hash, sig)
 }
 
-// Recovers a ECDSA public key (*ecdsa.PublicKey) from a hash and signature. Using ethereum/go-ethereum crypto.
+// Recovers a ECDSA public key (*ecdsa.PublicKey) from a hash and signature. Using secp256k1 C-bindings crypto.
 func recoverPubkey(hash []byte, sig []byte) (*ecdsa.PublicKey, error) {
-	return ethereum.SigToPub(hash, sig)
+	return secp256k1.SigToPub(hash, sig)
 }
 
-// Recovers a an address from a hash and signature. Using ethereum/go-ethereum crypto.
-
+// Recovers a an address from a hash and signature. Using secp256k1 C-bindings crypto.
 func recoverAddress(hash []byte, sig []byte) (Address, error) {
 	owner, err := recoverPubkey(hash, sig)
 	if err != nil {
@@ -38,7 +37,7 @@ Signing
 
 // Signs a hash
 func SignHash(hash []byte, key *ecdsa.PrivateKey) ([]byte, error) {
-	sig, err := ethereum.Sign(hash, key)
+	sig, err := secp256k1.Sign(hash, key)
 	if err != nil {
 		return []byte{}, err
 	}
@@ -99,14 +98,14 @@ func SignTransactionSigRequest(key *ecdsa.PrivateKey, request *TransactionSigReq
 Signature Verification
 */
 
-// Verifies a signature. Using ethereum/go-ethereum crypto
+// Verifies a signature. Using secp256k1 C bindings crypto
 func Verify(pubkey []byte, hash []byte, sig []byte) (bool, error) {
-	if len(sig) != ethereum.SignatureLength { // 64 + 1
-		msg := fmt.Sprintf("invalid signature length. wanted: %d, got: %d", ethereum.SignatureLength, len(sig))
+	if len(sig) != secp256k1.SignatureLength { // 64 + 1
+		msg := fmt.Sprintf("invalid signature length. wanted: %d, got: %d", secp256k1.SignatureLength, len(sig))
 		return false, errors.New(msg)
 	}
 	sig = sig[:len(sig)-1] // remove recovery bit
-	return ethereum.VerifySignature(pubkey, hash, sig), nil
+	return secp256k1.VerifySignature(pubkey, hash, sig), nil
 }
 
 // Verifies single value

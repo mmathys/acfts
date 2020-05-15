@@ -4,7 +4,7 @@ import (
 	"crypto/ecdsa"
 	"crypto/rand"
 	"errors"
-	ethereum "github.com/ethereum/go-ethereum/crypto"
+	secp256k1 "github.com/ethereum/go-ethereum/crypto"
 	"github.com/mmathys/acfts/common"
 	"testing"
 )
@@ -33,7 +33,7 @@ func BenchmarkSignSecp256k1(b *testing.B) {
 
 	b.ResetTimer()
 	for j := 0; j < b.N; j++ {
-		ethereum.Sign(hash, key)
+		secp256k1.Sign(hash, key)
 	}
 }
 
