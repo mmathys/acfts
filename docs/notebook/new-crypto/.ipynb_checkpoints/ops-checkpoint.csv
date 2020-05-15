@@ -1,0 +1,4 @@
+function,goEcdsa,secp256k1NoRecovery,secp256k1Recovery
+sign,146560,76123,76123
+verify,243644,121583,259425
+recover,0,0,134957

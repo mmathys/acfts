@@ -12,7 +12,6 @@ import (
 /**
 Signature Recovery
  */
-/*
 // Recovers a ECDSA public key (bytes, uncompressed) from a hash and signature. Using ethereum/go-ethereum crypto.
 func RecoverPubkeyBytes(hash []byte, sig []byte) ([]byte, error) {
 	return ethereum.Ecrecover(hash, sig)
@@ -32,7 +31,6 @@ func recoverAddress(hash []byte, sig []byte) (Address, error) {
 	}
 	return MarshalPubkey(owner), nil
 }
- */
 
 /**
 Signing
