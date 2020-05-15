@@ -16,16 +16,17 @@ import (
 	"time"
 )
 
-var numWorkers = 8
+var numWorkers = 0
 
 // This sets up the environment and the profiler.
 func TestMain(m *testing.M) {
-	numWorkers, err := strconv.Atoi(os.Args[len(os.Args)-1])
+	numWorkersLoaded, err := strconv.Atoi(os.Args[len(os.Args)-1])
 	if err != nil {
 		fmt.Printf("numWorkers must be supplied")
 		panic(err)
 	}
-	fmt.Printf("numWorkers = %d\n", numWorkers)
+
+	numWorkers = numWorkersLoaded
 
 	go func() {
 		runtime.SetBlockProfileRate(1)
@@ -60,6 +61,7 @@ func TestSignNoNetwork(t *testing.T) {
 // This function is used by the test and benchmarks. It contains some tests about whether a delay/distribution has an
 // effect on the profile
 func worker(N int, numWorkers int, b *testing.B) error {
+	fmt.Printf("numWorkers = %d\n", numWorkers)
 	args := os.Args
 	topo := args[len(args)-2]
 	common.InitAddresses(topo)
