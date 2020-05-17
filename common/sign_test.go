@@ -74,6 +74,6 @@ func TestKeylength(t *testing.T) {
 func TestPrintGeneratedKey(t *testing.T) {
 	for i := 0; i < 16; i++ {
 		id := GenerateKey()
-		fmt.Printf("\"%x\",\"%x\"\n", id.Address, id.PrivateKey)
+		fmt.Printf("{\"%x\",\"%x\"},\n", id.Address, id.PrivateKey)
 	}
 }

@@ -33,7 +33,7 @@ type TopologyConfig struct {
 	Clients []ClientNodeConfig
 }
 
-func readKey(keypair []string) (Address, PrivateKey) {
+func read(keypair []string) (Address, PrivateKey) {
 	addr, err := hex.DecodeString(keypair[0])
 	if err != nil {
 		panic(err)
@@ -88,7 +88,7 @@ func InitAddresses(path string) {
 	dec.Decode(&topology)
 
 	for _, client := range topology.Clients {
-		addr, key := readKey(client.Key)
+		addr, key := read(client.Key)
 		index := getIndex(addr)
 		clients[index] = ClientNode{
 			Instance: client.Instance,
@@ -98,7 +98,7 @@ func InitAddresses(path string) {
 	}
 
 	for _, server := range topology.Servers {
-		addr, key := readKey(server.Key)
+		addr, key := read(server.Key)
 		index := getIndex(addr)
 		servers[index] = ServerNode{
 			Instances: server.Instances,

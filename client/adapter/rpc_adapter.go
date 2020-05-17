@@ -66,7 +66,7 @@ func RequestSignature(serverAddr common.Address, id *common.Identity, t common.T
 	}
 
 	req := common.TransactionSigReq{Transaction: t}
-	err = common.SignTransactionSigRequest(id.Key, &req)
+	err = common.SignTransactionSigRequest(id, &req)
 	if err != nil {
 		errs <- err
 		return
