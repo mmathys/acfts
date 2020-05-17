@@ -1,32 +1,33 @@
 package common
 
 import (
-	"crypto/ecdsa"
+	"github.com/oasislabs/ed25519"
 	"sync"
 	"time"
 )
 
 const (
-	AddressLength    = 65 // address = public key
-	PrivateKeyLength = 32
-	IdentifierLength = 32
+	AddressLength    = 32 // address = public key
+	PrivateKeyLength = 64
+	IdentifierLength = 32 // used for UTXOs
+	SignatureLength = 64
 )
 
-type Address = []byte                    // len = AddressLength
-type PrivateKey = []byte                 // len = PrivateKeyLength
+type Address = ed25519.PublicKey         // len = AddressLength
+type PrivateKey = ed25519.PrivateKey     // len = PrivateKeyLength
 type Identifier = [IdentifierLength]byte // len = IdentifierLength
 
-type ECDSASig struct {
-	Address	Address
-	RS 		[]byte
+type EdDSASig struct {
+	Address		Address
+	Signature 	[]byte
 }
 
 // Defines an Input / Output tuple; with extra fields
 type Value struct {
-	Address    Address    	// The public key = Address (encoded)
-	Amount     int        	// The value itself
-	Id         Identifier 	// Unique identifier
-	Signatures []ECDSASig	// Signatures
+	Address    Address    // The public key = Address (encoded)
+	Amount     int        // The value itself
+	Id         Identifier // Unique identifier
+	Signatures []EdDSASig // Signatures
 }
 
 type Transaction struct {
@@ -36,7 +37,7 @@ type Transaction struct {
 
 type TransactionSigReq struct {
 	Transaction Transaction
-	Signature   ECDSASig
+	Signature   EdDSASig
 }
 
 type TransactionSignRes struct {
@@ -44,8 +45,8 @@ type TransactionSignRes struct {
 }
 
 type Identity struct {
-	Address Address
-	Key     *ecdsa.PrivateKey
+	Address		Address
+	PrivateKey  PrivateKey
 }
 
 type Wallet struct {
@@ -64,13 +65,13 @@ type Instance struct {
 
 type ClientNode struct {
 	Instance	Instance
-	Key      	*ecdsa.PrivateKey
+	Key      	PrivateKey
 	Balance		int
 }
 
 type ServerNode struct {
 	Instances	[]Instance
-	Key       	*ecdsa.PrivateKey
+	Key       	PrivateKey
 }
 
 type Agent struct {

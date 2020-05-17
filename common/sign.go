@@ -2,76 +2,44 @@ package common
 
 import (
 	"bytes"
-	"crypto/ecdsa"
 	"errors"
 	"fmt"
-	secp256k1 "github.com/ethereum/go-ethereum/crypto"
+	"github.com/oasislabs/ed25519"
 	"math"
 )
 
 /**
-Signature Recovery
- */
-// Recovers a ECDSA public key (bytes, uncompressed) from a hash and signature. Using secp256k1 C-bindings crypto.
-func RecoverPubkeyBytes(hash []byte, sig []byte) ([]byte, error) {
-	return secp256k1.Ecrecover(hash, sig)
-}
-
-// Recovers a ECDSA public key (*ecdsa.PublicKey) from a hash and signature. Using secp256k1 C-bindings crypto.
-func recoverPubkey(hash []byte, sig []byte) (*ecdsa.PublicKey, error) {
-	return secp256k1.SigToPub(hash, sig)
-}
-
-// Recovers a an address from a hash and signature. Using secp256k1 C-bindings crypto.
-func recoverAddress(hash []byte, sig []byte) (Address, error) {
-	owner, err := recoverPubkey(hash, sig)
-	if err != nil {
-		return nil, err
-	}
-	return MarshalPubkey(owner), nil
-}
-
-/**
 Signing
- */
+*/
 
 // Signs a hash
-func SignHash(hash []byte, key *ecdsa.PrivateKey) ([]byte, error) {
-	sig, err := secp256k1.Sign(hash, key)
-	if err != nil {
-		return []byte{}, err
+func SignHash(id *Identity, hash []byte) *EdDSASig {
+	sig := ed25519.Sign(id.PrivateKey, hash)
+	return &EdDSASig{
+		Address:   id.Address,
+		Signature: sig,
 	}
-	return sig, nil
 }
 
 // Signs a value
-func SignValue(key *ecdsa.PrivateKey, value *Value) error {
+func SignValue(id *Identity, value *Value) error {
 	hash := HashValue(*value)
 
 	if value.Signatures == nil {
-		value.Signatures = []ECDSASig{}
+		value.Signatures = []EdDSASig{}
 	}
 
-	addr := MarshalPubkey(&key.PublicKey)
-
-	sig, err := SignHash(hash, key)
-	if err != nil {
-		return err
-	}
-
-	value.Signatures = append(value.Signatures, ECDSASig{
-		Address: addr,
-		RS:      sig,
-	})
+	sig := SignHash(id, hash)
+	value.Signatures = append(value.Signatures, *sig)
 	return nil
 }
 
 // Signs multiple values
-func SignValues(key *ecdsa.PrivateKey, outputs []Value) ([]Value, error) {
+func SignValues(id *Identity, outputs []Value) ([]Value, error) {
 	var signed []Value
 
 	for _, i := range outputs {
-		SignValue(key, &i)
+		SignValue(id, &i)
 		signed = append(signed, i)
 	}
 
@@ -79,17 +47,10 @@ func SignValues(key *ecdsa.PrivateKey, outputs []Value) ([]Value, error) {
 }
 
 // Signs transaction signature request, which is requested by a client
-func SignTransactionSigRequest(key *ecdsa.PrivateKey, request *TransactionSigReq) error {
-	addr := MarshalPubkey(&key.PublicKey)
+func SignTransactionSigRequest(id *Identity, request *TransactionSigReq) error {
 	hash := HashTransactionSigRequest(*request)
-	sig, err := SignHash(hash, key)
-	if err != nil {
-		return err
-	}
-	request.Signature = ECDSASig{
-		Address: addr,
-		RS:      sig,
-	}
+	sig := SignHash(id, hash)
+	request.Signature = *sig
 
 	return nil
 }
@@ -99,13 +60,12 @@ Signature Verification
 */
 
 // Verifies a signature. Using secp256k1 C bindings crypto
-func Verify(pubkey []byte, hash []byte, sig []byte) (bool, error) {
-	if len(sig) != secp256k1.SignatureLength { // 64 + 1
-		msg := fmt.Sprintf("invalid signature length. wanted: %d, got: %d", secp256k1.SignatureLength, len(sig))
+func Verify(sig *EdDSASig, hash []byte) (bool, error) {
+	if len(sig.Signature) != SignatureLength {
+		msg := fmt.Sprintf("invalid signature length. wanted: %d, got: %d", SignatureLength, len(sig.Signature))
 		return false, errors.New(msg)
 	}
-	sig = sig[:len(sig)-1] // remove recovery bit
-	return secp256k1.VerifySignature(pubkey, hash, sig), nil
+	return ed25519.Verify(sig.Address, hash, sig.Signature), nil
 }
 
 // Verifies single value
@@ -119,7 +79,7 @@ func VerifyValue(value *Value) error {
 	numSigs := 0
 
 	for _, sig := range value.Signatures {
-		valid, err := Verify(sig.Address, hash, sig.RS)
+		valid, err := Verify(&sig, hash)
 		if err != nil {
 			return err
 		}
@@ -163,7 +123,7 @@ func VerifyTransactionSigRequest(req *TransactionSigReq) error {
 		}
 	}
 
-	valid, err := Verify(ownerAddress, hash, req.Signature.RS)
+	valid, err := Verify(&req.Signature, hash)
 	if err != nil {
 		return err
 	}

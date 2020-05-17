@@ -1,23 +1,30 @@
 package common
 
 import (
-	"crypto/ecdsa"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/ethereum/go-ethereum/crypto"
 	"golang.org/x/crypto/sha3"
 	"log"
 	"os"
 )
 
+/**
+Key:
+[
+	0: Public Key
+	1: Private Key
+]
+ */
+
 type ClientNodeConfig struct {
-	Key      []string
+	Key      []string // 0: Address, 1: Private Key
 	Instance Instance
 }
 
 type ServerNodeConfig struct {
-	Key       []string
+	Key       []string // 0: Address, 1: Private Key
 	Instances []Instance
 }
 
@@ -26,13 +33,26 @@ type TopologyConfig struct {
 	Clients []ClientNodeConfig
 }
 
-func readKey(keypair []string) *ecdsa.PrivateKey {
-	res, err := crypto.HexToECDSA(keypair[0])
+func readKey(keypair []string) (Address, PrivateKey) {
+	addr, err := hex.DecodeString(keypair[0])
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
-	return res
+	priv, err := hex.DecodeString(keypair[1])
+	if err != nil {
+		panic(err)
+	}
+
+	if len(addr) != AddressLength {
+		panic("topology: encountered wrong address length")
+	}
+
+	if len(priv) != PrivateKeyLength {
+		panic("topology: encountered wrong private key length")
+	}
+
+	return addr, priv
 }
 
 var clients map[[AddressLength]byte]ClientNode
@@ -68,8 +88,7 @@ func InitAddresses(path string) {
 	dec.Decode(&topology)
 
 	for _, client := range topology.Clients {
-		key := readKey(client.Key)
-		addr := MarshalPubkey(&key.PublicKey)
+		addr, key := readKey(client.Key)
 		index := getIndex(addr)
 		clients[index] = ClientNode{
 			Instance: client.Instance,
@@ -79,8 +98,7 @@ func InitAddresses(path string) {
 	}
 
 	for _, server := range topology.Servers {
-		key := readKey(server.Key)
-		addr := MarshalPubkey(&key.PublicKey)
+		addr, key := readKey(server.Key)
 		index := getIndex(addr)
 		servers[index] = ServerNode{
 			Instances: server.Instances,
@@ -144,15 +162,15 @@ func GetServerNetworkAddress(address Address, instanceIndex int) (string, error)
 	}
 }
 
-func GetKey(address Address) *ecdsa.PrivateKey {
+func GetKey(address Address) *PrivateKey {
 	client, err := lookupClient(address)
 	if err == nil {
-		return client.Key
+		return &client.Key
 	}
 
 	server, err := lookupServer(address)
 	if err == nil {
-		return server.Key
+		return &server.Key
 	}
 
 	log.Panicf("could not find address %x\n", address)

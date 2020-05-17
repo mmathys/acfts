@@ -60,7 +60,7 @@ func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignR
 	var outputs []common.Value
 	if !NoSigning {
 		var err error = nil
-		outputs, err = common.SignValues(Id.Key, tx.Outputs)
+		outputs, err = common.SignValues(Id, tx.Outputs)
 		if err != nil {
 			fmt.Println(err)
 			return err
@@ -68,7 +68,7 @@ func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignR
 	} else {
 		outputs = tx.Outputs
 		for i, _ := range outputs {
-			outputs[i].Signatures = []common.ECDSASig{}
+			outputs[i].Signatures = []common.EdDSASig{}
 		}
 	}
 
