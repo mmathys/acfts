@@ -36,10 +36,9 @@ func PrepareTransaction(w *common.Wallet, target common.Address, val int) (commo
 		return common.Transaction{}, errors.New("not enough funds")
 	}
 
-	addressOwn := common.MarshalPubkey(&w.Key.PublicKey)
+	addressOwn := w.Address
 	counterpart := common.GetIdentity(target)
-
-	addressCounterpart := common.MarshalPubkey(&counterpart.Key.PublicKey)
+	addressCounterpart := counterpart.Address
 
 	var outputs []common.Value
 
