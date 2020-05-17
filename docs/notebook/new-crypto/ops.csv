@@ -1,4 +1,3 @@
-function,goEcdsa,secp256k1NoRecovery,secp256k1Recovery
-sign,146560,76123,76123
-verify,243644,121583,259425
-recover,0,0,134957
+function,goEcdsa,secp256k1NoRecovery,secp256k1Recovery,ed25519,ed255192BatchVerify,ed2551964BatchVerify
+sign,146560,76123,76123,19412,19412,19412
+verify,243644,121583,259425,67191,70034,32748
