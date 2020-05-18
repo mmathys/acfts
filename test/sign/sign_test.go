@@ -90,7 +90,7 @@ func worker(N int, numWorkers int, b *testing.B) error {
 				return err
 			}
 			req := common.TransactionSigReq{Transaction: tx}
-			err = common.SignTransactionSigRequest(clientId.Key, &req)
+			err = common.SignTransactionSigRequest(clientId, &req)
 			if err != nil {
 				return err
 			}
