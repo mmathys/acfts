@@ -58,8 +58,7 @@ func TestSignNoNetwork(t *testing.T) {
 	}
 }
 
-// This function is used by the test and benchmarks. It contains some tests about whether a delay/distribution has an
-// effect on the profile
+// This function is used by the test and benchmarks.
 func worker(N int, numWorkers int, b *testing.B) error {
 	fmt.Printf("numWorkers = %d\n", numWorkers)
 	args := os.Args
