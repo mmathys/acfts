@@ -18,6 +18,7 @@ import (
 var numMultisig = 0
 var numWorkers = 0
 var topology = "none"
+var batchVerification = true
 
 // This sets up the environment and the profiler.
 func TestMain(m *testing.M) {
@@ -38,6 +39,18 @@ func TestMain(m *testing.M) {
 		panic("Environment variable TOPOLOGY is not set")
 	}
 	topology = _topology
+
+	_batchVerification := os.Getenv("BATCH_VERIFICATION")
+
+	if _batchVerification == "true" {
+		batchVerification = true
+	} else if _batchVerification == "false" {
+		batchVerification = false
+	} else if _batchVerification == "" {
+		panic("Environment variable BATCH_VERIFICATION is not set")
+	} else {
+		panic("Environment variable BATCH_VERIFICATION must be either \"true\" or \"false\"")
+	}
 
 	go func() {
 		//runtime.SetBlockProfileRate(1)
@@ -71,7 +84,8 @@ func TestSignNoNetwork(t *testing.T) {
 
 // This function is used by the test and benchmarks.
 func worker(N int, b *testing.B) error {
-	fmt.Printf("topology=%s, numWorkers=%d, numMultisig=%d\n", topology, numWorkers, numMultisig)
+	fmt.Printf("topology=%s, numWorkers=%d, numMultisig=%d, batchVerification=%t\n",
+		topology, numWorkers, numMultisig, batchVerification)
 
 	common.InitAddresses(topology)
 	// set the number of server according to numMultisig. numMultisig must be >= num servers.
@@ -91,6 +105,7 @@ func worker(N int, b *testing.B) error {
 	adapter.AllowDoublespend = false
 	adapter.UseUTXOMap = true
 	adapter.CheckTransactions = true
+	adapter.BatchVerification = batchVerification
 
 	// get clients from topology
 	client := common.GetClients()[0]

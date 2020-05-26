@@ -1,4 +1,13 @@
 version: "3.7"
+x-sign: &sign-env
+  environment:
+    - NUM_WORKERS
+    - TOPOLOGY_NAME=signTest
+    - BENCH=BenchmarkSignNoNetwork
+    - NUM_MULTISIG
+    - GOGC=11000
+    - BATCH_VERIFICATION
+
 services:
   base:
     build: .
@@ -75,12 +84,7 @@ services:
     build: ./test/sign
     depends_on:
       - base
-    environment:
-      - TOPOLOGY_NAME=signTest
-      - BENCH=BenchmarkSignNoNetwork
-      - NUM_MULTISIG
-      - NUM_WORKERS=1
-      - GOGC=11000
+    <<: *sign-env
     deploy:
       resources:
         limits:
@@ -90,12 +94,7 @@ services:
     build: ./test/sign
     depends_on:
       - base
-    environment:
-      - TOPOLOGY_NAME=signTest
-      - BENCH=BenchmarkSignNoNetwork
-      - NUM_MULTISIG
-      - NUM_WORKERS=2
-      - GOGC=11000
+    <<: *sign-env
     deploy:
       resources:
         limits:
@@ -105,12 +104,7 @@ services:
     build: ./test/sign
     depends_on:
       - base
-    environment:
-      - TOPOLOGY_NAME=signTest
-      - BENCH=BenchmarkSignNoNetwork
-      - NUM_MULTISIG
-      - NUM_WORKERS=4
-      - GOGC=11000
+    <<: *sign-env
     deploy:
       resources:
         limits:
@@ -120,12 +114,7 @@ services:
     build: ./test/sign
     depends_on:
       - base
-    environment:
-      - TOPOLOGY_NAME=signTest
-      - BENCH=BenchmarkSignNoNetwork
-      - NUM_MULTISIG
-      - NUM_WORKERS=8
-      - GOGC=11000
+    <<: *sign-env
     deploy:
       resources:
         limits:
@@ -135,12 +124,7 @@ services:
     build: ./test/sign
     depends_on:
       - base
-    environment:
-      - TOPOLOGY_NAME=signTest
-      - BENCH=BenchmarkSignNoNetwork
-      - NUM_MULTISIG
-      - NUM_WORKERS=16
-      - GOGC=11000
+    <<: *sign-env
     deploy:
       resources:
         limits:
@@ -150,12 +134,7 @@ services:
     build: ./test/sign
     depends_on:
       - base
-    environment:
-      - TOPOLOGY_NAME=signTest
-      - BENCH=BenchmarkSignNoNetwork
-      - NUM_MULTISIG
-      - NUM_WORKERS=32
-      - GOGC=11000
+    <<: *sign-env
     deploy:
       resources:
         limits:
@@ -165,12 +144,7 @@ services:
     build: ./test/sign
     depends_on:
       - base
-    environment:
-      - TOPOLOGY_NAME=signTest
-      - BENCH=BenchmarkSignNoNetwork
-      - NUM_MULTISIG
-      - NUM_WORKERS=64
-      - GOGC=11000
+    <<: *sign-env
     deploy:
       resources:
         limits:
@@ -193,12 +167,7 @@ services:
     build: ./test/sign
     depends_on:
       - base
-    environment:
-      - TOPOLOGY_NAME=signTest
-      - TEST=TestSignNoNetwork
-      - NUM_MULTISIG
-      - NUM_WORKERS=1
-      - GOGC=11000
+    <<: *sign-env
     ports:
       - "6666:6666"
     deploy:
@@ -210,12 +179,7 @@ services:
     build: ./test/sign
     depends_on:
       - base
-    environment:
-      - TOPOLOGY_NAME=signTest
-      - TEST=TestSignNoNetwork
-      - NUM_MULTISIG
-      - NUM_WORKERS=2
-      - GOGC=11000
+    <<: *sign-env
     ports:
       - "6666:6666"
     deploy:
@@ -227,12 +191,7 @@ services:
     build: ./test/sign
     depends_on:
       - base
-    environment:
-      - TOPOLOGY_NAME=signTest
-      - TEST=TestSignNoNetwork
-      - NUM_MULTISIG
-      - NUM_WORKERS=4
-      - GOGC=11000
+    <<: *sign-env
     ports:
       - "6666:6666"
     deploy:
@@ -244,12 +203,7 @@ services:
     build: ./test/sign
     depends_on:
       - base
-    environment:
-      - TOPOLOGY_NAME=signTest
-      - TEST=TestSignNoNetwork
-      - NUM_MULTISIG
-      - NUM_WORKERS=8
-      - GOGC=11000
+    <<: *sign-env
     ports:
       - "6666:6666"
     deploy:
@@ -261,12 +215,7 @@ services:
     build: ./test/sign
     depends_on:
       - base
-    environment:
-      - TOPOLOGY_NAME=signTest
-      - TEST=TestSignNoNetwork
-      - NUM_MULTISIG
-      - NUM_WORKERS=16
-      - GOGC=11000
+    <<: *sign-env
     ports:
       - "6666:6666"
     deploy:
@@ -278,12 +227,7 @@ services:
     build: ./test/sign
     depends_on:
       - base
-    environment:
-      - TOPOLOGY_NAME=signTest
-      - TEST=TestSignNoNetwork
-      - NUM_MULTISIG
-      - NUM_WORKERS=32
-      - GOGC=11000
+    <<: *sign-env
     ports:
       - "6666:6666"
     deploy:
@@ -295,13 +239,7 @@ services:
     build: ./test/sign
     depends_on:
       - base
-    environment:
-      - TOPOLOGY_NAME=signTest
-      - TEST=TestSignNoNetwork
-      - NUM_MULTISIG
-      - NUM_WORKERS=64
-      - GOGC=11000
-      - GOMAXPROCS=64
+    <<: *sign-env
     ports:
       - "6666:6666"
     deploy:
