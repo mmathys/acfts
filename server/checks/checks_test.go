@@ -19,7 +19,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestValidSig(t *testing.T) {
-	w := common.NewWallet(A)
+	w := common.NewWalletWithAmount(A, 100)
 	tx, _ := core.PrepareTransaction(w, B, 1)
 	_, err := core.SignTransaction(w, tx)
 
@@ -29,7 +29,7 @@ func TestValidSig(t *testing.T) {
 }
 
 func TestMinZero(t *testing.T) {
-	w := common.NewWallet(A)
+	w := common.NewWalletWithAmount(A, 100)
 
 	tx, _ := core.PrepareTransaction(w, B, 0)
 	_, err := core.SignTransaction(w, tx)

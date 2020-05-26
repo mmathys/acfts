@@ -16,13 +16,13 @@ var TxCounter = new(int32)
 //var SignedUTXO = funset.NewFunSet()
 var SignedUTXO sync.Map
 
-func runServer(address common.Address, instanceIndex int, benchmark bool, topology string, pprof bool) error {
+func runServer(address common.Address, instanceIndex int, benchmark bool, topology string, pprof bool, disableBatch bool) error {
 	common.InitAddresses(topology)
 
 	port := common.GetServerPort(address, instanceIndex)
 
 	log.Println("initialized server")
-	log.Printf("addr=%x, instance=%d, port=%d, benchmark = %t, pprof=%t\n", address, instanceIndex, port, benchmark, pprof)
+	log.Printf("addr=%x, instance=%d, port=%d, benchmark = %t, pprof=%t, batch verification enabled=%t\n", address, instanceIndex, port, benchmark, pprof, !disableBatch)
 
 	if benchmark {
 		go util.Ticker(TxCounter)
@@ -33,7 +33,7 @@ func runServer(address common.Address, instanceIndex int, benchmark bool, topolo
 	}
 
 	id := common.GetIdentity(address)
-	serverAdapter.Init(port, id, false, benchmark, TxCounter, &SignedUTXO)
+	serverAdapter.Init(port, id, false, benchmark, TxCounter, &SignedUTXO, !disableBatch)
 
 	return nil
 }
@@ -56,8 +56,9 @@ func main() {
 
 			benchmark := c.Bool("benchmark")
 			pprof := c.Bool("pprof")
+			disableBatch := c.Bool("disable-batch")
 
-			runServer(addr, instanceIndex, benchmark, c.String("topology"), pprof)
+			runServer(addr, instanceIndex, benchmark, c.String("topology"), pprof, disableBatch)
 			return nil
 		},
 		Flags: []cli.Flag{
@@ -88,6 +89,11 @@ func main() {
 			&cli.BoolFlag{
 				Name:     "pprof",
 				Usage:    "Enables pprof on default http server",
+				Required: false,
+			},
+			&cli.BoolFlag{
+				Name:     "disable-batch",
+				Usage:    "Disable EdDSA batch signature verification",
 				Required: false,
 			},
 		},

@@ -12,12 +12,13 @@ import (
 )
 
 const bufferLen int = 255
+var disableBatchVerification = false
 
 func handleIncoming(w *common.Wallet, incoming chan common.Value) {
 	for {
 		t := <-incoming
 		// verify
-		err := common.VerifyValue(&t)
+		err := common.VerifyValue(&t, !disableBatchVerification)
 		if err != nil {
 			panic(err)
 		}
@@ -40,6 +41,8 @@ func runClient(c *urfaveCli.Context) error {
 		fmt.Printf("Warning: no balance set for client. Initializing balance to %d.\n", newBalance)
 		balance = newBalance
 	}
+	
+	disableBatchVerification = c.Bool("disable-batch")
 
 	log.Printf("initialized client; addr = %x port = %d balance = %d", addr, port, balance)
 
@@ -67,11 +70,10 @@ func main() {
 				Usage:    "Set own address to `ADDRESS`. Format: e.g. 0x04",
 				Required: true,
 			},
-			&urfaveCli.StringFlag{
-				Name:     "topology",
-				Aliases:  []string{"t"},
-				Usage:    "Path to the topology json file",
-				Required: true,
+			&urfaveCli.BoolFlag{
+				Name:     "disable-batch",
+				Usage:    "Disable EdDSA batch signature verification",
+				Required: false,
 			},
 		},
 	}

@@ -5,7 +5,7 @@ import (
 )
 
 // Functions, which check the validity of incoming UTXOs before signing. Used by Server only.
-func CheckValidity(req *common.TransactionSigReq) error {
+func CheckValidity(req *common.TransactionSigReq, batchVerification bool) error {
 	tx := req.Transaction
 	err := common.CheckFormat(&tx)
 	if err != nil {
@@ -17,7 +17,7 @@ func CheckValidity(req *common.TransactionSigReq) error {
 		return err
 	}
 
-	err = checkInputSignatures(&tx)
+	err = checkInputSignatures(&tx, batchVerification)
 	if err != nil {
 		return err
 	}
@@ -31,9 +31,9 @@ func CheckValidity(req *common.TransactionSigReq) error {
 }
 
 // Checks if input signatures are valid.
-func checkInputSignatures(tx *common.Transaction) error {
+func checkInputSignatures(tx *common.Transaction, batchVerification bool) error {
 	for _, input := range tx.Inputs {
-		err := common.VerifyValue(&input)
+		err := common.VerifyValue(&input, batchVerification)
 		if err != nil {
 			return err
 		}

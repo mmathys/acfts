@@ -17,11 +17,13 @@ var Id *common.Identity
 var NoSigning bool
 var Benchmark bool
 var TxCounter *int32
+
 //var SignedUTXO *funset.FunSet
 var SignedUTXO *sync.Map
 var AllowDoublespend = false
 var UseUTXOMap = true
 var CheckTransactions = true
+var BatchVerification = true
 
 // struct for RPC
 type Server struct{}
@@ -34,7 +36,7 @@ func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignR
 
 	// Perform checks
 	if !NoSigning && CheckTransactions {
-		err := checks.CheckValidity(&req)
+		err := checks.CheckValidity(&req, BatchVerification)
 		if err != nil {
 			fmt.Println(err)
 			return err
@@ -79,12 +81,13 @@ func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignR
 
 // Initialises the adapter
 //func Init(port int, id *common.Identity, noSigning bool, benchmark bool, txCounter *int32, signedUTXO *funset.FunSet) {
-func Init(port int, id *common.Identity, noSigning bool, benchmark bool, txCounter *int32, signedUTXO *sync.Map) {
+func Init(port int, id *common.Identity, noSigning bool, benchmark bool, txCounter *int32, signedUTXO *sync.Map, batchVerification bool) {
 	Id = id
 	NoSigning = noSigning
 	Benchmark = benchmark
 	TxCounter = txCounter
 	SignedUTXO = signedUTXO
+	BatchVerification = batchVerification
 
 	addr := fmt.Sprintf(":%d", port)
 	server := new(Server)

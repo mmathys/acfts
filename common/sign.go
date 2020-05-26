@@ -59,7 +59,12 @@ func SignTransactionSigRequest(id *Identity, request *TransactionSigReq) error {
 Signature Verification
 */
 
-// Verifies a signature. Using secp256k1 C bindings crypto
+const (
+	// if num sigs >= BatchVerificationThreshold, then batch verification is more efficient.
+	BatchVerificationThreshold = 4
+)
+
+// Verifies a signature.
 func Verify(sig *EdDSASig, hash []byte) (bool, error) {
 	if len(sig.Signature) != SignatureLength {
 		msg := fmt.Sprintf("invalid signature length. wanted: %d, got: %d", SignatureLength, len(sig.Signature))
@@ -68,42 +73,88 @@ func Verify(sig *EdDSASig, hash []byte) (bool, error) {
 	return ed25519.Verify(sig.Address, hash, sig.Signature), nil
 }
 
+// Performs batch verification
+func VerifyBatch(sigs []EdDSASig, hash []byte) (bool, error) {
+	var pks []Address
+	var sigsByte [][]byte
+	for _, sig := range sigs {
+		pks = append(pks, sig.Address)
+
+		if len(sig.Signature) != SignatureLength {
+			msg := fmt.Sprintf("invalid signature length. wanted: %d, got: %d", SignatureLength, len(sig.Signature))
+			return false, errors.New(msg)
+		}
+		sigsByte = append(sigsByte, sig.Signature)
+	}
+
+	var messages [][]byte
+	for range sigs {
+		messages = append(messages, hash)
+	}
+
+	var opts ed25519.Options
+	ok, _, err := ed25519.VerifyBatch(nil, pks[:], messages[:], sigsByte[:], &opts)
+	if err != nil {
+		return false, err
+	}
+	return ok, nil
+}
+
 // Verifies single value
-// - Verifies all signatures
 // - Checks whether there are duplicate signatures
-// - Checks whether the signature are from valid severs
+// - Checks whether the signature are from valid servers
 // - Checks whether there are enough signatures to satisfy the validity constraint. (> 2/3 of all sigs)
-func VerifyValue(value *Value) error {
+// - Verifies all signatures
+func VerifyValue(value *Value, enableBatchVerification bool) error {
 	hash := HashValue(*value)
 	origins := make(map[[AddressLength]byte]bool)
-	numSigs := 0
 
+	// look out for duplicates signatures
 	for _, sig := range value.Signatures {
-		valid, err := Verify(&sig, hash)
-		if err != nil {
-			return err
-		}
-
-		if !valid {
-			return errors.New("value verification failed")
-		}
-
-		// look out for duplicates signatures
 		index := [AddressLength]byte{}
 		copy(index[:], sig.Address[:AddressLength])
 		if origins[index] {
 			return errors.New("duplicate signatures")
 		}
 		origins[index] = true
-		numSigs++
 	}
 
+	// check whether the signatures have all been made by valid servers
+	for _, sig := range value.Signatures {
+		if !IsValidServer(sig.Address) {
+			return errors.New("encountered signature signed by valid server")
+		}
+	}
+
+	// check that there are enough signatures
 	numServers := GetNumServers()
 	numRequiredSigs := int(math.Ceil(2.0 / 3.0 * float64(numServers)))
-
-	if numSigs < numRequiredSigs {
-		text := fmt.Sprintf("not enough signatures. need %d, have %d", int(numRequiredSigs), numSigs)
+	if len(value.Signatures) < numRequiredSigs {
+		text := fmt.Sprintf("not enough signatures. need %d, have %d", numRequiredSigs, len(value.Signatures))
 		return errors.New(text)
+	}
+
+	// verify all signatures, either with batch verification or single verification
+	if enableBatchVerification && len(value.Signatures) >= BatchVerificationThreshold {
+		// batch verification
+		valid, err := VerifyBatch(value.Signatures, hash)
+		if err != nil {
+			return err
+		}
+		if !valid {
+			return errors.New("value verification failed (batch mode)")
+		}
+	} else {
+		// single verification
+		for _, sig := range value.Signatures {
+			valid, err := Verify(&sig, hash)
+			if err != nil {
+				return err
+			}
+			if !valid {
+				return errors.New("value verification failed (single mode)")
+			}
+		}
 	}
 
 	return nil

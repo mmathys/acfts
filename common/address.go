@@ -56,9 +56,9 @@ func read(keypair []string) (Address, PrivateKey) {
 }
 
 var clients map[[AddressLength]byte]ClientNode
-var clientKeys []Address
+var ClientKeys []Address
 var servers map[[AddressLength]byte]ServerNode
-var serverKeys []Address
+var ServerKeys []Address
 
 func getIndex(addr Address) [AddressLength]byte {
 	index := [AddressLength]byte{}
@@ -79,9 +79,9 @@ func InitAddresses(path string) {
 	defer file.Close()
 
 	clients = map[[AddressLength]byte]ClientNode{}
-	clientKeys = []Address{}
+	ClientKeys = []Address{}
 	servers = map[[AddressLength]byte]ServerNode{}
-	serverKeys = []Address{}
+	ServerKeys = []Address{}
 
 	var topology TopologyConfig
 	dec := json.NewDecoder(file)
@@ -94,7 +94,7 @@ func InitAddresses(path string) {
 			Instance: client.Instance,
 			Key:      key,
 		}
-		clientKeys = append(clientKeys, addr)
+		ClientKeys = append(ClientKeys, addr)
 	}
 
 	for _, server := range topology.Servers {
@@ -104,7 +104,7 @@ func InitAddresses(path string) {
 			Instances: server.Instances,
 			Key:       key,
 		}
-		serverKeys = append(serverKeys, addr)
+		ServerKeys = append(ServerKeys, addr)
 	}
 }
 
@@ -230,12 +230,17 @@ func GetServerInstanceIndex(serverAddr Address, clientAddr Address) int {
 	return int(num % numInstances)
 }
 
+func IsValidServer(serverAddr Address) bool {
+	_, err := lookupServer(serverAddr)
+	return err == nil
+}
+
 func GetClients() []Address {
-	return clientKeys
+	return ClientKeys
 }
 
 func GetServers() []Address {
-	return serverKeys
+	return ServerKeys
 }
 
 func GetNumServers() int {

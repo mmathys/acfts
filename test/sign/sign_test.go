@@ -9,27 +9,38 @@ import (
 	"net/http"
 	_ "net/http/pprof"
 	"os"
-	"runtime"
 	"strconv"
 	"sync"
 	"testing"
 	"time"
 )
 
+var numMultisig = 0
 var numWorkers = 0
+var topology = "none"
 
 // This sets up the environment and the profiler.
 func TestMain(m *testing.M) {
-	numWorkersLoaded, err := strconv.Atoi(os.Args[len(os.Args)-1])
+	_numMultisig, err := strconv.Atoi(os.Getenv("NUM_MULTISIG"))
 	if err != nil {
-		fmt.Printf("numWorkers must be supplied")
-		panic(err)
+		panic("Error getting environment variable NUM_MULTISIG")
 	}
+	numMultisig = _numMultisig
 
-	numWorkers = numWorkersLoaded
+	_numWorkers, err := strconv.Atoi(os.Getenv("NUM_WORKERS"))
+	if err != nil {
+		panic("Error getting environment variable NUM_WORKERS")
+	}
+	numWorkers = _numWorkers
+
+	_topology := os.Getenv("TOPOLOGY")
+	if _topology == "" {
+		panic("Environment variable TOPOLOGY is not set")
+	}
+	topology = _topology
 
 	go func() {
-		runtime.SetBlockProfileRate(1)
+		//runtime.SetBlockProfileRate(1)
 		log.Println(http.ListenAndServe(":6666", nil))
 	}()
 
@@ -40,7 +51,7 @@ func TestMain(m *testing.M) {
 // number of workers is passed as the last argument in the command line.
 // Hint: this easiest way to run this test is with docker-compose.
 func BenchmarkSignNoNetwork(b *testing.B) {
-	err := worker(b.N, numWorkers, b)
+	err := worker(b.N, b)
 	if err != nil {
 		b.Error(err)
 		b.Fail()
@@ -51,7 +62,7 @@ func BenchmarkSignNoNetwork(b *testing.B) {
 // The topolpogy and the number of workers are passed as the last argument in the command line.
 // Hint: this easiest way to run this test is with docker-compose.
 func TestSignNoNetwork(t *testing.T) {
-	err := worker(50000, numWorkers, nil)
+	err := worker(50000, nil)
 	if err != nil {
 		t.Error(err)
 		t.Fail()
@@ -59,14 +70,21 @@ func TestSignNoNetwork(t *testing.T) {
 }
 
 // This function is used by the test and benchmarks.
-func worker(N int, numWorkers int, b *testing.B) error {
-	fmt.Printf("numWorkers = %d\n", numWorkers)
-	args := os.Args
-	topo := args[len(args)-2]
-	common.InitAddresses(topo)
-	adapter.TxCounter = new(int32)
+func worker(N int, b *testing.B) error {
+	fmt.Printf("topology=%s, numWorkers=%d, numMultisig=%d\n", topology, numWorkers, numMultisig)
+
+	common.InitAddresses(topology)
+	// set the number of server according to numMultisig. numMultisig must be >= num servers.
+	if len(common.ServerKeys) < numMultisig {
+		log.Panicf("not enough servers. numMultisig=%d, but we only have %d servers.", numMultisig, len(common.ServerKeys))
+		panic("not enough servers")
+	}
+	common.ServerKeys = common.ServerKeys[:numMultisig]
+
+	// initialize adapter
 	//adapter.SignedUTXO = funset.NewFunSet()
 	adapter.SignedUTXO = new(sync.Map)
+	adapter.TxCounter = new(int32)
 	adapter.CheckTransactions = true
 	adapter.Benchmark = false
 	adapter.Id = common.GetIdentity(common.GetServers()[0])
@@ -74,10 +92,12 @@ func worker(N int, numWorkers int, b *testing.B) error {
 	adapter.UseUTXOMap = true
 	adapter.CheckTransactions = true
 
+	// get clients from topology
 	client := common.GetClients()[0]
 	clientId := common.GetIdentity(client)
 	target := common.GetClients()[1]
 
+	// generate requests
 	var requests [][]common.TransactionSigReq
 	for i := 0; i < numWorkers; i++ {
 		requests = append(requests, []common.TransactionSigReq{})

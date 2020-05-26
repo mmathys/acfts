@@ -44,7 +44,7 @@ func TestBasic(t *testing.T) {
 
 func TestGenerateKeypair(t *testing.T) {
 	id := GenerateKey()
-	id2 :=GenerateKey()
+	id2 := GenerateKey()
 
 	if bytes.Equal(id.Address, id2.Address) || bytes.Equal(id.PrivateKey, id2.PrivateKey) {
 		t.Fatal("did not generate different keypairs")
@@ -72,7 +72,7 @@ func TestKeylength(t *testing.T) {
 }
 
 func TestPrintGeneratedKey(t *testing.T) {
-	for i := 0; i < 16; i++ {
+	for i := 0; i < 48; i++ {
 		id := GenerateKey()
 		fmt.Printf("{\"%x\",\"%x\"},\n", id.Address, id.PrivateKey)
 	}
