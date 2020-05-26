@@ -169,6 +169,19 @@ services:
         limits:
           cpus: '64'
 
+  verify_batch_benchmark_1:
+    build: ./test/crypto/ed25519
+    depends_on:
+      - base
+    environment:
+      - BENCH=BenchmarkVerifyBatch64
+      - NUM_WORKERS=1
+      - GOGC=11000
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+
   sign_test_1:
     build: ./test/sign
     depends_on:

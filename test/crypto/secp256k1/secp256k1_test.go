@@ -1,4 +1,4 @@
-package crypto
+package secp256k1
 
 import (
 	"crypto/ecdsa"

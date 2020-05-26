@@ -1,4 +1,4 @@
-package crypto
+package ed25519
 
 import (
 	"github.com/oasislabs/ed25519"
