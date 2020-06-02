@@ -78,7 +78,7 @@ services:
     depends_on:
       - base
     environment:
-      - TOPOLOGY=aws
+      - TOPOLOGY
       - NUM_WORKERS=64
 
   sign_benchmark_1:

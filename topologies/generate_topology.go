@@ -264,7 +264,7 @@ func localSimpleExtended() []byte {
 
 // topology optimized for aws
 func awsSimple() []byte {
-	numClients := 16
+	numClients := 64
 	numServers := 1
 	numInstances := 1
 
@@ -273,7 +273,7 @@ func awsSimple() []byte {
 
 // topology optimized for aws (sharded)
 func aws() []byte {
-	numClients := 16
+	numClients := 64
 	numServers := 1
 	numInstances := 5
 

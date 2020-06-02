@@ -47,7 +47,7 @@ func testAgentsMultipleParallel(t *testing.T) {
 
 func testAgents(t *testing.T, numClients int) {
 	delay := 500 * time.Millisecond
-	totalTx := 1000
+	totalTx := int(10e+6) // 1 million
 	clients := common.GetClients()
 	msg := fmt.Sprintf("numClients: %d", numClients)
 	t.Run(msg, func(t *testing.T) {
