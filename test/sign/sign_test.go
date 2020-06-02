@@ -5,6 +5,7 @@ import (
 	"github.com/mmathys/acfts/client/core"
 	"github.com/mmathys/acfts/common"
 	"github.com/mmathys/acfts/server/adapter"
+	"github.com/mmathys/acfts/server/store"
 	"log"
 	"net/http"
 	_ "net/http/pprof"
@@ -12,13 +13,13 @@ import (
 	"strconv"
 	"sync"
 	"testing"
-	"time"
 )
 
 var numMultisig = 0
 var numWorkers = 0
 var topology = "none"
 var batchVerification = true
+var mapType = -1
 
 // This sets up the environment and the profiler.
 func TestMain(m *testing.M) {
@@ -50,6 +51,17 @@ func TestMain(m *testing.M) {
 		panic("Environment variable BATCH_VERIFICATION is not set")
 	} else {
 		panic("Environment variable BATCH_VERIFICATION must be either \"true\" or \"false\"")
+	}
+
+	_mapType := os.Getenv("MAP_TYPE")
+	if _mapType == "insertOnly" {
+		mapType = store.TypeInsertOnly
+	} else if _mapType == "syncMap" {
+		mapType = store.TypeSyncMap
+	} else if _mapType == "" {
+		mapType = store.DefaultMapType
+	} else {
+		panic("Environment variable MAP_TYPE must be \"insertOnly\", \"syncMap\" or empty.")
 	}
 
 	go func() {
@@ -84,8 +96,15 @@ func TestSignNoNetwork(t *testing.T) {
 
 // This function is used by the test and benchmarks.
 func worker(N int, b *testing.B) error {
-	fmt.Printf("topology=%s, numWorkers=%d, numMultisig=%d, batchVerification=%t\n",
-		topology, numWorkers, numMultisig, batchVerification)
+	mapTypeString := "unrecognized"
+	if mapType == store.TypeSyncMap {
+		mapTypeString = "syncMap"
+	} else if mapType == store.TypeInsertOnly {
+		mapTypeString = "insertOnly"
+	}
+
+	fmt.Printf("topology=%s, numWorkers=%d, numMultisig=%d, batchVerification=%t, mapType=%s\n",
+		topology, numWorkers, numMultisig, batchVerification, mapTypeString)
 
 	common.InitAddresses(topology)
 	// set the number of server according to numMultisig. numMultisig must be >= num servers.
@@ -96,8 +115,10 @@ func worker(N int, b *testing.B) error {
 	common.ServerKeys = common.ServerKeys[:numMultisig]
 
 	// initialize adapter
-	//adapter.SignedUTXO = funset.NewFunSet()
-	adapter.SignedUTXO = new(sync.Map)
+	utxoMap := new(store.UTXOMap)
+	utxoMap.SetType(mapType)
+	utxoMap.Init()
+	adapter.UTXOMap = utxoMap
 	adapter.TxCounter = new(int32)
 	adapter.CheckTransactions = true
 	adapter.Benchmark = false
@@ -136,7 +157,7 @@ func worker(N int, b *testing.B) error {
 	server := new(adapter.Server)
 	res := common.TransactionSignRes{}
 
-	startDelay := 1 * time.Millisecond / time.Duration(numWorkers) // distribute start over 1ms
+	//startDelay := 1 * time.Millisecond / time.Duration(numWorkers) // distribute start over 1ms
 	var wg sync.WaitGroup
 
 	if b != nil {
@@ -144,7 +165,7 @@ func worker(N int, b *testing.B) error {
 	}
 	for i := 0; i < numWorkers; i++ {
 		wg.Add(1)
-		time.Sleep(startDelay)
+		//time.Sleep(startDelay)
 		go func(work []common.TransactionSigReq) {
 			for j := 0; j < N/numWorkers; j++ {
 				err := server.Sign(work[j], &res)

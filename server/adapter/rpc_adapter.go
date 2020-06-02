@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"github.com/mmathys/acfts/common"
 	"github.com/mmathys/acfts/server/checks"
+	"github.com/mmathys/acfts/server/store"
 	"github.com/mmathys/acfts/server/util"
 	"log"
 	"net"
 	"net/http"
 	"net/rpc"
-	"sync"
 )
 
 var Id *common.Identity
@@ -18,8 +18,7 @@ var NoSigning bool
 var Benchmark bool
 var TxCounter *int32
 
-//var SignedUTXO *funset.FunSet
-var SignedUTXO *sync.Map
+var UTXOMap *store.UTXOMap
 var AllowDoublespend = false
 var UseUTXOMap = true
 var CheckTransactions = true
@@ -27,6 +26,15 @@ var BatchVerification = true
 
 // struct for RPC
 type Server struct{}
+type AdapterOpt struct {
+	Port              int
+	Id                *common.Identity
+	NoSigning         bool
+	Benchmark         bool
+	TxCounter         *int32
+	UTXOMap           *store.UTXOMap
+	BatchVerification bool
+}
 
 // Signs a Transaction Request
 func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignRes) error {
@@ -47,9 +55,7 @@ func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignR
 	tx := req.Transaction
 	if !NoSigning && UseUTXOMap {
 		for _, input := range tx.Inputs {
-			//inserted := SignedUTXO.Insert(input.Id)
-			_, spent := SignedUTXO.LoadOrStore(input.Id, true)
-			//if !inserted && !AllowDoublespend {
+			spent := UTXOMap.Store(input.Id)
 			if spent && !AllowDoublespend {
 				err := errors.New("UTXO already exists: no double spending")
 				fmt.Println(err)
@@ -80,16 +86,17 @@ func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignR
 }
 
 // Initialises the adapter
-//func Init(port int, id *common.Identity, noSigning bool, benchmark bool, txCounter *int32, signedUTXO *funset.FunSet) {
-func Init(port int, id *common.Identity, noSigning bool, benchmark bool, txCounter *int32, signedUTXO *sync.Map, batchVerification bool) {
-	Id = id
-	NoSigning = noSigning
-	Benchmark = benchmark
-	TxCounter = txCounter
-	SignedUTXO = signedUTXO
-	BatchVerification = batchVerification
+func Init(opt AdapterOpt) {
+	Id = opt.Id
+	NoSigning = opt.NoSigning
+	Benchmark = opt.Benchmark
+	TxCounter = opt.TxCounter
+	UTXOMap = opt.UTXOMap
+	BatchVerification = opt.BatchVerification
 
-	addr := fmt.Sprintf(":%d", port)
+	UTXOMap.Init()
+
+	addr := fmt.Sprintf(":%d", opt.Port)
 	server := new(Server)
 	rpc.Register(server)
 	rpc.HandleHTTP()

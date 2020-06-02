@@ -3,37 +3,64 @@ package main
 import (
 	"github.com/mmathys/acfts/common"
 	serverAdapter "github.com/mmathys/acfts/server/adapter"
+	"github.com/mmathys/acfts/server/store"
 	"github.com/mmathys/acfts/server/util"
 	"github.com/urfave/cli/v2"
 	"log"
 	_ "net/http/pprof"
 	"os"
 	"runtime"
-	"sync"
 )
 
 var TxCounter = new(int32)
-//var SignedUTXO = funset.NewFunSet()
-var SignedUTXO sync.Map
+var UTXOMap store.UTXOMap
 
-func runServer(address common.Address, instanceIndex int, benchmark bool, topology string, pprof bool, disableBatch bool) error {
-	common.InitAddresses(topology)
+type serverOpt struct {
+	address common.Address
+	instanceIndex int
+	benchmark bool
+	topology string
+	pprof bool
+	disableBatch bool
+	mapType int
+}
 
-	port := common.GetServerPort(address, instanceIndex)
+func runServer(opt serverOpt) error {
+	common.InitAddresses(opt.topology)
+
+	port := common.GetServerPort(opt.address, opt.instanceIndex)
+
+	mapTypeReadable := "unrecognized"
+	if opt.mapType == store.TypeSyncMap {
+		mapTypeReadable = "syncMap"
+	} else if opt.mapType == store.TypeInsertOnly {
+		mapTypeReadable = "insertOnly"
+	}
+
+	UTXOMap.SetType(opt.mapType)
 
 	log.Println("initialized server")
-	log.Printf("addr=%x, instance=%d, port=%d, benchmark = %t, pprof=%t, batch verification enabled=%t\n", address, instanceIndex, port, benchmark, pprof, !disableBatch)
+	log.Printf("addr=%x, instance=%d, port=%d, benchmark=%t, pprof=%t, batchVerification=%t, mapType=%s\n",
+		opt.address, opt.instanceIndex, port, opt.benchmark, opt.pprof, !opt.disableBatch, mapTypeReadable)
 
-	if benchmark {
+	if opt.benchmark {
 		go util.Ticker(TxCounter)
 	}
 
-	if pprof {
+	if opt.pprof {
 		runtime.SetBlockProfileRate(1)
 	}
 
-	id := common.GetIdentity(address)
-	serverAdapter.Init(port, id, false, benchmark, TxCounter, &SignedUTXO, !disableBatch)
+	id := common.GetIdentity(opt.address)
+	serverAdapter.Init(serverAdapter.AdapterOpt{
+		Port:              port,
+		Id:                id,
+		NoSigning:         false,
+		Benchmark:         opt.benchmark,
+		TxCounter:         TxCounter,
+		UTXOMap:           &UTXOMap,
+		BatchVerification: !opt.disableBatch,
+	})
 
 	return nil
 }
@@ -43,22 +70,35 @@ func main() {
 		Name:  "ACFTS server",
 		Usage: "Asynchronous Consensus-Free Transaction System server",
 		Action: func(c *cli.Context) error {
-			instanceIndex := c.Int("instance") // if not set, value is 0
-
 			addr, err := common.ReadAddress(c.String("address"))
 			if err != nil {
 				log.Fatal(err)
 			}
 
 			if addr == nil {
-				log.Fatal("must define address")
+				log.Fatalf("must define address")
 			}
 
-			benchmark := c.Bool("benchmark")
-			pprof := c.Bool("pprof")
-			disableBatch := c.Bool("disable-batch")
+			mapType := c.String("map-type")
+			mapTypeInt := -1
 
-			runServer(addr, instanceIndex, benchmark, c.String("topology"), pprof, disableBatch)
+			if mapType == "syncMap" {
+				mapTypeInt = store.TypeSyncMap
+			} else if mapType == "insertOnly" {
+				mapTypeInt = store.TypeInsertOnly
+			} else {
+				log.Panicf("--map-type must be either 'syncMap' or 'insertOnly' (got %s)", mapType)
+			}
+
+			runServer(serverOpt{
+				address:       addr,
+				instanceIndex: c.Int("instance"),
+				benchmark:     c.Bool("benchmark"),
+				topology:      c.String("topology"),
+				pprof:         c.Bool("pprof"),
+				disableBatch:  c.Bool("disable-batch"),
+				mapType:       mapTypeInt,
+			})
 			return nil
 		},
 		Flags: []cli.Flag{
@@ -68,7 +108,7 @@ func main() {
 				Usage:    "Set own address to `ADDRESS`. Format: e.g. 0x04",
 				Required: true,
 			},
-			&cli.StringFlag{
+			&cli.IntFlag{
 				Name:     "instance",
 				Aliases:  []string{"i"},
 				Usage:    "Sets the zero-based instance index. This is used for load balancing/sharding. Default: 0",
@@ -95,6 +135,12 @@ func main() {
 				Name:     "disable-batch",
 				Usage:    "Disable EdDSA batch signature verification",
 				Required: false,
+			},
+			&cli.StringFlag{
+				Name:		"map-type",
+				Value:		store.DefaultMapTypeString,
+				Usage:    	"Sets the internal map type. 'syncMap' or 'insertOnly'.",
+				Required:	false,
 			},
 		},
 	}

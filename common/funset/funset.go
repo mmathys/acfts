@@ -1,15 +1,15 @@
 package funset
 
-const arrayLength = 10e7
+const ArrayLength = 10e7
 
 type FunSet struct {
-	data [arrayLength]*LinkedList
+	data [ArrayLength]*LinkedList
 }
 
 func NewFunSet() *FunSet {
-	table := [arrayLength]*LinkedList{}
+	table := [ArrayLength]*LinkedList{}
 
-	for i := 0; i < arrayLength; i++ {
+	for i := 0; i < ArrayLength; i++ {
 		table[i] = NewList()
 	}
 	return &FunSet{
@@ -26,13 +26,13 @@ func hash(t [32]byte) int {
 	for i := 0; i < 32; i++ {
 		h *= 256
 		h += int(t[i])
-		h %= arrayLength
+		h %= ArrayLength
 	}
 	return h
 }
 
 func index(hash int) int {
-	return hash % arrayLength
+	return hash % ArrayLength
 }
 
 func (h *FunSet) Insert(k [32]byte) bool {

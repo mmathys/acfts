@@ -70,6 +70,12 @@ func main() {
 				Usage:    "Set own address to `ADDRESS`. Format: e.g. 0x04",
 				Required: true,
 			},
+			&urfaveCli.StringFlag{
+				Name:     "topology",
+				Aliases:  []string{"t"},
+				Usage:    "Path to the topology json file",
+				Required: true,
+			},
 			&urfaveCli.BoolFlag{
 				Name:     "disable-batch",
 				Usage:    "Disable EdDSA batch signature verification",
