@@ -7,7 +7,7 @@ RUN go install
 
 ENV ADDRESS none
 ENV ADAPTER rpc
-ENV TOPOLOGY dockerSimple
+ENV TOPOLOGY none
 ENV INSTANCE 0
 
 WORKDIR /go/src/github.com/mmathys/acfts
