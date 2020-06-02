@@ -5,7 +5,7 @@ WORKDIR ./server
 RUN go build ./...
 RUN go install
 
-ENV ADDRESS a77000e6e7e77df500e39144e34e31f1715c98a5ecaaf34b8863f2d907c35ab4
+ENV ADDRESS none
 ENV ADAPTER rpc
 ENV TOPOLOGY dockerSimple
 ENV INSTANCE 0

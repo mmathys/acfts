@@ -22,6 +22,7 @@ services:
       - "6666:6666"
     environment:
       - TOPOLOGY=awsSimple
+      - ADDRESS
 
   server_shard_0:
     build: ./server

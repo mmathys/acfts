@@ -265,7 +265,7 @@ func localSimpleExtended() []byte {
 // topology optimized for aws
 func awsSimple() []byte {
 	numClients := 64
-	numServers := 1
+	numServers := 5
 	numInstances := 1
 
 	return config(numClients, numServers, numInstances, false)

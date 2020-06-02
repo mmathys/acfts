@@ -3,13 +3,61 @@
     {
       "Instances": [
         {
-          "Net": "ec2-18-194-28-121.eu-central-1.compute.amazonaws.com",
+          "Net": "ec2-18-185-184-219.eu-central-1.compute.amazonaws.com",
           "Port": 6666
         }
       ],
       "Key": [
         "a77000e6e7e77df500e39144e34e31f1715c98a5ecaaf34b8863f2d907c35ab4",
         "26665d594658641d981cb13e74e130c12bb5a0924c217e10b2a0e20437cabf97a77000e6e7e77df500e39144e34e31f1715c98a5ecaaf34b8863f2d907c35ab4"
+      ]
+    },
+    {
+      "Instances": [
+        {
+          "Net": "ec2-18-184-184-19.eu-central-1.compute.amazonaws.com",
+          "Port": 6667
+        }
+      ],
+      "Key": [
+        "c8766183072ad3a0aeb17e672152bff7d5382a62f14a818f2a7dbe3c123d1fc3",
+        "19d771ac0e1f2b76082820840dd8b7df7c7e2614f8d7346186460946b5f6173dc8766183072ad3a0aeb17e672152bff7d5382a62f14a818f2a7dbe3c123d1fc3"
+      ]
+    },
+    {
+      "Instances": [
+        {
+          "Net": "ec2-3-127-223-136.eu-central-1.compute.amazonaws.com",
+          "Port": 6668
+        }
+      ],
+      "Key": [
+        "564c67c3cd08863a570e632c60409d57b02f576a0582bcaf297aa4610f98aead",
+        "eb1a60b82e72545395f8ce4334703f13597985aed204107ea5bdaf6289c38a68564c67c3cd08863a570e632c60409d57b02f576a0582bcaf297aa4610f98aead"
+      ]
+    },
+    {
+      "Instances": [
+        {
+          "Net": "ec2-3-126-152-50.eu-central-1.compute.amazonaws.com",
+          "Port": 6669
+        }
+      ],
+      "Key": [
+        "4a155d1c1d86854aae1008373c3e9a92dd02cbbef52e5372aee13c2efe22398d",
+        "e76b8dee9a5eca0000da56aadaa39e8cdb564ee6f82008052caad39741e72b134a155d1c1d86854aae1008373c3e9a92dd02cbbef52e5372aee13c2efe22398d"
+      ]
+    },
+    {
+      "Instances": [
+        {
+          "Net": "ec2-52-57-141-97.eu-central-1.compute.amazonaws.com",
+          "Port": 6670
+        }
+      ],
+      "Key": [
+        "da67cdf6dcf621da70f2a3e902b371853b64d2da457de81eff5c9cb1da811f09",
+        "fc2d5e43dea1ce49885ad705abfa0c4370d103b2c5db566b8f5903b0b7acb3b1da67cdf6dcf621da70f2a3e902b371853b64d2da457de81eff5c9cb1da811f09"
       ]
     }
   ],
