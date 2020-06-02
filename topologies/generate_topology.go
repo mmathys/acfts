@@ -180,6 +180,7 @@ func main() {
 	writeConfig(localSimpleExtended(), "localSimpleExtended")
 	writeConfig(localFull(), "localFull")
 	writeConfig(dockerSimple(), "dockerSimple")
+	writeConfig(awsSimple(), "awsSimple")
 	writeConfig(aws(), "aws")
 }
 
@@ -262,6 +263,15 @@ func localSimpleExtended() []byte {
 }
 
 // topology optimized for aws
+func awsSimple() []byte {
+	numClients := 16
+	numServers := 1
+	numInstances := 1
+
+	return config(numClients, numServers, numInstances, false)
+}
+
+// topology optimized for aws (sharded)
 func aws() []byte {
 	numClients := 16
 	numServers := 1
