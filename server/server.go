@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/mmathys/acfts/common"
 	serverAdapter "github.com/mmathys/acfts/server/adapter"
 	"github.com/mmathys/acfts/server/store"
@@ -39,8 +40,8 @@ func runServer(opt serverOpt) error {
 
 	UTXOMap.SetType(opt.mapType)
 
-	log.Println("initializing server with:")
-	log.Printf("addr=%x, instance=%d, port=%d, benchmark=%t, pprof=%t, batchVerification=%t, mapType=%s\n",
+	fmt.Println("initializing server with:")
+	fmt.Printf("addr=%x, instance=%d, port=%d, benchmark=%t, pprof=%t, batchVerification=%t, mapType=%s\n",
 		opt.address, opt.instanceIndex, port, opt.benchmark, opt.pprof, !opt.disableBatch, mapTypeReadable)
 
 	if opt.benchmark {
