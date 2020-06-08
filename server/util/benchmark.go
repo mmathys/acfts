@@ -7,16 +7,12 @@ import (
 	"time"
 )
 
-const (
-	header = "time,tx,cpu_util"
-)
 
 func CountTx(txCounter *int32) {
 	atomic.AddInt32(txCounter, 1)
 }
 
 func Ticker(txCounter *int32) {
-	fmt.Println(header)
 	ticker := time.NewTicker(1 * time.Second)
 	for {
 		<-ticker.C

@@ -62,6 +62,7 @@ func RequestSignature(serverAddr common.Address, id *common.Identity, t common.T
 	net, err := common.GetServerNetworkAddress(serverAddr, instanceIndex)
 	if err != nil {
 		errs <- err
+		log.Println(err)
 		return
 	}
 
@@ -69,12 +70,15 @@ func RequestSignature(serverAddr common.Address, id *common.Identity, t common.T
 	err = common.SignTransactionSigRequest(id, &req)
 	if err != nil {
 		errs <- err
+		log.Println(err)
 		return
 	}
 
 	client, err := getConnection(net)
 	if err != nil {
 		errs <- err
+		fmt.Println(err)
+		wg.Done()
 		return
 	}
 

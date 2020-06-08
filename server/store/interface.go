@@ -32,6 +32,7 @@ func (m *UTXOMap) Init() {
 	if mapType == TypeInsertOnly {
 		fmt.Printf("initializing map with len = %e...\n", funset.ArrayLength)
 		funSetMap = funset.NewFunSet()
+		fmt.Printf("initialized.")
 	}
 }
 

@@ -39,7 +39,7 @@ func runServer(opt serverOpt) error {
 
 	UTXOMap.SetType(opt.mapType)
 
-	log.Println("initialized server")
+	log.Println("initializing server with:")
 	log.Printf("addr=%x, instance=%d, port=%d, benchmark=%t, pprof=%t, batchVerification=%t, mapType=%s\n",
 		opt.address, opt.instanceIndex, port, opt.benchmark, opt.pprof, !opt.disableBatch, mapTypeReadable)
 
