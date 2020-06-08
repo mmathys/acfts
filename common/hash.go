@@ -1,15 +1,15 @@
 package common
 
 import (
+	"crypto"
 	"encoding/binary"
 	"encoding/gob"
 	"fmt"
-	"golang.org/x/crypto/sha3"
 	"hash"
 )
 
 func HashValueSprintf(value Value) []byte {
-	d := sha3.New256()
+	d := crypto.SHA512.New()
 	value.Signatures = nil                    // zero out signatures before hash
 	d.Write([]byte(fmt.Sprintf("%v", value))) // this may be slow!
 	return d.Sum(nil)
@@ -18,7 +18,7 @@ func HashValueSprintf(value Value) []byte {
 func HashValue(value Value) []byte {
 	value.Signatures = nil // zero out signatures before hash
 
-	d := sha3.New256()
+	d := crypto.SHA512.New()
 	enc := gob.NewEncoder(d)
 	enc.Encode(value)
 	return d.Sum(nil)
@@ -38,7 +38,7 @@ func writeValue(d *hash.Hash, value *Value) {
 
 func HashTransactionSigRequest(req TransactionSigReq) []byte {
 	req.Signature = EdDSASig{} // zero out signature before hash
-	d := sha3.New256()
+	d := crypto.SHA512.New()
 
 	for _, input := range req.Transaction.Inputs {
 		writeValue(&d, &input)

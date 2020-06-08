@@ -2,6 +2,7 @@ package common
 
 import (
 	"bytes"
+	"crypto"
 	"crypto/rand"
 	"fmt"
 	"github.com/oasislabs/ed25519"
@@ -12,7 +13,8 @@ import (
 func TestBasic(t *testing.T) {
 	id := GenerateKey()
 
-	msg := []byte("hello")
+	msg := make([]byte, 64) // random hash
+	rand.Read(msg)
 	sig := SignHash(id, msg)
 
 	valid, err := Verify(sig, msg)
@@ -23,7 +25,8 @@ func TestBasic(t *testing.T) {
 		t.Fatal("invalid signature")
 	}
 
-	msg2 := []byte("world")
+	msg2 := make([]byte, 64) // random hash
+	rand.Read(msg2)
 	valid2, err := Verify(sig, msg2)
 	if err != nil {
 		t.Fatal(err)
@@ -62,8 +65,15 @@ func TestKeylength(t *testing.T) {
 		t.Fatal("wrong private key length")
 	}
 
-	msg := []byte("hello")
-	sig := ed25519.Sign(priv, msg)
+	msg := make([]byte, 64) // random hash
+	rand.Read(msg)
+	opts := ed25519.Options{
+		Hash: crypto.SHA512,
+	}
+	sig, err := priv.Sign(nil, msg, &opts)
+	if err != nil {
+		panic(err)
+	}
 
 	// TODO!
 	if len(sig) != SignatureLength {
@@ -75,5 +85,32 @@ func TestPrintGeneratedKey(t *testing.T) {
 	for i := 0; i < 48; i++ {
 		id := GenerateKey()
 		fmt.Printf("{\"%x\",\"%x\"},\n", id.Address, id.PrivateKey)
+	}
+}
+
+func BenchmarkSignNoPh(b *testing.B) {
+	id := GenerateKey()
+	hash := make([]byte, 1000) // random SHA-512 hash
+	rand.Read(hash)
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_ = ed25519.Sign(id.PrivateKey, hash)
+	}
+}
+
+func BenchmarkSignPh(b *testing.B) {
+	id := GenerateKey()
+	hash := make([]byte, 64) // random SHA-512 hash
+	rand.Read(hash)
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_, err := id.PrivateKey.Sign(nil, hash, &ed25519.Options{
+			Hash: crypto.SHA512,
+		})
+		if err != nil {
+			panic(err)
+		}
 	}
 }

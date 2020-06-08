@@ -2,6 +2,7 @@ package common
 
 import (
 	"bytes"
+	"crypto"
 	"errors"
 	"fmt"
 	"github.com/oasislabs/ed25519"
@@ -12,9 +13,17 @@ import (
 Signing
 */
 
+
+
 // Signs a hash
 func SignHash(id *Identity, hash []byte) *EdDSASig {
-	sig := ed25519.Sign(id.PrivateKey, hash)
+	opts := ed25519.Options{
+		Hash: crypto.SHA512,
+	}
+	sig, err := id.PrivateKey.Sign(nil, hash, &opts)
+	if err != nil {
+		panic(err)
+	}
 	return &EdDSASig{
 		Address:   id.Address,
 		Signature: sig,
@@ -70,7 +79,14 @@ func Verify(sig *EdDSASig, hash []byte) (bool, error) {
 		msg := fmt.Sprintf("invalid signature length. wanted: %d, got: %d", SignatureLength, len(sig.Signature))
 		return false, errors.New(msg)
 	}
-	return ed25519.Verify(sig.Address, hash, sig.Signature), nil
+	if len(hash) != crypto.SHA512.Size() {
+		msg := fmt.Sprintf("invalid hash length. wanted: %d, got: %d", crypto.SHA512.Size(), len(hash))
+		return false, errors.New(msg)
+	}
+	opts := ed25519.Options{
+		Hash: crypto.SHA512,
+	}
+	return ed25519.VerifyWithOptions(sig.Address, hash, sig.Signature, &opts), nil
 }
 
 // Performs batch verification
@@ -92,7 +108,9 @@ func VerifyBatch(sigs []EdDSASig, hash []byte) (bool, error) {
 		messages = append(messages, hash)
 	}
 
-	var opts ed25519.Options
+	opts := ed25519.Options{
+		Hash: crypto.SHA512,
+	}
 	ok, _, err := ed25519.VerifyBatch(nil, pks[:], messages[:], sigsByte[:], &opts)
 	if err != nil {
 		return false, err
@@ -122,7 +140,7 @@ func VerifyValue(value *Value, enableBatchVerification bool) error {
 	// check whether the signatures have all been made by valid servers
 	for _, sig := range value.Signatures {
 		if !IsValidServer(sig.Address) {
-			return errors.New("encountered signature signed by valid server")
+			return errors.New("encountered signature signed by invalid server")
 		}
 	}
 
