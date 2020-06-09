@@ -16,7 +16,7 @@
       "Instances": [
         {
           "Net": "localhost",
-          "Port": 6667
+          "Port": 6666
         }
       ],
       "Key": [
@@ -28,7 +28,7 @@
       "Instances": [
         {
           "Net": "localhost",
-          "Port": 6668
+          "Port": 6666
         }
       ],
       "Key": [
@@ -40,7 +40,7 @@
       "Instances": [
         {
           "Net": "localhost",
-          "Port": 6669
+          "Port": 6666
         }
       ],
       "Key": [
@@ -52,7 +52,7 @@
       "Instances": [
         {
           "Net": "localhost",
-          "Port": 6670
+          "Port": 6666
         }
       ],
       "Key": [

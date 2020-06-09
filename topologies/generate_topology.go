@@ -200,16 +200,20 @@ func getServerNetwork(dockerNetwork bool) string {
 	}
 }
 
-func config(numClients int, numServers int, numServerInstances int, dockerNetwork bool) []byte {
+func config(numClients int, numServers int, numServerInstances int, dockerNetwork bool, sameServerPort bool) []byte {
 	topo := Topology{}
 
 	counter := 0
 	for i := 0; i < numServers; i++ {
 		var instances []Instance
 		for j := 0; j < numServerInstances; j++ {
+			port := 6666
+			if !sameServerPort {
+				port += counter
+			}
 			instances = append(instances, Instance{
 				Net:  getServerNetwork(dockerNetwork),
-				Port: 6666 + counter,
+				Port: port,
 			})
 			counter++
 		}
@@ -241,7 +245,7 @@ func localFull() []byte {
 	numServers := 1
 	numServerInstances := 3
 
-	return config(numClients, numServers, numServerInstances, false)
+	return config(numClients, numServers, numServerInstances, false, false)
 }
 
 // topology optimized for local testing
@@ -250,7 +254,7 @@ func localSimple() []byte {
 	numServers := 1
 	numServerInstances := 1
 
-	return config(numClients, numServers, numServerInstances, false)
+	return config(numClients, numServers, numServerInstances, false, false)
 }
 
 // topology optimized for local testing, extended
@@ -259,7 +263,7 @@ func localSimpleExtended() []byte {
 	numServers := 1
 	numServerInstances := 1
 
-	return config(numClients, numServers, numServerInstances, false)
+	return config(numClients, numServers, numServerInstances, false, false)
 }
 
 // topology optimized for aws
@@ -268,7 +272,7 @@ func awsSimple() []byte {
 	numServers := 5
 	numInstances := 1
 
-	return config(numClients, numServers, numInstances, false)
+	return config(numClients, numServers, numInstances, false, true)
 }
 
 // topology optimized for aws (sharded)
@@ -277,7 +281,7 @@ func aws() []byte {
 	numServers := 1
 	numInstances := 5
 
-	return config(numClients, numServers, numInstances, false)
+	return config(numClients, numServers, numInstances, false, true)
 }
 
 // topology optimized for docker
@@ -286,7 +290,7 @@ func dockerSimple() []byte {
 	numServers := 1
 	numInstances := 1
 
-	return config(numClients, numServers, numInstances, true)
+	return config(numClients, numServers, numInstances, true, false)
 }
 
 // topology optimized for the sign test
@@ -295,5 +299,5 @@ func signTest() []byte {
 	numServers := 64
 	numInstances := 1
 
-	return config(numClients, numServers, numInstances, true)
+	return config(numClients, numServers, numInstances, true, false)
 }

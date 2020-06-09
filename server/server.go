@@ -8,7 +8,7 @@ import (
 	"github.com/mmathys/acfts/server/util"
 	"github.com/urfave/cli/v2"
 	"log"
-	_ "net/http/pprof"
+	//_ "net/http/pprof"
 	"os"
 	"runtime"
 )
