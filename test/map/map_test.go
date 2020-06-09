@@ -213,6 +213,7 @@ func BenchmarkFunSetSingleIdentifier(b *testing.B) {
 	wg.Wait()
 }
 
+// this is likely not gonna work (OOM)
 func BenchmarkFunSet(b *testing.B) {
 	lastParam := os.Args[len(os.Args)-1]
 	numWorkers := 64
@@ -227,6 +228,7 @@ func BenchmarkFunSet(b *testing.B) {
 func insert(b *testing.B, numWorkers int, overrideN int) {
 	fmt.Println("initializing set...")
 	utxos := funset.NewFunSet()
+	fmt.Println("done initializing set.")
 	fmt.Printf("numWorkers = %d\n", numWorkers)
 
 	N := 0
@@ -235,6 +237,8 @@ func insert(b *testing.B, numWorkers int, overrideN int) {
 	} else {
 		N = b.N
 	}
+
+	fmt.Printf("N = %d\n", N)
 
 	var ig sync.WaitGroup
 	fmt.Println("initializing transactions...")
@@ -247,6 +251,7 @@ func insert(b *testing.B, numWorkers int, overrideN int) {
 				id := common.RandomIdentifier()
 				identifiers[i] = append(identifiers[i], id)
 			}
+			fmt.Printf("worker %d done\n", i)
 			ig.Done()
 		}(i)
 	}

@@ -1,6 +1,6 @@
 package funset
 
-const ArrayLength = 10e6
+const ArrayLength = 10e7
 
 type FunSet struct {
 	data [ArrayLength]*LinkedList
@@ -12,6 +12,7 @@ func NewFunSet() *FunSet {
 	for i := 0; i < ArrayLength; i++ {
 		table[i] = NewList()
 	}
+
 	return &FunSet{
 		table,
 	}
