@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/oasislabs/ed25519"
-	"math"
 )
 
 /**
@@ -145,13 +144,11 @@ func VerifyValue(value *Value, enableBatchVerification bool) error {
 	}
 
 	// check that there are enough signatures
-	numServers := GetNumServers()
-	numRequiredSigs := int(math.Ceil(2.0 / 3.0 * float64(numServers)))
+	numRequiredSigs := QuorumSize()
 	if len(value.Signatures) < numRequiredSigs {
 		text := fmt.Sprintf("not enough signatures. need %d, have %d", numRequiredSigs, len(value.Signatures))
 		return errors.New(text)
 	}
-
 	// verify all signatures, either with batch verification or single verification
 	if enableBatchVerification && len(value.Signatures) >= BatchVerificationThreshold {
 		// batch verification

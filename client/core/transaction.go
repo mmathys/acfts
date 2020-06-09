@@ -33,7 +33,7 @@ func DoTransaction(w *common.Wallet, t common.Transaction, forward bool) {
 	AddUTXOMultiple(w, &ownOutputs)
 }
 
-// TODO Only wait for Math.ceil(2/3 * n) of n servers!
+// TODO Only request Math.ceil(2/3 * n) of n (randomly chosen) servers!
 func SignTransaction(w *common.Wallet, t common.Transaction) (*[]common.TransactionSignRes, error) {
 	n := len(common.GetServers())
 
@@ -41,8 +41,8 @@ func SignTransaction(w *common.Wallet, t common.Transaction) (*[]common.Transact
 	errs := make(chan error, n)
 
 	var wg sync.WaitGroup
-	wg.Add(n)
-	for _, server := range common.GetServers() {
+	wg.Add(common.QuorumSize())
+	for _, server := range common.ServerQuorum() {
 		go adapter.RequestSignature(server, w.Identity, t, &wg, sigs, errs)
 	}
 	wg.Wait()

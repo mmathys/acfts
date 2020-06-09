@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"golang.org/x/crypto/sha3"
 	"log"
+	"math"
+	"math/rand"
 	"os"
 )
 
@@ -241,6 +243,24 @@ func GetClients() []Address {
 
 func GetServers() []Address {
 	return ServerKeys
+}
+
+func QuorumSize() int {
+	n := GetNumServers()
+	return int(math.Ceil(2.0 / 3.0 * float64(n)))
+}
+
+// returns shuffled >2/3 server quorum
+func ServerQuorum() []Address {
+	numServers := GetNumServers()
+	quorumSize := QuorumSize()
+	keys := make([]Address, quorumSize)
+	indexes := rand.Perm(numServers)[:quorumSize]
+
+	for i, v := range indexes {
+		keys[i] = ServerKeys[v]
+	}
+	return keys
 }
 
 func GetNumServers() int {
