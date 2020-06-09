@@ -100,7 +100,6 @@ func Init(opt AdapterOpt) {
 	server := new(Server)
 	rpc.Register(server)
 	rpc.HandleHTTP()
-	fmt.Printf("about to bind %s\n", addr)
 	lis, err := net.Listen("tcp", addr)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
