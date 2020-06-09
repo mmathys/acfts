@@ -91,7 +91,7 @@ func RequestSignature(serverAddr common.Address, id *common.Identity, t common.T
 		return
 	}
 
-	sigs <- res
+ 	sigs <- res
 }
 
 func ForwardValue(t common.Value) {
