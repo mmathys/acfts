@@ -163,7 +163,7 @@ func TestFunSetRaceCondition(t *testing.T) {
 				inserted := set.Insert(id)
 				if inserted {
 					if anyInsert {
-						t.Errorf("saw more than one insert")
+						t.Errorf("saw more than one insertBenchmark")
 					}
 					anyInsert = true
 				}
@@ -180,7 +180,36 @@ This tests whether 1 million identifiers can be inserted into Fun Set
 func TestFunSetInserts(t *testing.T) {
 	var N int = 10e9
 
-	insert(nil, 64, N)
+	insertMemoryTest(t, 64, N)
+}
+
+// this function first prepares the transactions, then inserts them
+func insertMemoryTest(t *testing.T, numWorkers int, overrideN int) {
+	fmt.Println("initializing set...")
+	utxos := funset.NewFunSet()
+	fmt.Println("done initializing set.")
+	fmt.Printf("numWorkers = %d\n", numWorkers)
+
+	N := overrideN
+	fmt.Printf("N = %d\n", N)
+
+	var wg sync.WaitGroup
+
+	fmt.Println("inserting transactions...")
+	for i := 0; i < numWorkers; i++ {
+		wg.Add(1)
+		go func(amount int) {
+			for j := 0; j < amount; j++ {
+				id := common.RandomIdentifier()
+				if !utxos.Insert(id) {
+					t.Fatal("should not happen")
+				}
+			}
+			wg.Done()
+		}(N/numWorkers)
+	}
+
+	wg.Wait()
 }
 
 func BenchmarkFunSetSingleIdentifier(b *testing.B) {
@@ -222,10 +251,11 @@ func BenchmarkFunSet(b *testing.B) {
 		numWorkers = paramNum
 	}
 
-	insert(b, numWorkers, -1)
+	insertBenchmark(b, numWorkers, -1)
 }
 
-func insert(b *testing.B, numWorkers int, overrideN int) {
+// this function first prepares the transactions, then inserts them
+func insertBenchmark(b *testing.B, numWorkers int, overrideN int) {
 	fmt.Println("initializing set...")
 	utxos := funset.NewFunSet()
 	fmt.Println("done initializing set.")

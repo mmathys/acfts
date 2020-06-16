@@ -27,6 +27,25 @@ x-sign-test: &sign-test-env
   ports:
     - "6666:6666"
 
+x-map-bench: &map-bench-env
+  build: ./test/map
+  depends_on:
+    - base
+  environment:
+    - BENCH=BenchmarkFunSet
+    - NUM_WORKERS
+    - GOGC=11000
+
+x-map-test: &map-test-env
+  build: ./test/map
+  depends_on:
+    - base
+  environment:
+    - TEST=TestFunSetInserts
+    - NUM_WORKERS
+    - GOGC=11000
+
+
 services:
   base:
     build: .
@@ -213,42 +232,21 @@ services:
           cpus: '64'
 
   map_benchmark_1:
-    build: ./test/map
-    depends_on:
-      - base
-    environment:
-      - BENCH
-      - TEST
-      - NUM_WORKERS=1
-      - GOGC=11000
+    <<: *map-bench-env
     deploy:
       resources:
         limits:
           cpus: '1'
 
   map_benchmark_2:
-    build: ./test/map
-    depends_on:
-      - base
-    environment:
-      - BENCH
-      - TEST
-      - NUM_WORKERS=2
-      - GOGC=11000
+    <<: *map-bench-env
     deploy:
       resources:
         limits:
           cpus: '2'
 
   map_benchmark_4:
-    build: ./test/map
-    depends_on:
-      - base
-    environment:
-      - BENCH
-      - TEST
-      - NUM_WORKERS=4
-      - GOGC=11000
+    <<: *map-bench-env
     deploy:
       resources:
         limits:
@@ -256,14 +254,7 @@ services:
 
 
   map_benchmark_8:
-    build: ./test/map
-    depends_on:
-      - base
-    environment:
-      - BENCH
-      - TEST
-      - NUM_WORKERS=8
-      - GOGC=11000
+    <<: *map-bench-env
     deploy:
       resources:
         limits:
@@ -271,14 +262,7 @@ services:
 
 
   map_benchmark_16:
-    build: ./test/map
-    depends_on:
-      - base
-    environment:
-      - BENCH
-      - TEST
-      - NUM_WORKERS=16
-      - GOGC=11000
+    <<: *map-bench-env
     deploy:
       resources:
         limits:
@@ -286,14 +270,7 @@ services:
 
 
   map_benchmark_32:
-    build: ./test/map
-    depends_on:
-      - base
-    environment:
-      - BENCH
-      - TEST
-      - NUM_WORKERS=32
-      - GOGC=11000
+    <<: *map-bench-env
     deploy:
       resources:
         limits:
@@ -301,16 +278,15 @@ services:
 
 
   map_benchmark_64:
-    build: ./test/map
-    depends_on:
-      - base
-    environment:
-      - BENCH
-      - TEST
-      - NUM_WORKERS=64
-      - GOGC=11000
+    <<: *map-bench-env
     deploy:
       resources:
         limits:
           cpus: '64'
 
+  map_test_64:
+    <<: *map-test-env
+    deploy:
+      resources:
+        limits:
+          cpus: '64'
