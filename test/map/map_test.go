@@ -210,6 +210,9 @@ func insertMemoryTest(t *testing.T, numWorkers int, overrideN int) {
 	}
 
 	wg.Wait()
+
+	fmt.Println("finished. Sleeping 10 seconds before exiting")
+	time.Sleep(10 * time.Second)
 }
 
 func BenchmarkFunSetSingleIdentifier(b *testing.B) {
