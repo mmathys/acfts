@@ -87,7 +87,7 @@ func BenchmarkSignNoNetwork(b *testing.B) {
 // The topolpogy and the number of workers are passed as the last argument in the command line.
 // Hint: this easiest way to run this test is with docker-compose.
 func TestSignNoNetwork(t *testing.T) {
-	err := worker(50000, nil)
+	err := worker(1000000, nil)
 	if err != nil {
 		t.Error(err)
 		t.Fail()

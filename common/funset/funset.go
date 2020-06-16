@@ -1,6 +1,6 @@
 package funset
 
-const ArrayLength = 10e3
+const ArrayLength = 10e7
 
 type FunSet struct {
 	data [ArrayLength]*LinkedList

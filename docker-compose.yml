@@ -1,13 +1,31 @@
 version: "3.7"
-x-sign: &sign-env
+x-sign-bench: &sign-bench-env
+  build: ./test/sign
+  depends_on:
+    - base
   environment:
     - NUM_WORKERS
     - TOPOLOGY_NAME=signTest
-#   - BENCH=BenchmarkSignNoNetwork
+    - BENCH=BenchmarkSignNoNetwork
     - NUM_MULTISIG
     - GOGC=11000
     - BATCH_VERIFICATION
     - MAP_TYPE
+
+x-sign-test: &sign-test-env
+  build: ./test/sign
+  depends_on:
+    - base
+  environment:
+    - NUM_WORKERS
+    - TOPOLOGY_NAME=signTest
+    - TEST=TestSignNoNetwork
+    - NUM_MULTISIG
+    - GOGC=11000
+    - BATCH_VERIFICATION
+    - MAP_TYPE
+  ports:
+    - "6666:6666"
 
 services:
   base:
@@ -84,70 +102,49 @@ services:
       - NUM_WORKERS=64
 
   sign_benchmark_1:
-    build: ./test/sign
-    depends_on:
-      - base
-    <<: *sign-env
+    <<: *sign-bench-env
     deploy:
       resources:
         limits:
           cpus: '1'
 
   sign_benchmark_2:
-    build: ./test/sign
-    depends_on:
-      - base
-    <<: *sign-env
+    <<: *sign-bench-env
     deploy:
       resources:
         limits:
           cpus: '2'
 
   sign_benchmark_4:
-    build: ./test/sign
-    depends_on:
-      - base
-    <<: *sign-env
+    <<: *sign-bench-env
     deploy:
       resources:
         limits:
           cpus: '4'
 
   sign_benchmark_8:
-    build: ./test/sign
-    depends_on:
-      - base
-    <<: *sign-env
+    <<: *sign-bench-env
     deploy:
       resources:
         limits:
           cpus: '8'
 
   sign_benchmark_16:
-    build: ./test/sign
-    depends_on:
-      - base
-    <<: *sign-env
+    <<: *sign-bench-env
     deploy:
       resources:
         limits:
           cpus: '16'
 
   sign_benchmark_32:
-    build: ./test/sign
-    depends_on:
-      - base
-    <<: *sign-env
+    <<: *sign-bench-env
     deploy:
       resources:
         limits:
           cpus: '32'
 
   sign_benchmark_64:
-    build: ./test/sign
-    depends_on:
-      - base
-    <<: *sign-env
+    <<: *sign-bench-env
     deploy:
       resources:
         limits:
@@ -167,84 +164,49 @@ services:
           cpus: '1'
 
   sign_test_1:
-    build: ./test/sign
-    depends_on:
-      - base
-    <<: *sign-env
-    ports:
-      - "6666:6666"
+    <<: *sign-test-env
     deploy:
       resources:
         limits:
           cpus: '1'
 
   sign_test_2:
-    build: ./test/sign
-    depends_on:
-      - base
-    <<: *sign-env
-    ports:
-      - "6666:6666"
+    <<: *sign-test-env
     deploy:
       resources:
         limits:
           cpus: '2'
 
   sign_test_4:
-    build: ./test/sign
-    depends_on:
-      - base
-    <<: *sign-env
-    ports:
-      - "6666:6666"
+    <<: *sign-test-env
     deploy:
       resources:
         limits:
           cpus: '4'
 
   sign_test_8:
-    build: ./test/sign
-    depends_on:
-      - base
-    <<: *sign-env
-    ports:
-      - "6666:6666"
+    <<: *sign-test-env
     deploy:
       resources:
         limits:
           cpus: '8'
 
   sign_test_16:
-    build: ./test/sign
-    depends_on:
-      - base
-    <<: *sign-env
-    ports:
-      - "6666:6666"
+    <<: *sign-test-env
     deploy:
       resources:
         limits:
           cpus: '16'
 
   sign_test_32:
-    build: ./test/sign
-    depends_on:
-      - base
-    <<: *sign-env
-    ports:
-      - "6666:6666"
+    <<: *sign-test-env
     deploy:
       resources:
         limits:
           cpus: '32'
 
   sign_test_64:
-    build: ./test/sign
-    depends_on:
-      - base
-    <<: *sign-env
-    ports:
-      - "6666:6666"
+    <<: *sign-test-env
     deploy:
       resources:
         limits:
