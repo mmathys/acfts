@@ -3,7 +3,7 @@ x-sign: &sign-env
   environment:
     - NUM_WORKERS
     - TOPOLOGY_NAME=signTest
-    - BENCH=BenchmarkSignNoNetwork
+#   - BENCH=BenchmarkSignNoNetwork
     - NUM_MULTISIG
     - GOGC=11000
     - BATCH_VERIFICATION
