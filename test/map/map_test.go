@@ -187,7 +187,8 @@ func TestFunSetInserts(t *testing.T) {
 func insertMemoryTest(t *testing.T, numWorkers int, overrideN int) {
 	fmt.Println("initializing set...")
 	utxos := funset.NewFunSet()
-	fmt.Println("done initializing set.")
+	fmt.Println("done initializing set. Sleeping for 5 seconds")
+	time.Sleep(5 * time.Second)
 	fmt.Printf("numWorkers = %d\n", numWorkers)
 
 	N := overrideN
@@ -211,8 +212,8 @@ func insertMemoryTest(t *testing.T, numWorkers int, overrideN int) {
 
 	wg.Wait()
 
-	fmt.Println("finished. Sleeping 10 seconds before exiting")
-	time.Sleep(10 * time.Second)
+	fmt.Println("finished. Sleeping 5 seconds before exiting")
+	time.Sleep(5 * time.Second)
 }
 
 func BenchmarkFunSetSingleIdentifier(b *testing.B) {
