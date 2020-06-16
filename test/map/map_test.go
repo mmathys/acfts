@@ -178,7 +178,7 @@ func TestFunSetRaceCondition(t *testing.T) {
 This tests whether 1 million identifiers can be inserted into Fun Set
 */
 func TestFunSetInserts(t *testing.T) {
-	var N int = 100e6
+	var N int = 10e8
 
 	insertMemoryTest(t, 64, N)
 }
