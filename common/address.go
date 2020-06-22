@@ -19,13 +19,19 @@ Key:
 ]
 */
 
+type KeyConfig struct {
+	PublicKey  string
+	PrivateKey string
+	Mode       string
+}
+
 type ClientNodeConfig struct {
-	Key      []string // 0: Address, 1: Private Key
+	Key      KeyConfig // 0: Address, 1: Private Key
 	Instance Instance
 }
 
 type ServerNodeConfig struct {
-	Key       []string // 0: Address, 1: Private Key
+	Key       KeyConfig // 0: Address, 1: Private Key
 	Instances []Instance
 }
 
@@ -34,8 +40,17 @@ type TopologyConfig struct {
 	Clients []ClientNodeConfig
 }
 
-func read(keypair []string) *Key {
-	res, err := DecodeKey(ModeEdDSA, keypair[0], keypair[1])
+func read(conf KeyConfig) *Key {
+	var mode int
+	if conf.Mode == "eddsa" {
+		mode = ModeEdDSA
+	} else if conf.Mode == "bls" {
+		mode = ModeBLS
+	} else {
+		log.Panicf("encountered invalid mode %v (only \"eddsa\" and \"bls\" are valid)\n", conf.Mode)
+	}
+
+	res, err := DecodeKey(mode, conf.PublicKey, conf.PrivateKey)
 	if err != nil {
 		panic(err)
 	}

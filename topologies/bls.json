@@ -7,10 +7,11 @@
           "Port": 6666
         }
       ],
-      "Key": [
-        "b8a1415822dc81d71a9700d6cdc89ff86f52ff5914cd8b573417b09325c05904267574d88ee1f22b10699247d00afd76",
-        "73533a8ac313bb31ca99c4ca94b57e439ad16b19294bb0a00f2d0fbc390559e0"
-      ]
+      "Key": {
+        "PublicKey": "b8a1415822dc81d71a9700d6cdc89ff86f52ff5914cd8b573417b09325c05904267574d88ee1f22b10699247d00afd76",
+        "PrivateKey": "73533a8ac313bb31ca99c4ca94b57e439ad16b19294bb0a00f2d0fbc390559e0",
+        "Mode": "bls"
+      }
     },
     {
       "Instances": [
@@ -19,10 +20,11 @@
           "Port": 6667
         }
       ],
-      "Key": [
-        "882d5edb29b7ad6cdd3aa308319909525441f171db1edf3ddf83777d49621572a9893fe28cc29237c2531ec37b6c33bf",
-        "4a5682d086912eab3ee96325a9a9bd6c6c35a401e74c953a9b10dd88ce7cce17"
-      ]
+      "Key": {
+        "PublicKey": "882d5edb29b7ad6cdd3aa308319909525441f171db1edf3ddf83777d49621572a9893fe28cc29237c2531ec37b6c33bf",
+        "PrivateKey": "4a5682d086912eab3ee96325a9a9bd6c6c35a401e74c953a9b10dd88ce7cce17",
+        "Mode": "bls"
+      }
     },
     {
       "Instances": [
@@ -31,10 +33,11 @@
           "Port": 6668
         }
       ],
-      "Key": [
-        "a20042ace8d9e8cf9930366e52f50486fb4c9ea4e8a8a12ac392d8f7f22da1856b3a12adbc6c7716cf00dce7b62a267e",
-        "41cbf22d56958ab83a722ef7b5a585932553f472f48c4e93273de5eb6a6a23e5"
-      ]
+      "Key": {
+        "PublicKey": "a20042ace8d9e8cf9930366e52f50486fb4c9ea4e8a8a12ac392d8f7f22da1856b3a12adbc6c7716cf00dce7b62a267e",
+        "PrivateKey": "41cbf22d56958ab83a722ef7b5a585932553f472f48c4e93273de5eb6a6a23e5",
+        "Mode": "bls"
+      }
     },
     {
       "Instances": [
@@ -43,10 +46,11 @@
           "Port": 6669
         }
       ],
-      "Key": [
-        "a89e138230579ccf54e62d22db294b76e575cdddf897443716040402889d16a13e814bae792f10797ca027456a51b6a3",
-        "6565a6134af510987d33b0da08ff2dcb998d868b16ffae568899350c457572c0"
-      ]
+      "Key": {
+        "PublicKey": "a89e138230579ccf54e62d22db294b76e575cdddf897443716040402889d16a13e814bae792f10797ca027456a51b6a3",
+        "PrivateKey": "6565a6134af510987d33b0da08ff2dcb998d868b16ffae568899350c457572c0",
+        "Mode": "bls"
+      }
     }
   ],
   "Clients": [
@@ -55,10 +59,11 @@
         "Net": "localhost",
         "Port": 5555
       },
-      "Key": [
-        "b3c26d19a2292eeb4f67af03806c4c95abd76b67a0d0e3a6ba2fb5776d99493482e53215b848c10cc0f7a48f976418e9",
-        "180329c4821b6f24f59ca6114349e64c85dd45f3eb10bda0545a4cd56840816b"
-      ],
+      "Key": {
+        "PublicKey": "b3c26d19a2292eeb4f67af03806c4c95abd76b67a0d0e3a6ba2fb5776d99493482e53215b848c10cc0f7a48f976418e9",
+        "PrivateKey": "180329c4821b6f24f59ca6114349e64c85dd45f3eb10bda0545a4cd56840816b",
+        "Mode": "bls"
+      },
       "Balance": 100
     },
     {
@@ -66,10 +71,11 @@
         "Net": "localhost",
         "Port": 5556
       },
-      "Key": [
-        "b95a0539589e527b94508a915e05e59ecddfec1344a8f1bc778c8c52153f0d81e2ff60f292b1fe65f970760d10925eea",
-        "563d293eefdf9498d15af500ed3f4fa8cd25213c19bfee6a6bf58bc5a346b943"
-      ],
+      "Key": {
+        "PublicKey": "b95a0539589e527b94508a915e05e59ecddfec1344a8f1bc778c8c52153f0d81e2ff60f292b1fe65f970760d10925eea",
+        "PrivateKey": "563d293eefdf9498d15af500ed3f4fa8cd25213c19bfee6a6bf58bc5a346b943",
+        "Mode": "bls"
+      },
       "Balance": 100
     }
   ]

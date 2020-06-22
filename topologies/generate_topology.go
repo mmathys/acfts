@@ -3,12 +3,8 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/mmathys/acfts/common"
 	"io/ioutil"
-)
-
-const (
-	SIG_EDDSA = 0
-	SIG_BLS   = 1
 )
 
 // keys can be generated with TestPrintGeneratedKey in common/sign_test.go
@@ -288,15 +284,21 @@ type Instance struct {
 	Port int    // port
 }
 
+type Key struct {
+	PublicKey  string
+	PrivateKey string
+	Mode       string
+}
+
 type ClientNode struct {
 	Instance Instance
-	Key      []string
+	Key      Key
 	Balance  int
 }
 
 type ServerNode struct {
 	Instances []Instance
-	Key       []string
+	Key       Key
 }
 
 type Topology struct {
@@ -343,16 +345,18 @@ func getServerNetwork(dockerNetwork bool) string {
 func config(numClients int, numServers int, numServerInstances int, dockerNetwork bool, sameServerPort bool, sigMode int) []byte {
 	var serverKeys [][]string
 	var clientKeys [][]string
-	if sigMode == SIG_EDDSA {
+	var readableMode string
+	if sigMode == common.ModeEdDSA {
 		serverKeys = eddsaServer
 		clientKeys = eddsaClient
-	} else if sigMode == SIG_BLS {
+		readableMode = "eddsa"
+	} else if sigMode == common.ModeBLS {
 		serverKeys = blsServer
 		clientKeys = blsClient
+		readableMode = "bls"
 	} else {
-		panic("invalid sigMode")
+		panic("invalid mode")
 	}
-
 
 	topo := Topology{}
 
@@ -373,7 +377,11 @@ func config(numClients int, numServers int, numServerInstances int, dockerNetwor
 
 		topo.Servers = append(topo.Servers, ServerNode{
 			Instances: instances,
-			Key:       serverKeys[i],
+			Key: Key{
+				PublicKey:  serverKeys[i][0],
+				PrivateKey: serverKeys[i][1],
+				Mode:       readableMode,
+			},
 		})
 	}
 
@@ -384,11 +392,15 @@ func config(numClients int, numServers int, numServerInstances int, dockerNetwor
 				Port: 5555 + i,
 			},
 			Balance: 100,
-			Key:     clientKeys[i],
+			Key: Key{
+				PublicKey:  clientKeys[i][0],
+				PrivateKey: clientKeys[i][1],
+				Mode:       readableMode,
+			},
 		})
 	}
 
-	out, _ := json.Marshal(topo)
+	out, _ := json.MarshalIndent(topo, "", "  ")
 	return out
 }
 
@@ -398,7 +410,7 @@ func localFull() []byte {
 	numServers := 1
 	numServerInstances := 3
 
-	return config(numClients, numServers, numServerInstances, false, false, SIG_EDDSA)
+	return config(numClients, numServers, numServerInstances, false, false, common.ModeEdDSA)
 }
 
 // topology optimized for local testing
@@ -407,7 +419,7 @@ func localSimple() []byte {
 	numServers := 1
 	numServerInstances := 1
 
-	return config(numClients, numServers, numServerInstances, false, false, SIG_EDDSA)
+	return config(numClients, numServers, numServerInstances, false, false, common.ModeEdDSA)
 }
 
 // topology optimized for local testing, extended
@@ -416,7 +428,7 @@ func localSimpleExtended() []byte {
 	numServers := 1
 	numServerInstances := 1
 
-	return config(numClients, numServers, numServerInstances, false, false, SIG_EDDSA)
+	return config(numClients, numServers, numServerInstances, false, false, common.ModeEdDSA)
 }
 
 // topology optimized for aws
@@ -425,7 +437,7 @@ func awsSimple() []byte {
 	numServers := 5
 	numInstances := 1
 
-	return config(numClients, numServers, numInstances, false, true, SIG_EDDSA)
+	return config(numClients, numServers, numInstances, false, true, common.ModeEdDSA)
 }
 
 // topology optimized for aws (sharded)
@@ -434,7 +446,7 @@ func aws() []byte {
 	numServers := 1
 	numInstances := 5
 
-	return config(numClients, numServers, numInstances, false, true, SIG_EDDSA)
+	return config(numClients, numServers, numInstances, false, true, common.ModeEdDSA)
 }
 
 // topology optimized for docker
@@ -443,7 +455,7 @@ func dockerSimple() []byte {
 	numServers := 1
 	numInstances := 1
 
-	return config(numClients, numServers, numInstances, true, false, SIG_EDDSA)
+	return config(numClients, numServers, numInstances, true, false, common.ModeEdDSA)
 }
 
 // topology optimized for the sign test
@@ -452,7 +464,7 @@ func signTest() []byte {
 	numServers := 64
 	numInstances := 1
 
-	return config(numClients, numServers, numInstances, true, false, SIG_EDDSA)
+	return config(numClients, numServers, numInstances, true, false, common.ModeEdDSA)
 }
 
 func bls() []byte {
@@ -460,5 +472,5 @@ func bls() []byte {
 	numServers := 4 // 3f+1 where f=1
 	numInstances := 1
 
-	return config(numClients, numServers, numInstances, false, false, SIG_BLS)
+	return config(numClients, numServers, numInstances, false, false, common.ModeBLS)
 }
