@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/herumi/bls-eth-go-binary/bls"
 	"github.com/mmathys/acfts/common"
 	serverAdapter "github.com/mmathys/acfts/server/adapter"
 	"github.com/mmathys/acfts/server/store"
@@ -28,6 +29,9 @@ type serverOpt struct {
 }
 
 func runServer(opt serverOpt) error {
+	bls.Init(bls.BLS12_381)
+	bls.SetETHmode(bls.EthModeDraft07)
+
 	common.InitAddresses(opt.topology)
 
 	port := common.GetServerPort(opt.address, opt.instanceIndex)

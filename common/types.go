@@ -1,6 +1,7 @@
 package common
 
 import (
+	"github.com/herumi/bls-eth-go-binary/bls"
 	"github.com/oasislabs/ed25519"
 	"sync"
 	"time"
@@ -9,6 +10,8 @@ import (
 const (
 	EdDSAPublicKeyLength  = 32 // address = public key
 	EdDSAPrivateKeyLength = 64
+	BLSPublicKeyLength  = 48 // encoded
+	BLSPrivateKeyLength = 32
 	IdentifierLength      = 32 // used for UTXOs
 	SignatureLength       = 64
 	ModeEdDSA             = 1
@@ -17,26 +20,27 @@ const (
 
 // Keys
 type EdDSAKey struct {
-	Address ed25519.PublicKey
+	Address    ed25519.PublicKey
 	PrivateKey ed25519.PrivateKey
 }
 
 type BLSKey struct {
-
+	Address	bls.PublicKey
+	PrivateKey bls.SecretKey
 }
 
 type Key struct {
 	EdDSA *EdDSAKey
-	BLS *BLSKey
-	Mode int
+	BLS   *BLSKey
+	Mode  int
 }
 
 // Signatures
 
 type Signature struct {
-	Address		Address
-	Signature 	[]byte
-	Mode int
+	Address   Address
+	Signature []byte
+	Mode      int
 }
 
 type Address = ed25519.PublicKey         // len = EdDSAPublicKeyLength
@@ -80,14 +84,14 @@ type Instance struct {
 }
 
 type ClientNode struct {
-	Instance	Instance
-	Key      	*Key
-	Balance		int
+	Instance Instance
+	Key      *Key
+	Balance  int
 }
 
 type ServerNode struct {
-	Instances	[]Instance
-	Key       	*Key
+	Instances []Instance
+	Key       *Key
 }
 
 type Agent struct {

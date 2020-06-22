@@ -57,14 +57,15 @@ func read(conf KeyConfig) *Key {
 	return res
 }
 
-var clients map[[EdDSAPublicKeyLength]byte]ClientNode
+const IndexLength = 48 // max(EdDSAPublicKeyLength, BLSPublicKeyLength)
+var clients map[[IndexLength]byte]ClientNode
 var ClientAddresses []Address
-var servers map[[EdDSAPublicKeyLength]byte]ServerNode
+var servers map[[IndexLength]byte]ServerNode
 var ServerAddresses []Address
 
-func getIndex(addr Address) [EdDSAPublicKeyLength]byte {
-	index := [EdDSAPublicKeyLength]byte{}
-	copy(index[:], addr[:EdDSAPublicKeyLength])
+func getIndex(addr Address) [IndexLength]byte {
+	index := [IndexLength]byte{}
+	copy(index[:], addr[:])
 	return index
 }
 
@@ -80,9 +81,9 @@ func InitAddresses(path string) {
 
 	defer file.Close()
 
-	clients = map[[EdDSAPublicKeyLength]byte]ClientNode{}
+	clients = map[[IndexLength]byte]ClientNode{}
 	ClientAddresses = []Address{}
-	servers = map[[EdDSAPublicKeyLength]byte]ServerNode{}
+	servers = map[[IndexLength]byte]ServerNode{}
 	ServerAddresses = []Address{}
 
 	var topology TopologyConfig

@@ -5,6 +5,7 @@ import (
 	"crypto"
 	"crypto/rand"
 	"fmt"
+	"github.com/herumi/bls-eth-go-binary/bls"
 	"github.com/oasislabs/ed25519"
 	"testing"
 )
@@ -82,9 +83,13 @@ func TestKeylength(t *testing.T) {
 }
 
 func TestPrintGeneratedKey(t *testing.T) {
-	mode := ModeEdDSA
-	for i := 0; i < 48; i++ {
+	mode := ModeBLS
+	if mode == ModeBLS {
+		bls.Init(bls.BLS12_381)
+		bls.SetETHmode(bls.EthModeDraft07)
+	}
+	for i := 0; i < 64; i++ {
 		key := GenerateKey(mode)
-		fmt.Printf("{\"%x\",\"%x\"},\n", key.GetAddress(), key.GetPrivateKey())
+		fmt.Printf("{\"%x\",\"%x\"},\n", key.SerializePublicKey(), key.SerializePrivateKey())
 	}
 }

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/herumi/bls-eth-go-binary/bls"
 	clientAdapter "github.com/mmathys/acfts/client/adapter"
 	"github.com/mmathys/acfts/client/cli"
 	"github.com/mmathys/acfts/client/core"
@@ -27,6 +28,8 @@ func handleIncoming(w *common.Wallet, incoming chan common.Value) {
 }
 
 func runClient(c *urfaveCli.Context) error {
+	bls.Init(bls.BLS12_381)
+	bls.SetETHmode(bls.EthModeDraft07)
 	addr, err := common.ReadAddress(c.String("address"))
 	if err != nil {
 		log.Fatal(err)
