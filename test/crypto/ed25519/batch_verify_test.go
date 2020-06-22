@@ -64,7 +64,7 @@ func TestVerifyBatch64(t *testing.T) {
 	hash := make([]byte, 32) // random hash
 	rand.Read(hash)
 	numSigs := 64
-	var sigs []common.EdDSASig
+	var sigs []common.Signature
 	for i := 0; i < numSigs; i++ {
 		id := common.GenerateKey()
 		sig := common.SignHash(id, hash)

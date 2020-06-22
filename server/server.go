@@ -52,10 +52,10 @@ func runServer(opt serverOpt) error {
 		runtime.SetBlockProfileRate(1)
 	}
 
-	id := common.GetIdentity(opt.address)
+	key := common.GetKey(opt.address)
 	serverAdapter.Init(serverAdapter.AdapterOpt{
 		Port:              port,
-		Id:                id,
+		Key:               key,
 		NoSigning:         false,
 		Benchmark:         opt.benchmark,
 		TxCounter:         TxCounter,

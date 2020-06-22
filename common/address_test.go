@@ -7,10 +7,10 @@ import (
 )
 
 func TestServerQuorum(t *testing.T) {
-	ServerKeys = []Address{}
+	ServerAddresses = []Address{}
 	for i := 0; i < 10; i++ {
-		addr := GenerateKey().Address
-		ServerKeys = append(ServerKeys, addr)
+		addr := GenerateKey(ModeEdDSA).GetAddress()
+		ServerAddresses = append(ServerAddresses, addr)
 	}
 
 	quorumSize := int(math.Ceil(2.0 / 3.0 * float64(10)))

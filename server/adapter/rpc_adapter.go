@@ -13,7 +13,7 @@ import (
 	"net/rpc"
 )
 
-var Id *common.Identity
+var Key *common.Key
 var NoSigning bool
 var Benchmark bool
 var TxCounter *int32
@@ -28,7 +28,7 @@ var BatchVerification = true
 type Server struct{}
 type AdapterOpt struct {
 	Port              int
-	Id                *common.Identity
+	Key               *common.Key
 	NoSigning         bool
 	Benchmark         bool
 	TxCounter         *int32
@@ -68,7 +68,7 @@ func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignR
 	var outputs []common.Value
 	if !NoSigning {
 		var err error = nil
-		outputs, err = common.SignValues(Id, tx.Outputs)
+		outputs, err = Key.SignValues(tx.Outputs)
 		if err != nil {
 			fmt.Println(err)
 			return err
@@ -76,7 +76,7 @@ func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignR
 	} else {
 		outputs = tx.Outputs
 		for i, _ := range outputs {
-			outputs[i].Signatures = []common.EdDSASig{}
+			outputs[i].Signatures = []common.Signature{}
 		}
 	}
 
@@ -87,7 +87,7 @@ func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignR
 
 // Initialises the adapter
 func Init(opt AdapterOpt) {
-	Id = opt.Id
+	Key = opt.Key
 	NoSigning = opt.NoSigning
 	Benchmark = opt.Benchmark
 	TxCounter = opt.TxCounter

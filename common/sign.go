@@ -12,42 +12,45 @@ import (
 Signing
 */
 
-
-
 // Signs a hash
-func SignHash(id *Identity, hash []byte) *EdDSASig {
-	opts := ed25519.Options{
-		Hash: crypto.SHA512,
-	}
-	sig, err := id.PrivateKey.Sign(nil, hash, &opts)
-	if err != nil {
-		panic(err)
-	}
-	return &EdDSASig{
-		Address:   id.Address,
-		Signature: sig,
+func (key *Key) SignHash(hash []byte) *Signature {
+	if key.Mode == ModeEdDSA {
+		opts := ed25519.Options{
+			Hash: crypto.SHA512,
+		}
+		sig, err := key.EdDSA.PrivateKey.Sign(nil, hash, &opts)
+		if err != nil {
+			panic(err)
+		}
+		return &Signature{
+			Address:   key.GetAddress(),
+			Signature: sig,
+			Mode:      ModeEdDSA,
+		}
+	} else {
+		panic("unsupported mode")
 	}
 }
 
 // Signs a value
-func SignValue(id *Identity, value *Value) error {
+func (key *Key) SignValue(value *Value) error {
 	hash := HashValue(*value)
 
 	if value.Signatures == nil {
-		value.Signatures = []EdDSASig{}
+		value.Signatures = []Signature{}
 	}
 
-	sig := SignHash(id, hash)
+	sig := key.SignHash(hash)
 	value.Signatures = append(value.Signatures, *sig)
 	return nil
 }
 
 // Signs multiple values
-func SignValues(id *Identity, outputs []Value) ([]Value, error) {
+func (key *Key) SignValues(outputs []Value) ([]Value, error) {
 	var signed []Value
 
 	for _, i := range outputs {
-		SignValue(id, &i)
+		key.SignValue(&i)
 		signed = append(signed, i)
 	}
 
@@ -55,9 +58,9 @@ func SignValues(id *Identity, outputs []Value) ([]Value, error) {
 }
 
 // Signs transaction signature request, which is requested by a client
-func SignTransactionSigRequest(id *Identity, request *TransactionSigReq) error {
+func (key *Key) SignTransactionSigRequest(request *TransactionSigReq) error {
 	hash := HashTransactionSigRequest(*request)
-	sig := SignHash(id, hash)
+	sig := key.SignHash(hash)
 	request.Signature = *sig
 
 	return nil
@@ -73,7 +76,7 @@ const (
 )
 
 // Verifies a signature.
-func Verify(sig *EdDSASig, hash []byte) (bool, error) {
+func Verify(sig *Signature, hash []byte) (bool, error) {
 	if len(sig.Signature) != SignatureLength {
 		msg := fmt.Sprintf("invalid signature length. wanted: %d, got: %d", SignatureLength, len(sig.Signature))
 		return false, errors.New(msg)
@@ -89,7 +92,7 @@ func Verify(sig *EdDSASig, hash []byte) (bool, error) {
 }
 
 // Performs batch verification
-func VerifyBatch(sigs []EdDSASig, hash []byte) (bool, error) {
+func VerifyBatch(sigs []Signature, hash []byte) (bool, error) {
 	var pks []Address
 	var sigsByte [][]byte
 	for _, sig := range sigs {
@@ -124,12 +127,12 @@ func VerifyBatch(sigs []EdDSASig, hash []byte) (bool, error) {
 // - Verifies all signatures
 func VerifyValue(value *Value, enableBatchVerification bool) error {
 	hash := HashValue(*value)
-	origins := make(map[[AddressLength]byte]bool)
+	origins := make(map[[EdDSAPublicKeyLength]byte]bool)
 
 	// look out for duplicates signatures
 	for _, sig := range value.Signatures {
-		index := [AddressLength]byte{}
-		copy(index[:], sig.Address[:AddressLength])
+		index := [EdDSAPublicKeyLength]byte{}
+		copy(index[:], sig.Address[:EdDSAPublicKeyLength])
 		if origins[index] {
 			return errors.New("duplicate signatures")
 		}

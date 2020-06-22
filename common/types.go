@@ -7,27 +7,48 @@ import (
 )
 
 const (
-	AddressLength    = 32 // address = public key
-	PrivateKeyLength = 64
-	IdentifierLength = 32 // used for UTXOs
-	SignatureLength = 64
+	EdDSAPublicKeyLength  = 32 // address = public key
+	EdDSAPrivateKeyLength = 64
+	IdentifierLength      = 32 // used for UTXOs
+	SignatureLength       = 64
+	ModeEdDSA             = 1
+	ModeBLS               = 2
 )
 
-type Address = ed25519.PublicKey         // len = AddressLength
-type PrivateKey = ed25519.PrivateKey     // len = PrivateKeyLength
-type Identifier = [IdentifierLength]byte // len = IdentifierLength
+// Keys
+type EdDSAKey struct {
+	Address ed25519.PublicKey
+	PrivateKey ed25519.PrivateKey
+}
 
-type EdDSASig struct {
+type BLSKey struct {
+
+}
+
+type Key struct {
+	EdDSA *EdDSAKey
+	BLS *BLSKey
+	Mode int
+}
+
+// Signatures
+
+type Signature struct {
 	Address		Address
 	Signature 	[]byte
+	Mode int
 }
+
+type Address = ed25519.PublicKey         // len = EdDSAPublicKeyLength
+type PrivateKey = ed25519.PrivateKey     // len = EdDSAPrivateKeyLength
+type Identifier = [IdentifierLength]byte // len = IdentifierLength
 
 // Defines an Input / Output tuple; with extra fields
 type Value struct {
-	Address    Address    // The public key = Address (encoded)
-	Amount     int        // The value itself
-	Id         Identifier // Unique identifier
-	Signatures []EdDSASig // Signatures
+	Address    Address     // The public key = Address (encoded)
+	Amount     int         // The value itself
+	Id         Identifier  // Unique identifier
+	Signatures []Signature // Signatures
 }
 
 type Transaction struct {
@@ -37,20 +58,15 @@ type Transaction struct {
 
 type TransactionSigReq struct {
 	Transaction Transaction
-	Signature   EdDSASig
+	Signature   Signature
 }
 
 type TransactionSignRes struct {
 	Outputs []Value
 }
 
-type Identity struct {
-	Address		Address
-	PrivateKey  PrivateKey
-}
-
 type Wallet struct {
-	*Identity
+	*Key
 	UTXO *sync.Map // of type int --> Value
 }
 
@@ -65,13 +81,13 @@ type Instance struct {
 
 type ClientNode struct {
 	Instance	Instance
-	Key      	PrivateKey
+	Key      	*Key
 	Balance		int
 }
 
 type ServerNode struct {
 	Instances	[]Instance
-	Key       	PrivateKey
+	Key       	*Key
 }
 
 type Agent struct {

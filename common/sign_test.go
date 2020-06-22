@@ -11,11 +11,11 @@ import (
 
 // test basic behavior.
 func TestBasic(t *testing.T) {
-	id := GenerateKey()
+	key := GenerateKey(ModeEdDSA)
 
 	msg := make([]byte, 64) // random hash
 	rand.Read(msg)
-	sig := SignHash(id, msg)
+	sig := key.SignHash(msg)
 
 	valid, err := Verify(sig, msg)
 	if err != nil {
@@ -46,10 +46,10 @@ func TestBasic(t *testing.T) {
 }
 
 func TestGenerateKeypair(t *testing.T) {
-	id := GenerateKey()
-	id2 := GenerateKey()
+	key := GenerateKey(ModeEdDSA)
+	key2 := GenerateKey(ModeEdDSA)
 
-	if bytes.Equal(id.Address, id2.Address) || bytes.Equal(id.PrivateKey, id2.PrivateKey) {
+	if bytes.Equal(key.GetAddress(), key2.GetAddress()) || bytes.Equal(key.GetPrivateKey(), key2.GetPrivateKey()) {
 		t.Fatal("did not generate different keypairs")
 	}
 }
@@ -57,11 +57,11 @@ func TestGenerateKeypair(t *testing.T) {
 func TestKeylength(t *testing.T) {
 	pub, priv, _ := ed25519.GenerateKey(rand.Reader)
 
-	if len(pub) != AddressLength {
+	if len(pub) != EdDSAPublicKeyLength {
 		t.Fatal("wrong public key length")
 	}
 
-	if len(priv) != PrivateKeyLength {
+	if len(priv) != EdDSAPrivateKeyLength {
 		t.Fatal("wrong private key length")
 	}
 
@@ -82,35 +82,9 @@ func TestKeylength(t *testing.T) {
 }
 
 func TestPrintGeneratedKey(t *testing.T) {
+	mode := ModeEdDSA
 	for i := 0; i < 48; i++ {
-		id := GenerateKey()
-		fmt.Printf("{\"%x\",\"%x\"},\n", id.Address, id.PrivateKey)
-	}
-}
-
-func BenchmarkSignNoPh(b *testing.B) {
-	id := GenerateKey()
-	hash := make([]byte, 1000) // random SHA-512 hash
-	rand.Read(hash)
-
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		_ = ed25519.Sign(id.PrivateKey, hash)
-	}
-}
-
-func BenchmarkSignPh(b *testing.B) {
-	id := GenerateKey()
-	hash := make([]byte, 64) // random SHA-512 hash
-	rand.Read(hash)
-
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		_, err := id.PrivateKey.Sign(nil, hash, &ed25519.Options{
-			Hash: crypto.SHA512,
-		})
-		if err != nil {
-			panic(err)
-		}
+		key := GenerateKey(mode)
+		fmt.Printf("{\"%x\",\"%x\"},\n", key.GetAddress(), key.GetPrivateKey())
 	}
 }

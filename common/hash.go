@@ -37,7 +37,7 @@ func writeValue(d *hash.Hash, value *Value) {
 }
 
 func HashTransactionSigRequest(req TransactionSigReq) []byte {
-	req.Signature = EdDSASig{} // zero out signature before hash
+	req.Signature = Signature{} // zero out signature before hash
 	d := crypto.SHA512.New()
 
 	for _, input := range req.Transaction.Inputs {

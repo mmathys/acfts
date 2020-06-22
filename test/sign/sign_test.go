@@ -108,11 +108,11 @@ func worker(N int, b *testing.B) error {
 
 	common.InitAddresses(topology)
 	// set the number of server according to numMultisig. numMultisig must be >= num servers.
-	if len(common.ServerKeys) < numMultisig {
-		log.Panicf("not enough servers. numMultisig=%d, but we only have %d servers.", numMultisig, len(common.ServerKeys))
+	if len(common.ServerAddresses) < numMultisig {
+		log.Panicf("not enough servers. numMultisig=%d, but we only have %d servers.", numMultisig, len(common.ServerAddresses))
 		panic("not enough servers")
 	}
-	common.ServerKeys = common.ServerKeys[:numMultisig]
+	common.ServerAddresses = common.ServerAddresses[:numMultisig]
 
 	// initialize adapter
 	utxoMap := new(store.UTXOMap)
@@ -122,7 +122,7 @@ func worker(N int, b *testing.B) error {
 	adapter.TxCounter = new(int32)
 	adapter.CheckTransactions = true
 	adapter.Benchmark = false
-	adapter.Id = common.GetIdentity(common.GetServers()[0])
+	adapter.Key = common.GetIdentity(common.GetServers()[0])
 	adapter.AllowDoublespend = false
 	adapter.UseUTXOMap = true
 	adapter.CheckTransactions = true

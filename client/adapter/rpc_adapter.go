@@ -55,10 +55,10 @@ func getConnection(net string) (*rpc.Client, error) {
 	return c, nil
 }
 
-func RequestSignature(serverAddr common.Address, id *common.Identity, t common.Transaction, wg *sync.WaitGroup, sigs chan common.TransactionSignRes, errs chan error) {
+func RequestSignature(serverAddr common.Address, key *common.Key, t common.Transaction, wg *sync.WaitGroup, sigs chan common.TransactionSignRes, errs chan error) {
 	defer wg.Done()
 
-	instanceIndex := common.GetServerInstanceIndex(serverAddr, id.Address)
+	instanceIndex := common.GetServerInstanceIndex(serverAddr, key.GetAddress())
 	net, err := common.GetServerNetworkAddress(serverAddr, instanceIndex)
 	if err != nil {
 		errs <- err
@@ -67,7 +67,7 @@ func RequestSignature(serverAddr common.Address, id *common.Identity, t common.T
 	}
 
 	req := common.TransactionSigReq{Transaction: t}
-	err = common.SignTransactionSigRequest(id, &req)
+	err = key.SignTransactionSigRequest(&req)
 	if err != nil {
 		errs <- err
 		log.Println(err)

@@ -23,7 +23,7 @@ func DoTransaction(w *common.Wallet, t common.Transaction, forward bool) {
 	// add own outputs
 	var ownOutputs []common.Value
 	for _, v := range sig.Outputs {
-		if bytes.Equal(v.Address, w.Identity.Address) {
+		if bytes.Equal(v.Address, w.GetAddress()) {
 			ownOutputs = append(ownOutputs, v)
 		} else if forward {
 			go adapter.ForwardValue(v)
@@ -43,7 +43,7 @@ func SignTransaction(w *common.Wallet, t common.Transaction) (*[]common.Transact
 	var wg sync.WaitGroup
 	wg.Add(common.QuorumSize())
 	for _, server := range common.ServerQuorum() {
-		go adapter.RequestSignature(server, w.Identity, t, &wg, sigs, errs)
+		go adapter.RequestSignature(server, w.Key, t, &wg, sigs, errs)
 	}
 	wg.Wait()
 
