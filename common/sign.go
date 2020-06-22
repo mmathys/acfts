@@ -77,25 +77,39 @@ const (
 
 // Verifies a signature.
 func Verify(sig *Signature, hash []byte) (bool, error) {
-	if len(sig.Signature) != SignatureLength {
-		msg := fmt.Sprintf("invalid signature length. wanted: %d, got: %d", SignatureLength, len(sig.Signature))
-		return false, errors.New(msg)
+	if sig.Mode == ModeEdDSA {
+		if len(sig.Signature) != SignatureLength {
+			msg := fmt.Sprintf("invalid signature length. wanted: %d, got: %d", SignatureLength, len(sig.Signature))
+			return false, errors.New(msg)
+		}
+		if len(hash) != crypto.SHA512.Size() {
+			msg := fmt.Sprintf("invalid hash length. wanted: %d, got: %d", crypto.SHA512.Size(), len(hash))
+			return false, errors.New(msg)
+		}
+		opts := ed25519.Options{
+			Hash: crypto.SHA512,
+		}
+		return ed25519.VerifyWithOptions(sig.Address, hash, sig.Signature, &opts), nil
+	} else if sig.Mode == ModeBLS {
+		if len(hash) != crypto.SHA3_256.Size() {
+			msg := fmt.Sprintf("invalid hash length. wanted: %d, got: %d", crypto.SHA3_256.Size(), len(hash))
+			return false, errors.New(msg)
+		}
+		panic("bls is not implemented yet")
+	} else {
+		panic("mode not supported")
 	}
-	if len(hash) != crypto.SHA512.Size() {
-		msg := fmt.Sprintf("invalid hash length. wanted: %d, got: %d", crypto.SHA512.Size(), len(hash))
-		return false, errors.New(msg)
-	}
-	opts := ed25519.Options{
-		Hash: crypto.SHA512,
-	}
-	return ed25519.VerifyWithOptions(sig.Address, hash, sig.Signature, &opts), nil
 }
 
-// Performs batch verification
+// Performs batch verification (EdDSA mode only)
 func VerifyBatch(sigs []Signature, hash []byte) (bool, error) {
 	var pks []Address
 	var sigsByte [][]byte
 	for _, sig := range sigs {
+		if sig.Mode != ModeEdDSA {
+			return false, errors.New("batch verification is only available for EdDSA, but found other types of signatures")
+		}
+
 		pks = append(pks, sig.Address)
 
 		if len(sig.Signature) != SignatureLength {
