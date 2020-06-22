@@ -7,14 +7,17 @@ import (
 	"sync"
 )
 
-type UTXOMap struct {}
+type UTXOMap struct{}
 
 const (
-	DefaultMapType = TypeInsertOnly
+	DefaultMapType       = TypeInsertOnly
 	DefaultMapTypeString = "insertOnly"
+	DefaultScheme        = "eddsa"
 
 	TypeSyncMap    = 0
 	TypeInsertOnly = 1
+	TypeEdDSA      = 2
+	TypeBLS        = 3
 )
 
 var mapType = TypeInsertOnly

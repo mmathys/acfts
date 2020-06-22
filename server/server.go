@@ -24,6 +24,7 @@ type serverOpt struct {
 	pprof bool
 	disableBatch bool
 	mapType int
+	scheme int
 }
 
 func runServer(opt serverOpt) error {
@@ -38,11 +39,18 @@ func runServer(opt serverOpt) error {
 		mapTypeReadable = "insertOnly"
 	}
 
+	schemeReadable := "unrecognized"
+	if opt.scheme == store.TypeEdDSA {
+		schemeReadable = "EdDSA"
+	} else if opt.scheme == store.TypeBLS {
+		schemeReadable = "BLS"
+	}
+
 	UTXOMap.SetType(opt.mapType)
 
 	fmt.Println("initializing server with:")
-	fmt.Printf("addr=%x, instance=%d, port=%d, benchmark=%t, pprof=%t, batchVerification=%t, mapType=%s\n",
-		opt.address, opt.instanceIndex, port, opt.benchmark, opt.pprof, !opt.disableBatch, mapTypeReadable)
+	fmt.Printf("addr=%x, instance=%d, port=%d, benchmark=%t, pprof=%t, batchVerification=%t, mapType=%s, scheme=%s\n",
+		opt.address, opt.instanceIndex, port, opt.benchmark, opt.pprof, !opt.disableBatch, mapTypeReadable, schemeReadable)
 
 	if opt.benchmark {
 		go util.Ticker(TxCounter)
@@ -91,6 +99,16 @@ func main() {
 				log.Panicf("--map-type must be either 'syncMap' or 'insertOnly' (got %s)", mapType)
 			}
 
+			scheme := c.String("scheme")
+			schemeInt := -1
+			if scheme == "eddsa" {
+				schemeInt = store.TypeEdDSA
+			} else if scheme == "bls" {
+				schemeInt = store.TypeBLS
+			} else {
+				log.Panicf("--scheme must be either 'eddsa' or 'bls' (got %s)", scheme)
+			}
+
 			runServer(serverOpt{
 				address:       addr,
 				instanceIndex: c.Int("instance"),
@@ -99,6 +117,7 @@ func main() {
 				pprof:         c.Bool("pprof"),
 				disableBatch:  c.Bool("disable-batch"),
 				mapType:       mapTypeInt,
+				scheme: schemeInt,
 			})
 			return nil
 		},
@@ -120,6 +139,13 @@ func main() {
 				Aliases:  []string{"t"},
 				Usage:    "Path to the topology json file",
 				Required: true,
+			},
+			&cli.StringFlag{
+				Name:     "scheme",
+				Aliases:  []string{"s"},
+				Value:		store.DefaultScheme,
+				Usage:    "Crypto scheme: EdDSA or BLS",
+				Required: false,
 			},
 			&cli.BoolFlag{
 				Name:     "benchmark",
