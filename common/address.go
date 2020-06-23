@@ -26,18 +26,19 @@ type KeyConfig struct {
 }
 
 type ClientNodeConfig struct {
-	Key      KeyConfig // 0: Address, 1: Private Key
+	Key      KeyConfig
 	Instance Instance
 }
 
 type ServerNodeConfig struct {
-	Key       KeyConfig // 0: Address, 1: Private Key
+	Key       KeyConfig
 	Instances []Instance
 }
 
 type TopologyConfig struct {
-	Servers []ServerNodeConfig
-	Clients []ClientNodeConfig
+	BLSMasterKey KeyConfig
+	Servers      []ServerNodeConfig
+	Clients      []ClientNodeConfig
 }
 
 func read(conf KeyConfig) *Key {
@@ -62,6 +63,7 @@ var clients map[[IndexLength]byte]ClientNode
 var ClientAddresses []Address
 var servers map[[IndexLength]byte]ServerNode
 var ServerAddresses []Address
+var masterKey *Key
 
 func getIndex(addr Address) [IndexLength]byte {
 	index := [IndexLength]byte{}
@@ -108,6 +110,11 @@ func InitAddresses(path string) {
 			Key:       key,
 		}
 		ServerAddresses = append(ServerAddresses, key.GetAddress())
+	}
+
+	masterKeyConfig := topology.BLSMasterKey
+	if masterKeyConfig.Mode == "bls" {
+		masterKey = read(masterKeyConfig)
 	}
 }
 
@@ -178,6 +185,10 @@ func GetKey(address Address) *Key {
 
 	log.Panicf("could not find address %x\n", address)
 	return nil
+}
+
+func GetBLSMasterKey() *Key {
+	return masterKey
 }
 
 func GetClientPort(address Address) int {

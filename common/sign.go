@@ -23,20 +23,26 @@ func (key *Key) SignHash(hash []byte) *Signature {
 			panic(err)
 		}
 		return &Signature{
-			Address:   key.GetAddress(),
-			Signature: sig,
-			Mode:      ModeEdDSA,
+			Address:        key.GetAddress(),
+			EdDSASignature: &sig,
+			Mode:           key.Mode,
 		}
 	} else if key.Mode == ModeBLS {
-		panic("bls is not supported yet")
+		sig := key.BLS.PrivateKey.SignHash(hash)
+		return &Signature{
+			Address:        key.GetAddress(),
+			BLSSignature: 	sig,
+			Mode:           key.Mode,
+		}
 	} else {
 		panic("unsupported mode")
 	}
+
 }
 
 // Signs a value
 func (key *Key) SignValue(value *Value) error {
-	hash := HashValue(*value)
+	hash := HashValue(key.Mode, *value)
 
 	if value.Signatures == nil {
 		value.Signatures = []Signature{}
@@ -61,7 +67,7 @@ func (key *Key) SignValues(outputs []Value) ([]Value, error) {
 
 // Signs transaction signature request, which is requested by a client
 func (key *Key) SignTransactionSigRequest(request *TransactionSigReq) error {
-	hash := HashTransactionSigRequest(*request)
+	hash := HashTransactionSigRequest(key.Mode, *request)
 	sig := key.SignHash(hash)
 	request.Signature = *sig
 
@@ -80,8 +86,9 @@ const (
 // Verifies a signature.
 func Verify(sig *Signature, hash []byte) (bool, error) {
 	if sig.Mode == ModeEdDSA {
-		if len(sig.Signature) != SignatureLength {
-			msg := fmt.Sprintf("invalid signature length. wanted: %d, got: %d", SignatureLength, len(sig.Signature))
+		eddsaSig := *sig.EdDSASignature
+		if len(eddsaSig) != SignatureLength {
+			msg := fmt.Sprintf("invalid signature length. wanted: %d, got: %d", SignatureLength, len(eddsaSig))
 			return false, errors.New(msg)
 		}
 		if len(hash) != crypto.SHA512.Size() {
@@ -91,7 +98,7 @@ func Verify(sig *Signature, hash []byte) (bool, error) {
 		opts := ed25519.Options{
 			Hash: crypto.SHA512,
 		}
-		return ed25519.VerifyWithOptions(sig.Address, hash, sig.Signature, &opts), nil
+		return ed25519.VerifyWithOptions(sig.Address, hash, eddsaSig, &opts), nil
 	} else if sig.Mode == ModeBLS {
 		if len(hash) != crypto.SHA3_256.Size() {
 			msg := fmt.Sprintf("invalid hash length. wanted: %d, got: %d", crypto.SHA3_256.Size(), len(hash))
@@ -114,11 +121,12 @@ func VerifyBatch(sigs []Signature, hash []byte) (bool, error) {
 
 		pks = append(pks, sig.Address)
 
-		if len(sig.Signature) != SignatureLength {
-			msg := fmt.Sprintf("invalid signature length. wanted: %d, got: %d", SignatureLength, len(sig.Signature))
+		eddsaSig := *sig.EdDSASignature
+		if len(eddsaSig) != SignatureLength {
+			msg := fmt.Sprintf("invalid signature length. wanted: %d, got: %d", SignatureLength, len(eddsaSig))
 			return false, errors.New(msg)
 		}
-		sigsByte = append(sigsByte, sig.Signature)
+		sigsByte = append(sigsByte, eddsaSig)
 	}
 
 	var messages [][]byte
@@ -176,9 +184,8 @@ func VerifyValue(value *Value, enableBatchVerification bool) error {
 		return errors.New(text)
 	}
 
+	hash := HashValue(mode, *value)
 	if mode == ModeEdDSA {
-		hash := HashValue(*value)
-
 		// verify all signatures, either with batch verification or single verification
 		if enableBatchVerification && len(value.Signatures) >= BatchVerificationThreshold {
 			// batch verification
@@ -211,8 +218,8 @@ func VerifyValue(value *Value, enableBatchVerification bool) error {
 // Verifies a signature request
 // - checks if all inputs are owned by the same party
 // - checks if party signed the request
-func VerifyTransactionSigRequest(req *TransactionSigReq) error {
-	hash := HashTransactionSigRequest(*req)
+func VerifyTransactionSigRequest(mode int, req *TransactionSigReq) error {
+	hash := HashTransactionSigRequest(mode, *req)
 
 	ownerAddress := req.Signature.Address
 

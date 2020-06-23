@@ -4,21 +4,20 @@ import (
 	"crypto"
 	"encoding/binary"
 	"encoding/gob"
-	"fmt"
 	"hash"
 )
 
-func HashValueSprintf(value Value) []byte {
-	d := crypto.SHA512.New()
-	value.Signatures = nil                    // zero out signatures before hash
-	d.Write([]byte(fmt.Sprintf("%v", value))) // this may be slow!
-	return d.Sum(nil)
-}
-
-func HashValue(value Value) []byte {
+func HashValue(mode int, value Value) []byte {
 	value.Signatures = nil // zero out signatures before hash
 
-	d := crypto.SHA512.New()
+	var d hash.Hash
+	if mode == ModeEdDSA {
+		d = crypto.SHA512.New()
+	} else if mode == ModeBLS {
+		d = crypto.SHA3_256.New()
+	} else {
+		panic("unsupported mode")
+	}
 	enc := gob.NewEncoder(d)
 	enc.Encode(value)
 	return d.Sum(nil)
@@ -31,14 +30,28 @@ func writeValue(d *hash.Hash, value *Value) {
 	if value.Signatures != nil {
 		for _, signature := range value.Signatures {
 			(*d).Write(signature.Address)
-			(*d).Write(signature.Signature)
+			if signature.EdDSASignature != nil {
+				(*d).Write(*signature.EdDSASignature)
+			}
+			if signature.BLSSignature != nil {
+				panic("hashing of bls signatures not supported yet")
+			}
+			binary.Write(*d, binary.LittleEndian, signature.Mode)
 		}
 	}
 }
 
-func HashTransactionSigRequest(req TransactionSigReq) []byte {
+func HashTransactionSigRequest(mode int, req TransactionSigReq) []byte {
 	req.Signature = Signature{} // zero out signature before hash
-	d := crypto.SHA512.New()
+
+	var d hash.Hash
+	if mode == ModeEdDSA {
+		d = crypto.SHA512.New()
+	} else if mode == ModeBLS {
+		d = crypto.SHA3_256.New()
+	} else {
+		panic("unsupported mode")
+	}
 
 	for _, input := range req.Transaction.Inputs {
 		writeValue(&d, &input)

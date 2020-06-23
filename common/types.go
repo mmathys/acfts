@@ -10,8 +10,8 @@ import (
 const (
 	EdDSAPublicKeyLength  = 32 // address = public key
 	EdDSAPrivateKeyLength = 64
-	BLSPublicKeyLength  = 48 // encoded
-	BLSPrivateKeyLength = 32
+	BLSPublicKeyLength    = 48 // encoded
+	BLSPrivateKeyLength   = 32
 	IdentifierLength      = 32 // used for UTXOs
 	SignatureLength       = 64
 	ModeEdDSA             = 1
@@ -25,7 +25,7 @@ type EdDSAKey struct {
 }
 
 type BLSKey struct {
-	Address	bls.PublicKey
+	Address    bls.PublicKey
 	PrivateKey bls.SecretKey
 }
 
@@ -38,9 +38,10 @@ type Key struct {
 // Signatures
 
 type Signature struct {
-	Address   Address
-	Signature []byte
-	Mode      int
+	Address        Address
+	EdDSASignature *[]byte
+	BLSSignature   *bls.Sign
+	Mode           int
 }
 
 type Address = ed25519.PublicKey         // len = EdDSAPublicKeyLength
