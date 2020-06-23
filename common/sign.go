@@ -155,7 +155,7 @@ func VerifyValue(value *Value, enableBatchVerification bool) error {
 	origins := make(map[[IndexLength]byte]bool)
 	for _, sig := range value.Signatures {
 		index := [IndexLength]byte{}
-		copy(index[:], sig.Address[:IndexLength])
+		copy(index[:], sig.Address[:])
 		if origins[index] {
 			return errors.New("duplicate signatures")
 		}
