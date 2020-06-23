@@ -60,16 +60,26 @@ func info(w *common.Wallet) {
 func utxo(w *common.Wallet) {
 	table := tablewriter.NewWriter(os.Stdout)
 	sum := 0
-	table.SetHeader([]string{"address", "amount", "id", "sig count"})
+	table.SetHeader([]string{"address", "amount", "id", "sig count", "sig mode"})
 	w.UTXO.Range(func(_ interface{}, value interface{}) bool {
 		v := value.(common.Value)
 		trimmedAddr := fmt.Sprintf("%x", v.Address)[:10]
 		trimmedId := fmt.Sprintf("%x", v.Id)[:10]
+		sigMode := "unknown"
+		if len(v.Signatures) > 0 {
+			if v.Signatures[0].Mode == common.ModeEdDSA {
+				sigMode = "multisig (EdDSA)"
+			} else if v.Signatures[0].Mode == common.ModeBLS {
+				sigMode = "threshold (BLS)"
+			}
+		}
+
 		table.Append([]string{
 			fmt.Sprintf("%s...", trimmedAddr),
 			fmt.Sprintf("%d", v.Amount),
 			fmt.Sprintf("%s...", trimmedId),
 			fmt.Sprintf("%d", len(v.Signatures)),
+			sigMode,
 		})
 		sum += v.Amount
 		return true

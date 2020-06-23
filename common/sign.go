@@ -218,9 +218,7 @@ func VerifyValue(value *Value, enableBatchVerification bool) error {
 // Verifies a signature request
 // - checks if all inputs are owned by the same party
 // - checks if party signed the request
-func VerifyTransactionSigRequest(mode int, req *TransactionSigReq) error {
-	hash := HashTransactionSigRequest(mode, *req)
-
+func VerifyTransactionSigRequest(req *TransactionSigReq) error {
 	ownerAddress := req.Signature.Address
 
 	for _, input := range req.Transaction.Inputs {
@@ -228,6 +226,8 @@ func VerifyTransactionSigRequest(mode int, req *TransactionSigReq) error {
 			return errors.New("inputs are not owned by the same party")
 		}
 	}
+
+	hash := HashTransactionSigRequest(req.Signature.Mode, *req)
 
 	valid, err := Verify(&req.Signature, hash)
 	if err != nil {
