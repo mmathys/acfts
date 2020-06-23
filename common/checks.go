@@ -7,6 +7,9 @@ Checks the format of the request
 - Fields must be defined
 - there must be at least one input and one output field
 - all values must be greater than zero
+- all inputs must have at least one signature
+- the mode of the signature must be valid TODO
+- all signatures must have the same mode
 */
 func CheckFormat(tx *Transaction) error {
 	if tx == nil || tx.Outputs == nil || tx.Inputs == nil {
@@ -21,9 +24,25 @@ func CheckFormat(tx *Transaction) error {
 		return errors.New("there must be a least on input")
 	}
 
+	// signature mode
+	var mode int
+	if len(tx.Inputs[0].Signatures) > 0 {
+		mode = tx.Inputs[0].Signatures[0].Mode
+	} else {
+		return errors.New("encountered input without signatures")
+	}
+
 	for _, input := range tx.Inputs {
 		if input.Amount <= 0 {
 			return errors.New("input must be greater than zero")
+		}
+		if len(input.Signatures) == 0 {
+			return errors.New("encountered input without signatures")
+		}
+		for _, sig := range input.Signatures {
+			if sig.Mode != mode {
+				return errors.New("encountered inconsistent (or invalid) signature mode")
+			}
 		}
 	}
 

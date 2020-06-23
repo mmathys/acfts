@@ -1,4 +1,9 @@
 {
+  "BLSMasterKey": {
+    "PublicKey": "85020269fc037eb8801dc3a2330af8a89b463de06ceb3515cf6acd38f30bc39b2507271a517f380af8eaaaf891d8d687",
+    "PrivateKey": "0898e186dfa83fe55c14aa6491ac9ea3b0f17f5ec0113b8b6bc42a4def42ac07",
+    "Mode": "bls"
+  },
   "Servers": [
     {
       "Instances": [
@@ -8,8 +13,8 @@
         }
       ],
       "Key": {
-        "PublicKey": "93d6bc45ca462f6022ad5786ac43faf6e67a785f5ac69f279d24acec998787ef2ac963ccfb2d5136469029be99eada19",
-        "PrivateKey": "395de584a776d74175f2834948b3e0f3d08e2ea34367608ebc4369d1dd29f1f8",
+        "PublicKey": "81a44f12d738f5858043f6471bfbc9f222e2abdeae14c1a23109fef9ed78e461b4ed36fab48eb5d0f3f720b4b092b477",
+        "PrivateKey": "1cec1a4f941b45bd07274ad84d79d8d19b161afbb81241e5facce98ad5bc8e13",
         "Mode": "bls"
       }
     },
@@ -21,8 +26,8 @@
         }
       ],
       "Key": {
-        "PublicKey": "b8a42280e396ae07133b94b7682845c0a67ab52cb32549531914396f8613d9061cc3686e250d350686b99e77019b716a",
-        "PrivateKey": "6544f07640f62540289896b95bab4e35471f5e3b28dc0aa9604057f21d6a205d",
+        "PublicKey": "8a2a4dd5a7d18aba2700d47b93398cf4a73e2e460ee95e17fe550a7ccec9883d79a8f6f02d8b6ffd1f07728a5bdde218",
+        "PrivateKey": "29b55d32a26d2a6156ea31146fd852e25b58e3be3590e7e21781a1df6922d1a1",
         "Mode": "bls"
       }
     },
@@ -34,8 +39,8 @@
         }
       ],
       "Key": {
-        "PublicKey": "91adf3b5a31e0ab3f8319c2dc600f84551465665f6954271a0bcab9950ddce944df9709ccfb394a0c37089ff3b028e5b",
-        "PrivateKey": "309d7ed06d007b02e28a3dcbbdd611f9250214dade0e2dc320de403513c51b9b",
+        "PublicKey": "8ec8412718ecf453ea7d69815006b3452a749fa56ff7b15c8e9364c51ad4fc17fb24fd6efcb072f4d2b9c65a415eb3b9",
+        "PrivateKey": "2ef4aa300a9dedd24b5d5d18f8c80cd5f1b9d9a6388d2d7fc1e2534ba97576b1",
         "Mode": "bls"
       }
     },
@@ -47,8 +52,8 @@
         }
       ],
       "Key": {
-        "PublicKey": "b6a068055d8ebefbd3381c3a58ae8a1d9ba6a85b706459bfec30b8cbb78e0641ad2f168361b8a3317e9ae403bf222bd2",
-        "PrivateKey": "68fd6fcc92dd73d00114c2ae809af6ef7501bc302fe6316e0b4a3f62be92ff7b",
+        "PublicKey": "ad02e46d107f198a1a3da647ee96ea2c2256c727c22f407aaa79b5682d64aa4006e30f7c834e2d19f921c39cf4fe7425",
+        "PrivateKey": "2caa0147ccad900fe480cee5e84906ac5e38fcb3c10712bef9eefdcf96b47d43",
         "Mode": "bls"
       }
     }

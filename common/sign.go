@@ -27,6 +27,8 @@ func (key *Key) SignHash(hash []byte) *Signature {
 			Signature: sig,
 			Mode:      ModeEdDSA,
 		}
+	} else if key.Mode == ModeBLS {
+		panic("bls is not supported yet")
 	} else {
 		panic("unsupported mode")
 	}
@@ -140,13 +142,20 @@ func VerifyBatch(sigs []Signature, hash []byte) (bool, error) {
 // - Checks whether there are enough signatures to satisfy the validity constraint. (> 2/3 of all sigs)
 // - Verifies all signatures
 func VerifyValue(value *Value, enableBatchVerification bool) error {
-	hash := HashValue(*value)
-	origins := make(map[[EdDSAPublicKeyLength]byte]bool)
+	// check signature type
+	var mode int
+	if len(value.Signatures) > 0 {
+		firstSig := value.Signatures[0]
+		mode = firstSig.Mode
+	} else {
+		return errors.New("got value with no signatures")
+	}
 
 	// look out for duplicates signatures
+	origins := make(map[[IndexLength]byte]bool)
 	for _, sig := range value.Signatures {
-		index := [EdDSAPublicKeyLength]byte{}
-		copy(index[:], sig.Address[:EdDSAPublicKeyLength])
+		index := [IndexLength]byte{}
+		copy(index[:], sig.Address[:IndexLength])
 		if origins[index] {
 			return errors.New("duplicate signatures")
 		}
@@ -166,30 +175,37 @@ func VerifyValue(value *Value, enableBatchVerification bool) error {
 		text := fmt.Sprintf("not enough signatures. need %d, have %d", numRequiredSigs, len(value.Signatures))
 		return errors.New(text)
 	}
-	// verify all signatures, either with batch verification or single verification
-	if enableBatchVerification && len(value.Signatures) >= BatchVerificationThreshold {
-		// batch verification
-		valid, err := VerifyBatch(value.Signatures, hash)
-		if err != nil {
-			return err
-		}
-		if !valid {
-			return errors.New("value verification failed (batch mode)")
-		}
-	} else {
-		// single verification
-		for _, sig := range value.Signatures {
-			valid, err := Verify(&sig, hash)
+
+	if mode == ModeEdDSA {
+		hash := HashValue(*value)
+
+		// verify all signatures, either with batch verification or single verification
+		if enableBatchVerification && len(value.Signatures) >= BatchVerificationThreshold {
+			// batch verification
+			valid, err := VerifyBatch(value.Signatures, hash)
 			if err != nil {
 				return err
 			}
 			if !valid {
-				return errors.New("value verification failed (single mode)")
+				return errors.New("value verification failed (batch mode)")
+			}
+		} else {
+			// single verification
+			for _, sig := range value.Signatures {
+				valid, err := Verify(&sig, hash)
+				if err != nil {
+					return err
+				}
+				if !valid {
+					return errors.New("value verification failed (single mode)")
+				}
 			}
 		}
-	}
 
-	return nil
+		return nil
+	} else {
+		panic("verifying bls is not supported yet")
+	}
 }
 
 // Verifies a signature request
