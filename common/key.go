@@ -22,7 +22,7 @@ func edDSAKey(pub []byte, sk []byte) *Key {
 func blsKey(pub bls.PublicKey, sk bls.SecretKey) *Key {
 	return &Key{
 		EdDSA: nil,
-		BLS:  &BLSKey{
+		BLS: &BLSKey{
 			Address:    pub,
 			PrivateKey: sk,
 		},
@@ -92,14 +92,6 @@ func (key *Key) GetAddress() []byte {
 	}
 }
 
-func (key *Key) GetPrivateKey() []byte {
-	if key.Mode == ModeEdDSA {
-		return key.EdDSA.PrivateKey
-	} else {
-		panic("unsupported mode")
-	}
-}
-
 func (key *Key) SerializePublicKey() []byte {
 	if key.Mode == ModeEdDSA {
 		panic("not yet implemented")
@@ -112,7 +104,7 @@ func (key *Key) SerializePublicKey() []byte {
 
 func (key *Key) SerializePrivateKey() []byte {
 	if key.Mode == ModeEdDSA {
-		panic("not yet implemented")
+		return key.EdDSA.PrivateKey
 	} else if key.Mode == ModeBLS {
 		return key.BLS.PrivateKey.Serialize()
 	} else {

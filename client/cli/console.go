@@ -51,9 +51,18 @@ func send(w *common.Wallet, s []string) {
 
 func info(w *common.Wallet) {
 	addr := w.GetAddress()
+	key := common.GetKey(addr)
+	keySerialized := w.SerializePrivateKey()
 	net, _ := common.GetClientNetworkAddress(addr)
 	fmt.Printf("Address (public key):\t%x\n", addr)
-	fmt.Printf("Private Key:\t\t%x\n", addr)
+	fmt.Printf("Private Key:\t\t%x\n", keySerialized)
+	modeReadable := "unrecognized"
+	if key.Mode == common.ModeEdDSA {
+		modeReadable = "EdDSA"
+	} else if key.Mode == common.ModeBLS {
+		modeReadable = "BLS"
+	}
+	fmt.Printf("Key Mode:\t\t%v\n", modeReadable)
 	fmt.Printf("Network:\t\t%s\n", net)
 }
 
