@@ -19,10 +19,13 @@ func edDSAKey(pub []byte, sk []byte) *Key {
 	}
 }
 
-func blsKey(pub bls.PublicKey, sk bls.SecretKey) *Key {
+func blsKey(pub bls.PublicKey, sk bls.SecretKey, id int) *Key {
+	var blsId bls.ID
+	blsId.SetLittleEndian([]byte{uint8(id)})
 	return &Key{
 		EdDSA: nil,
 		BLS: &BLSKey{
+			ID:         blsId,
 			Address:    pub,
 			PrivateKey: sk,
 		},
@@ -30,7 +33,7 @@ func blsKey(pub bls.PublicKey, sk bls.SecretKey) *Key {
 	}
 }
 
-func GenerateKey(mode int) *Key {
+func GenerateKey(mode int, id int) *Key {
 	if mode == ModeEdDSA {
 		pub, sk, err := ed25519.GenerateKey(rand.Reader)
 		if err != nil {
@@ -41,13 +44,13 @@ func GenerateKey(mode int) *Key {
 		var sec bls.SecretKey
 		sec.SetByCSPRNG()
 		pub := sec.GetPublicKey()
-		return blsKey(*pub, sec)
+		return blsKey(*pub, sec, id)
 	} else {
 		panic("invalid mode")
 	}
 }
 
-func DecodeKey(mode int, pubS string, skS string) (*Key, error) {
+func DecodeKey(mode int, index int, pubS string, skS string) (*Key, error) {
 	pub, err := hex.DecodeString(pubS)
 	if err != nil {
 		return nil, err
@@ -76,7 +79,7 @@ func DecodeKey(mode int, pubS string, skS string) (*Key, error) {
 		blsPub.Deserialize(pub)
 		var blsSk bls.SecretKey
 		blsSk.Deserialize(sk)
-		return blsKey(blsPub, blsSk), nil
+		return blsKey(blsPub, blsSk, index+1), nil
 	} else {
 		panic("unsupported mode")
 	}

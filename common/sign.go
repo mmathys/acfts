@@ -5,6 +5,7 @@ import (
 	"crypto"
 	"errors"
 	"fmt"
+	"github.com/herumi/bls-eth-go-binary/bls"
 	"github.com/oasislabs/ed25519"
 )
 
@@ -23,16 +24,18 @@ func (key *Key) SignHash(hash []byte) *Signature {
 			panic(err)
 		}
 		return &Signature{
-			Address:        key.GetAddress(),
-			EdDSASignature: &sig,
-			Mode:           key.Mode,
+			Address:   key.GetAddress(),
+			Signature: sig,
+			Mode:      key.Mode,
 		}
 	} else if key.Mode == ModeBLS {
 		sig := key.BLS.PrivateKey.SignHash(hash)
+		id := key.BLS.ID
 		return &Signature{
-			Address:        key.GetAddress(),
-			BLSSignature: 	sig,
-			Mode:           key.Mode,
+			BLSID:     id.Serialize(),
+			Address:   key.GetAddress(),
+			Signature: sig.Serialize(),
+			Mode:      key.Mode,
 		}
 	} else {
 		panic("unsupported mode")
@@ -86,13 +89,14 @@ const (
 // Verifies a signature.
 func Verify(sig *Signature, hash []byte) (bool, error) {
 	if sig.Mode == ModeEdDSA {
-		eddsaSig := *sig.EdDSASignature
-		if len(eddsaSig) != SignatureLength {
-			msg := fmt.Sprintf("invalid signature length. wanted: %d, got: %d", SignatureLength, len(eddsaSig))
-			return false, errors.New(msg)
-		}
 		if len(hash) != crypto.SHA512.Size() {
 			msg := fmt.Sprintf("invalid hash length. wanted: %d, got: %d", crypto.SHA512.Size(), len(hash))
+			return false, errors.New(msg)
+		}
+
+		eddsaSig := sig.Signature
+		if len(eddsaSig) != SignatureLength {
+			msg := fmt.Sprintf("invalid signature length. wanted: %d, got: %d", SignatureLength, len(eddsaSig))
 			return false, errors.New(msg)
 		}
 		opts := ed25519.Options{
@@ -104,15 +108,21 @@ func Verify(sig *Signature, hash []byte) (bool, error) {
 			msg := fmt.Sprintf("invalid hash length. wanted: %d, got: %d", crypto.SHA3_256.Size(), len(hash))
 			return false, errors.New(msg)
 		}
-		panic("bls is not implemented yet")
+
+		var blsSig bls.Sign
+		blsSig.Deserialize(sig.Signature)
+		var blsPub bls.PublicKey
+		blsPub.Deserialize(sig.Address)
+
+		return blsSig.VerifyHash(&blsPub, hash), nil
 	} else {
-		panic("mode not supported")
+		return false, errors.New("mode not supported")
 	}
 }
 
 // Performs batch verification (EdDSA mode only)
 func VerifyBatch(sigs []Signature, hash []byte) (bool, error) {
-	var pks []Address
+	var pks []ed25519.PublicKey
 	var sigsByte [][]byte
 	for _, sig := range sigs {
 		if sig.Mode != ModeEdDSA {
@@ -121,7 +131,7 @@ func VerifyBatch(sigs []Signature, hash []byte) (bool, error) {
 
 		pks = append(pks, sig.Address)
 
-		eddsaSig := *sig.EdDSASignature
+		eddsaSig := sig.Signature
 		if len(eddsaSig) != SignatureLength {
 			msg := fmt.Sprintf("invalid signature length. wanted: %d, got: %d", SignatureLength, len(eddsaSig))
 			return false, errors.New(msg)
@@ -159,33 +169,33 @@ func VerifyValue(value *Value, enableBatchVerification bool) error {
 		return errors.New("got value with no signatures")
 	}
 
-	// look out for duplicates signatures
-	origins := make(map[[IndexLength]byte]bool)
-	for _, sig := range value.Signatures {
-		index := [IndexLength]byte{}
-		copy(index[:], sig.Address[:])
-		if origins[index] {
-			return errors.New("duplicate signatures")
-		}
-		origins[index] = true
-	}
-
-	// check whether the signatures have all been made by valid servers
-	for _, sig := range value.Signatures {
-		if !IsValidServer(sig.Address) {
-			return errors.New("encountered signature signed by invalid server")
-		}
-	}
-
-	// check that there are enough signatures
-	numRequiredSigs := QuorumSize()
-	if len(value.Signatures) < numRequiredSigs {
-		text := fmt.Sprintf("not enough signatures. need %d, have %d", numRequiredSigs, len(value.Signatures))
-		return errors.New(text)
-	}
-
 	hash := HashValue(mode, *value)
 	if mode == ModeEdDSA {
+		// look out for duplicates signatures
+		origins := make(map[[IndexLength]byte]bool)
+		for _, sig := range value.Signatures {
+			index := [IndexLength]byte{}
+			copy(index[:], sig.Address[:])
+			if origins[index] {
+				return errors.New("duplicate signatures")
+			}
+			origins[index] = true
+		}
+
+		// check that there are enough signatures
+		numRequiredSigs := QuorumSize()
+		if len(value.Signatures) < numRequiredSigs {
+			text := fmt.Sprintf("not enough signatures. need %d, have %d", numRequiredSigs, len(value.Signatures))
+			return errors.New(text)
+		}
+
+		// check whether the signatures have all been made by valid servers
+		for _, sig := range value.Signatures {
+			if !IsValidServer(sig.Address) {
+				return errors.New("encountered signature signed by invalid server (eddsa)")
+			}
+		}
+
 		// verify all signatures, either with batch verification or single verification
 		if enableBatchVerification && len(value.Signatures) >= BatchVerificationThreshold {
 			// batch verification
@@ -209,10 +219,27 @@ func VerifyValue(value *Value, enableBatchVerification bool) error {
 			}
 		}
 
-		return nil
 	} else {
-		panic("verifying bls is not supported yet")
+		// we want exactly one signature
+		if len(value.Signatures) != 1 {
+			return errors.New("in BLS mode, exactly one combined signature must be sent")
+		}
+
+		sig := value.Signatures[0]
+		masterPub := GetBLSMasterPublicKey()
+		if !bytes.Equal(masterPub.Serialize(), sig.Address) {
+			return errors.New("signature address does not match master")
+		}
+
+		var masterSig bls.Sign
+		masterSig.Deserialize(value.Signatures[0].Signature)
+		valid := masterSig.VerifyHash(&masterPub, hash)
+		if !valid {
+			return errors.New("BLS signature is not valid")
+		}
 	}
+
+	return nil
 }
 
 // Verifies a signature request

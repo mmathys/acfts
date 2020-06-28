@@ -11,7 +11,8 @@ import (
 func DoTransaction(w *common.Wallet, t common.Transaction, forward bool) {
 	res, err := SignTransaction(w, t)
 	if err != nil {
-		fmt.Println("failed to sign transaction")
+		fmt.Println("failed to sign transaction:")
+		fmt.Println(err)
 		return
 	}
 

@@ -25,6 +25,7 @@ type EdDSAKey struct {
 }
 
 type BLSKey struct {
+	ID         bls.ID
 	Address    bls.PublicKey
 	PrivateKey bls.SecretKey
 }
@@ -38,14 +39,14 @@ type Key struct {
 // Signatures
 
 type Signature struct {
-	Address        Address
-	EdDSASignature *[]byte
-	BLSSignature   *bls.Sign
-	Mode           int
+	BLSID     []byte
+	Address   Address
+	Signature []byte
+	Mode      int
 }
 
-type Address = ed25519.PublicKey         // len = EdDSAPublicKeyLength
-type PrivateKey = ed25519.PrivateKey     // len = EdDSAPrivateKeyLength
+type Address = []byte                    // len = EdDSAPublicKeyLength
+type PrivateKey = []byte                 // len = EdDSAPrivateKeyLength
 type Identifier = [IdentifierLength]byte // len = IdentifierLength
 
 // Defines an Input / Output tuple; with extra fields

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/herumi/bls-eth-go-binary/bls"
 	"golang.org/x/crypto/sha3"
 	"log"
 	"math"
@@ -41,7 +42,7 @@ type TopologyConfig struct {
 	Clients      []ClientNodeConfig
 }
 
-func read(conf KeyConfig) *Key {
+func read(conf KeyConfig, index int) *Key {
 	var mode int
 	if conf.Mode == "eddsa" {
 		mode = ModeEdDSA
@@ -51,7 +52,7 @@ func read(conf KeyConfig) *Key {
 		log.Panicf("encountered invalid mode %v (only \"eddsa\" and \"bls\" are valid)\n", conf.Mode)
 	}
 
-	res, err := DecodeKey(mode, conf.PublicKey, conf.PrivateKey)
+	res, err := DecodeKey(mode, index, conf.PublicKey, conf.PrivateKey)
 	if err != nil {
 		panic(err)
 	}
@@ -92,8 +93,8 @@ func InitAddresses(path string) {
 	dec := json.NewDecoder(file)
 	dec.Decode(&topology)
 
-	for _, client := range topology.Clients {
-		key := read(client.Key)
+	for i, client := range topology.Clients {
+		key := read(client.Key, i)
 		index := getIndex(key.GetAddress())
 		clients[index] = ClientNode{
 			Instance: client.Instance,
@@ -102,8 +103,8 @@ func InitAddresses(path string) {
 		ClientAddresses = append(ClientAddresses, key.GetAddress())
 	}
 
-	for _, server := range topology.Servers {
-		key := read(server.Key)
+	for i, server := range topology.Servers {
+		key := read(server.Key, i)
 		index := getIndex(key.GetAddress())
 		servers[index] = ServerNode{
 			Instances: server.Instances,
@@ -114,7 +115,7 @@ func InitAddresses(path string) {
 
 	masterKeyConfig := topology.BLSMasterKey
 	if masterKeyConfig.Mode == "bls" {
-		masterKey = read(masterKeyConfig)
+		masterKey = read(masterKeyConfig, 0)
 	}
 }
 
@@ -189,6 +190,10 @@ func GetKey(address Address) *Key {
 
 func GetBLSMasterKey() *Key {
 	return masterKey
+}
+
+func GetBLSMasterPublicKey() bls.PublicKey {
+	return masterKey.BLS.Address
 }
 
 func GetClientPort(address Address) int {

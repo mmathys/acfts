@@ -36,7 +36,7 @@ type AdapterOpt struct {
 	BatchVerification bool
 }
 
-// Signs a Transaction Request
+// Signs UTXOs
 func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignRes) error {
 	if Benchmark {
 		defer util.CountTx(TxCounter)

@@ -30,12 +30,7 @@ func writeValue(d *hash.Hash, value *Value) {
 	if value.Signatures != nil {
 		for _, signature := range value.Signatures {
 			(*d).Write(signature.Address)
-			if signature.EdDSASignature != nil {
-				(*d).Write(*signature.EdDSASignature)
-			}
-			if signature.BLSSignature != nil {
-				panic("hashing of bls signatures not supported yet")
-			}
+			(*d).Write(signature.Signature)
 			binary.Write(*d, binary.LittleEndian, signature.Mode)
 		}
 	}
