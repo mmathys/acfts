@@ -3,6 +3,7 @@ package common
 import (
 	"bytes"
 	"crypto"
+	"crypto/sha512"
 	"errors"
 	"fmt"
 	"github.com/herumi/bls-eth-go-binary/bls"
@@ -13,7 +14,7 @@ import (
 Signing
 */
 
-// Signs a hash
+// Signs a single hash
 func (key *Key) SignHash(hash []byte) *Signature {
 	if key.Mode == ModeEdDSA {
 		opts := ed25519.Options{
@@ -37,6 +38,9 @@ func (key *Key) SignHash(hash []byte) *Signature {
 			Signature: sig.Serialize(),
 			Mode:      key.Mode,
 		}
+	} else if key.Mode == ModeMerkle {
+		sigs := key.SignMultipleMerkle([][]byte{hash})
+		return sigs[0]
 	} else {
 		panic("unsupported mode")
 	}
@@ -77,6 +81,49 @@ func (key *Key) SignTransactionSigRequest(request *TransactionSigReq) error {
 	return nil
 }
 
+// Signs (multiple) signatures efficiently into a Merkle Signature
+func (key *Key) SignMultipleMerkle(hashes [][]byte) []*Signature {
+	if key.Mode != ModeMerkle {
+		panic("when using SignMerkle, the key mode must be merkle")
+	}
+
+	t, err := NewTreeWithHashStrategy(hashes, sha512.New)
+	if err != nil {
+		panic(err)
+	}
+	root := t.MerkleRoot()
+	opts := ed25519.Options{
+		Hash: crypto.SHA512,
+	}
+
+	rootSig, err := key.EdDSA.PrivateKey.Sign(nil, root, &opts)
+	if err != nil {
+		panic(err)
+	}
+
+	sigs := make([]*Signature, len(hashes))
+	for i, item := range hashes {
+		path, indexesInt64, err := t.GetMerklePath(item)
+		if err != nil {
+			panic(err)
+		}
+		indexes := make([]bool, len(indexesInt64))
+		for j, index := range indexesInt64 {
+			indexes[j] = index == 1
+		}
+
+		sigs[i] = &Signature{
+			Address:       key.EdDSA.Address,
+			Signature:     rootSig,
+			Mode:          ModeMerkle,
+			MerklePath:    path,
+			MerkleIndexes: indexes,
+		}
+	}
+
+	return sigs
+}
+
 /**
 Signature Verification
 */
@@ -86,7 +133,7 @@ const (
 	BatchVerificationThreshold = 4
 )
 
-// Verifies a signature.
+// Verifies a signature. for EdDSA, BLS or Merkle.
 func Verify(sig *Signature, hash []byte) (bool, error) {
 	if sig.Mode == ModeEdDSA {
 		if len(hash) != crypto.SHA512.Size() {
@@ -115,13 +162,43 @@ func Verify(sig *Signature, hash []byte) (bool, error) {
 		blsPub.Deserialize(sig.Address)
 
 		return blsSig.VerifyHash(&blsPub, hash), nil
+	} else if sig.Mode == ModeMerkle {
+		// calculate master
+		current := hash
+		for i := range sig.MerklePath {
+			h := sha512.New()
+			hash := sig.MerklePath[i]
+			index := sig.MerkleIndexes[i]
+			var msg []byte
+			if index == false {
+				// hash is left
+				msg = append(hash, current...)
+			} else {
+				// hash is right
+				msg = append(current, hash...)
+			}
+			if _, err := h.Write(msg); err != nil {
+				return false, err
+			}
+
+			current = h.Sum(nil)
+		}
+
+		// `current` should now be the merkle root.
+
+		opts := ed25519.Options{
+			Hash: crypto.SHA512,
+		}
+
+		valid := ed25519.VerifyWithOptions(sig.Address, current, sig.Signature, &opts)
+		return valid, nil
 	} else {
 		return false, errors.New("mode not supported")
 	}
 }
 
-// Performs batch verification (EdDSA mode only)
-func VerifyBatch(sigs []Signature, hash []byte) (bool, error) {
+// Performs batch verification (for EdDSA mode only)
+func VerifyEdDSABatch(sigs []Signature, hash []byte) (bool, error) {
 	var pks []ed25519.PublicKey
 	var sigsByte [][]byte
 	for _, sig := range sigs {
@@ -170,7 +247,7 @@ func VerifyValue(value *Value, enableBatchVerification bool) error {
 	}
 
 	hash := HashValue(mode, *value)
-	if mode == ModeEdDSA {
+	if mode == ModeEdDSA || mode == ModeMerkle {
 		// look out for duplicates signatures
 		origins := make(map[[IndexLength]byte]bool)
 		for _, sig := range value.Signatures {
@@ -197,9 +274,9 @@ func VerifyValue(value *Value, enableBatchVerification bool) error {
 		}
 
 		// verify all signatures, either with batch verification or single verification
-		if enableBatchVerification && len(value.Signatures) >= BatchVerificationThreshold {
+		if mode == ModeEdDSA && enableBatchVerification && len(value.Signatures) >= BatchVerificationThreshold {
 			// batch verification
-			valid, err := VerifyBatch(value.Signatures, hash)
+			valid, err := VerifyEdDSABatch(value.Signatures, hash)
 			if err != nil {
 				return err
 			}
@@ -207,7 +284,7 @@ func VerifyValue(value *Value, enableBatchVerification bool) error {
 				return errors.New("value verification failed (batch mode)")
 			}
 		} else {
-			// single verification
+			// single verification for EdDSA and Merkle
 			for _, sig := range value.Signatures {
 				valid, err := Verify(&sig, hash)
 				if err != nil {
@@ -219,7 +296,7 @@ func VerifyValue(value *Value, enableBatchVerification bool) error {
 			}
 		}
 
-	} else {
+	} else if mode == ModeBLS {
 		// we want exactly one signature
 		if len(value.Signatures) != 1 {
 			return errors.New("in BLS mode, exactly one combined signature must be sent")
@@ -237,6 +314,8 @@ func VerifyValue(value *Value, enableBatchVerification bool) error {
 		if !valid {
 			return errors.New("BLS signature is not valid")
 		}
+	} else {
+		return errors.New("unrecognized mode")
 	}
 
 	return nil

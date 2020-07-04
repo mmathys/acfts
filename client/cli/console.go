@@ -14,7 +14,7 @@ import (
 
 // Show help
 func help() {
-	fmt.Println("send <address> 100\t\tSend 100 credits to <address>. Must be encoded in hexadecimal.")
+	fmt.Println("send <address> 100\tSend 100 credits to <address>. Must be encoded in hexadecimal.")
 	fmt.Println("utxo\t\t\tShow local UTXOs")
 	fmt.Println("balance\t\t\tShow balance")
 	fmt.Println("info\t\t\tShow client information")
@@ -61,6 +61,8 @@ func info(w *common.Wallet) {
 		modeReadable = "EdDSA"
 	} else if key.Mode == common.ModeBLS {
 		modeReadable = "BLS"
+	} else if key.Mode == common.ModeMerkle {
+		modeReadable = "Merkle"
 	}
 	fmt.Printf("Key Mode:\t\t%v\n", modeReadable)
 	fmt.Printf("Network:\t\t%s\n", net)
@@ -80,6 +82,8 @@ func utxo(w *common.Wallet) {
 				sigMode = "multisig (EdDSA)"
 			} else if v.Signatures[0].Mode == common.ModeBLS {
 				sigMode = "threshold (BLS)"
+			} else if v.Signatures[0].Mode == common.ModeMerkle {
+				sigMode = "merkle (EdDSA)"
 			}
 		}
 

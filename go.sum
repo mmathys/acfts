@@ -27,6 +27,8 @@ github.com/btcsuite/btcd v0.0.0-20171128150713-2e60448ffcc6 h1:Eey/GGQ/E5Xp1P2Ly
 github.com/btcsuite/btcd v0.0.0-20171128150713-2e60448ffcc6/go.mod h1:Dmm/EzmjnCiweXmzRIAiUWCInVmPgjkzgv5k4tVyXiQ=
 github.com/c-bata/go-prompt v0.2.3 h1:jjCS+QhG/sULBhAaBdjb2PlMRVaKXQgn+4yzaauvs2s=
 github.com/c-bata/go-prompt v0.2.3/go.mod h1:VzqtzE2ksDBcdln8G7mk2RX9QyGjH+OVqOCSiVIqS34=
+github.com/cbergoon/merkletree v0.2.0 h1:Bttqr3OuoiZEo4ed1L7fTasHka9II+BF9fhBfbNEEoQ=
+github.com/cbergoon/merkletree v0.2.0/go.mod h1:5c15eckUgiucMGDOCanvalj/yJnD+KAZj1qyJtRW5aM=
 github.com/cespare/cp v0.1.0/go.mod h1:SOGHArjBr4JWaSDEVpWpo/hNg6RoKrls6Oh40hiwW+s=
 github.com/cespare/xxhash v1.1.0/go.mod h1:XrSqR1VqqWfGrhpAt58auRo0WTKS1nRRg3ghfAqPWnc=
 github.com/cespare/xxhash/v2 v2.0.1-0.20190104013014-3767db7a7e18/go.mod h1:HD5P3vAIAh+Y2GAxg0PrPN1P8WkepXGpjbUPDHJqqKM=

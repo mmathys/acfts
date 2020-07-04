@@ -8,14 +8,14 @@ import (
 	"github.com/oasislabs/ed25519"
 )
 
-func edDSAKey(pub []byte, sk []byte) *Key {
+func edDSAKey(pub []byte, sk []byte, mode int) *Key {
 	return &Key{
 		EdDSA: &EdDSAKey{
 			Address:    pub,
 			PrivateKey: sk,
 		},
 		BLS:  nil,
-		Mode: ModeEdDSA,
+		Mode: mode,
 	}
 }
 
@@ -39,7 +39,7 @@ func GenerateKey(mode int, id int) *Key {
 		if err != nil {
 			panic(err)
 		}
-		return edDSAKey(pub, sk)
+		return edDSAKey(pub, sk, ModeEdDSA)
 	} else if mode == ModeBLS {
 		var sec bls.SecretKey
 		sec.SetByCSPRNG()
@@ -67,7 +67,7 @@ func DecodeKey(mode int, index int, pubS string, skS string) (*Key, error) {
 		if len(sk) != EdDSAPrivateKeyLength {
 			return nil, errors.New("topology: encountered wrong private key length")
 		}
-		return edDSAKey(pub, sk), nil
+		return edDSAKey(pub, sk, ModeEdDSA), nil
 	} else if mode == ModeBLS {
 		if len(pub) != BLSPublicKeyLength {
 			return nil, errors.New("topology: encountered wrong address length")
@@ -80,13 +80,21 @@ func DecodeKey(mode int, index int, pubS string, skS string) (*Key, error) {
 		var blsSk bls.SecretKey
 		blsSk.Deserialize(sk)
 		return blsKey(blsPub, blsSk, index+1), nil
+	} else if mode == ModeMerkle {
+		if len(pub) != MerklePublicKeyLength {
+			return nil, errors.New("topology: encountered wrong address length")
+		}
+		if len(sk) != MerklePrivateKeyLength {
+			return nil, errors.New("topology: encountered wrong private key length")
+		}
+		return edDSAKey(pub, sk, ModeMerkle), nil
 	} else {
 		panic("unsupported mode")
 	}
 }
 
 func (key *Key) GetAddress() []byte {
-	if key.Mode == ModeEdDSA {
+	if key.Mode == ModeEdDSA || key.Mode == ModeMerkle {
 		return key.EdDSA.Address
 	} else if key.Mode == ModeBLS {
 		return key.BLS.Address.Serialize()
@@ -96,8 +104,8 @@ func (key *Key) GetAddress() []byte {
 }
 
 func (key *Key) SerializePublicKey() []byte {
-	if key.Mode == ModeEdDSA {
-		panic("not yet implemented")
+	if key.Mode == ModeEdDSA || key.Mode == ModeMerkle {
+		return key.EdDSA.Address
 	} else if key.Mode == ModeBLS {
 		return key.BLS.Address.Serialize()
 	} else {
@@ -106,7 +114,7 @@ func (key *Key) SerializePublicKey() []byte {
 }
 
 func (key *Key) SerializePrivateKey() []byte {
-	if key.Mode == ModeEdDSA {
+	if key.Mode == ModeEdDSA || key.Mode == ModeMerkle {
 		return key.EdDSA.PrivateKey
 	} else if key.Mode == ModeBLS {
 		return key.BLS.PrivateKey.Serialize()

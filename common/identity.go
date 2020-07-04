@@ -14,8 +14,8 @@ func NewWalletWithAmount(address Address, value int) *Wallet {
 
 	// every client gets valid 100 credits to their account.
 	// this is for debugging. In production, there would be an origin output or something like that
-	if key.Mode == ModeEdDSA {
-		// EdDSA: sign the 100 credits by each server
+	if key.Mode == ModeEdDSA ||key.Mode == ModeMerkle {
+		// EdDSA/Merkle: sign the 100 credits by each server
 		for _, server := range GetServers() {
 			key := GetKey(server)
 			err := key.SignValue(&v)

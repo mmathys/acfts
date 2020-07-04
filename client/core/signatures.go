@@ -26,7 +26,7 @@ func combineSignatures(res *[]common.TransactionSignRes) common.TransactionSignR
 		}
 	}
 
-	if mode == common.ModeEdDSA {
+	if mode == common.ModeEdDSA || mode == common.ModeMerkle {
 		// return response unmerged
 		return baseRes
 	} else if mode == common.ModeBLS {

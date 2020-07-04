@@ -71,7 +71,7 @@ func TestVerifyBatch64(t *testing.T) {
 		sigs = append(sigs, *sig)
 	}
 
-	ok, err := common.VerifyBatch(sigs, hash)
+	ok, err := common.VerifyEdDSABatch(sigs, hash)
 	if err != nil {
 		panic(err)
 	}
@@ -80,7 +80,7 @@ func TestVerifyBatch64(t *testing.T) {
 	}
 
 	sigs[0].Signature[0]++
-	ok2, err2 := common.VerifyBatch(sigs, hash)
+	ok2, err2 := common.VerifyEdDSABatch(sigs, hash)
 	if err2 != nil {
 		panic(err2)
 	}

@@ -14,18 +14,17 @@ const (
 	EdDSAPrivateKeyLength = 64
 
 	// BLS
-	ModeBLS               = 2
-	BLSPublicKeyLength    = 48 // encoded
-	BLSPrivateKeyLength   = 32
+	ModeBLS             = 2
+	BLSPublicKeyLength  = 48 // encoded
+	BLSPrivateKeyLength = 32
 
 	// Merkle
-	ModeMerkle            = 3
+	ModeMerkle             = 3
 	MerklePublicKeyLength  = 32
 	MerklePrivateKeyLength = 64
 
-	IdentifierLength      = 32 // used for UTXOs
-	SignatureLength       = 64
-
+	IdentifierLength = 32 // used for UTXOs
+	SignatureLength  = 64
 )
 
 // Keys
@@ -49,10 +48,16 @@ type Key struct {
 // Signatures
 
 type Signature struct {
-	BLSID     []byte
 	Address   Address
 	Signature []byte
 	Mode      int
+
+	// BLS specific
+	BLSID []byte
+
+	// Merkle specific
+	MerklePath    [][]byte
+	MerkleIndexes []bool
 }
 
 type Address = []byte                    // len = EdDSAPublicKeyLength

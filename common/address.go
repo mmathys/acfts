@@ -48,6 +48,8 @@ func read(conf KeyConfig, index int) *Key {
 		mode = ModeEdDSA
 	} else if conf.Mode == "bls" {
 		mode = ModeBLS
+	} else if conf.Mode == "merkle" {
+		mode = ModeMerkle
 	} else {
 		log.Panicf("encountered invalid mode %v (only \"eddsa\" and \"bls\" are valid)\n", conf.Mode)
 	}
