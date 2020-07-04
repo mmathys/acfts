@@ -1,0 +1,83 @@
+{
+  "BLSMasterKey": null,
+  "Servers": [
+    {
+      "Instances": [
+        {
+          "Net": "localhost",
+          "Port": 6666
+        }
+      ],
+      "Key": {
+        "PublicKey": "a77000e6e7e77df500e39144e34e31f1715c98a5ecaaf34b8863f2d907c35ab4",
+        "PrivateKey": "26665d594658641d981cb13e74e130c12bb5a0924c217e10b2a0e20437cabf97a77000e6e7e77df500e39144e34e31f1715c98a5ecaaf34b8863f2d907c35ab4",
+        "Mode": "merkle"
+      }
+    },
+    {
+      "Instances": [
+        {
+          "Net": "localhost",
+          "Port": 6667
+        }
+      ],
+      "Key": {
+        "PublicKey": "c8766183072ad3a0aeb17e672152bff7d5382a62f14a818f2a7dbe3c123d1fc3",
+        "PrivateKey": "19d771ac0e1f2b76082820840dd8b7df7c7e2614f8d7346186460946b5f6173dc8766183072ad3a0aeb17e672152bff7d5382a62f14a818f2a7dbe3c123d1fc3",
+        "Mode": "merkle"
+      }
+    },
+    {
+      "Instances": [
+        {
+          "Net": "localhost",
+          "Port": 6668
+        }
+      ],
+      "Key": {
+        "PublicKey": "564c67c3cd08863a570e632c60409d57b02f576a0582bcaf297aa4610f98aead",
+        "PrivateKey": "eb1a60b82e72545395f8ce4334703f13597985aed204107ea5bdaf6289c38a68564c67c3cd08863a570e632c60409d57b02f576a0582bcaf297aa4610f98aead",
+        "Mode": "merkle"
+      }
+    },
+    {
+      "Instances": [
+        {
+          "Net": "localhost",
+          "Port": 6669
+        }
+      ],
+      "Key": {
+        "PublicKey": "4a155d1c1d86854aae1008373c3e9a92dd02cbbef52e5372aee13c2efe22398d",
+        "PrivateKey": "e76b8dee9a5eca0000da56aadaa39e8cdb564ee6f82008052caad39741e72b134a155d1c1d86854aae1008373c3e9a92dd02cbbef52e5372aee13c2efe22398d",
+        "Mode": "merkle"
+      }
+    }
+  ],
+  "Clients": [
+    {
+      "Instance": {
+        "Net": "localhost",
+        "Port": 5555
+      },
+      "Key": {
+        "PublicKey": "5e7da91d8083e79d742f39a1e218c92fdfb8e5684b60c3d2d82bce1fcc2c8084",
+        "PrivateKey": "135f014fc76ca27c3be0227ac8c356ab7c6cb38dda1f350bb8fda7487f8aa2dd5e7da91d8083e79d742f39a1e218c92fdfb8e5684b60c3d2d82bce1fcc2c8084",
+        "Mode": "merkle"
+      },
+      "Balance": 100
+    },
+    {
+      "Instance": {
+        "Net": "localhost",
+        "Port": 5556
+      },
+      "Key": {
+        "PublicKey": "13a619eba72c54e669d67b910d3e927f3dc1bb02764b69b4163345d55c2eb0aa",
+        "PrivateKey": "43ccf68f7190d1fc0f6fa6b2dc35e1244290c816cd0eb4fc12d73a5c1914a86e13a619eba72c54e669d67b910d3e927f3dc1bb02764b69b4163345d55c2eb0aa",
+        "Mode": "merkle"
+      },
+      "Balance": 100
+    }
+  ]
+}

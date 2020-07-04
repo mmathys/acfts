@@ -148,6 +148,7 @@ var eddsaClient = [][]string{
 // 3-of-4 scheme
 // generated in bls_test.go
 var blsMasterKey = []string{"85020269fc037eb8801dc3a2330af8a89b463de06ceb3515cf6acd38f30bc39b2507271a517f380af8eaaaf891d8d687", "0898e186dfa83fe55c14aa6491ac9ea3b0f17f5ec0113b8b6bc42a4def42ac07"}
+
 // bls IDs: 1..4
 var blsServerShares = [][]string{
 	{"81a44f12d738f5858043f6471bfbc9f222e2abdeae14c1a23109fef9ed78e461b4ed36fab48eb5d0f3f720b4b092b477", "1cec1a4f941b45bd07274ad84d79d8d19b161afbb81241e5facce98ad5bc8e13"},
@@ -268,6 +269,7 @@ func main() {
 	writeConfig(awsSimple(), "awsSimple")
 	writeConfig(aws(), "aws")
 	writeConfig(bls(), "bls")
+	writeConfig(merkle(), "merkle")
 }
 
 func getClientNetwork(dockerNetwork bool) string {
@@ -298,6 +300,11 @@ func config(numClients int, numServers int, numServerInstances int, dockerNetwor
 		serverKeys = blsServerShares
 		clientKeys = blsClient
 		readableMode = "bls"
+	} else if sigMode == common.ModeMerkle {
+		// for merkle, keys are the same as eddsa
+		serverKeys = eddsaServer
+		clientKeys = eddsaClient
+		readableMode = "merkle"
 	} else {
 		panic("invalid mode")
 	}
@@ -425,4 +432,12 @@ func bls() []byte {
 	numInstances := 1
 
 	return config(numClients, numServers, numInstances, false, false, common.ModeBLS)
+}
+
+func merkle() []byte {
+	numClients := 2
+	numServers := 4 // 3f+1 where f=1
+	numInstances := 1
+
+	return config(numClients, numServers, numInstances, false, false, common.ModeMerkle)
 }

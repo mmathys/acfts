@@ -8,14 +8,24 @@ import (
 )
 
 const (
+	// EdDSA
+	ModeEdDSA             = 1
 	EdDSAPublicKeyLength  = 32 // address = public key
 	EdDSAPrivateKeyLength = 64
+
+	// BLS
+	ModeBLS               = 2
 	BLSPublicKeyLength    = 48 // encoded
 	BLSPrivateKeyLength   = 32
+
+	// Merkle
+	ModeMerkle            = 3
+	MerklePublicKeyLength  = 32
+	MerklePrivateKeyLength = 64
+
 	IdentifierLength      = 32 // used for UTXOs
 	SignatureLength       = 64
-	ModeEdDSA             = 1
-	ModeBLS               = 2
+
 )
 
 // Keys
