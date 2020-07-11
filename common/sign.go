@@ -39,6 +39,8 @@ func (key *Key) SignHash(hash []byte) *Signature {
 			Mode:      key.Mode,
 		}
 	} else if key.Mode == ModeMerkle {
+		// this is only for a SINGLE merkle signature. should not be used
+		fmt.Println("warning: using merkle signing for debugging purposes")
 		sigs := key.SignMultipleMerkle([][]byte{hash})
 		return sigs[0]
 	} else {

@@ -18,14 +18,15 @@ var TxCounter = new(int32)
 var UTXOMap store.UTXOMap
 
 type serverOpt struct {
-	address common.Address
+	address       common.Address
 	instanceIndex int
-	benchmark bool
-	topology string
-	pprof bool
-	disableBatch bool
-	mapType int
-	scheme int
+	benchmark     bool
+	topology      string
+	pprof         bool
+	disableBatch  bool
+	merklePooling bool
+	mapType       int
+	scheme        int
 }
 
 func runServer(opt serverOpt) error {
@@ -46,8 +47,8 @@ func runServer(opt serverOpt) error {
 	UTXOMap.SetType(opt.mapType)
 
 	fmt.Println("initializing server with:")
-	fmt.Printf("addr=%x, instance=%d, port=%d, benchmark=%t, pprof=%t, batchVerification=%t, mapType=%s\n",
-		opt.address, opt.instanceIndex, port, opt.benchmark, opt.pprof, !opt.disableBatch, mapTypeReadable)
+	fmt.Printf("addr=%x, instance=%d, port=%d, benchmark=%t, pprof=%t, batchVerification=%t, mapType=%s, merklePooling=%t\n",
+		opt.address, opt.instanceIndex, port, opt.benchmark, opt.pprof, !opt.disableBatch, mapTypeReadable, opt.merklePooling)
 
 	if opt.benchmark {
 		go util.Ticker(TxCounter)
@@ -66,6 +67,7 @@ func runServer(opt serverOpt) error {
 		TxCounter:         TxCounter,
 		UTXOMap:           &UTXOMap,
 		BatchVerification: !opt.disableBatch,
+		MerklePooling:     opt.merklePooling,
 	})
 
 	return nil
@@ -103,6 +105,7 @@ func main() {
 				topology:      c.String("topology"),
 				pprof:         c.Bool("pprof"),
 				disableBatch:  c.Bool("disable-batch"),
+				merklePooling: c.Bool("merkle-pooling"),
 				mapType:       mapTypeInt,
 			})
 			return nil
@@ -143,10 +146,15 @@ func main() {
 				Required: false,
 			},
 			&cli.StringFlag{
-				Name:		"map-type",
-				Value:		store.DefaultMapTypeString,
-				Usage:    	"Sets the internal map type. 'syncMap' or 'insertOnly'.",
-				Required:	false,
+				Name:     "map-type",
+				Value:    store.DefaultMapTypeString,
+				Usage:    "Sets the internal map type. 'syncMap' or 'insertOnly'.",
+				Required: false,
+			},
+			&cli.BoolFlag{
+				Name:     "merkle-pooling",
+				Usage:    "Enable merkle pooling (collect and dispatch)",
+				Required: false,
 			},
 		},
 	}
