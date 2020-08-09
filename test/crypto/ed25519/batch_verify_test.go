@@ -61,13 +61,13 @@ func testBatchInit(tb testing.TB, r io.Reader, batchSize int, opts *ed25519.Opti
 }
 
 func TestVerifyBatch64(t *testing.T) {
-	hash := make([]byte, 32) // random hash
+	hash := make([]byte, 64) // random hash
 	rand.Read(hash)
 	numSigs := 64
 	var sigs []common.Signature
 	for i := 0; i < numSigs; i++ {
-		id := common.GenerateKey()
-		sig := common.SignHash(id, hash)
+		key := common.GenerateKey(common.ModeEdDSA, 0)
+		sig := key.SignHash(hash)
 		sigs = append(sigs, *sig)
 	}
 
