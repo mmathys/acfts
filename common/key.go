@@ -103,6 +103,16 @@ func (key *Key) GetAddress() []byte {
 	}
 }
 
+func (key *Key) GetPrivateKey() []byte {
+	if key.Mode == ModeEdDSA || key.Mode == ModeMerkle {
+		return key.EdDSA.PrivateKey
+	} else if key.Mode == ModeBLS {
+		return key.BLS.PrivateKey.Serialize()
+	} else {
+		panic("unsupported mode")
+	}
+}
+
 func (key *Key) SerializePublicKey() []byte {
 	if key.Mode == ModeEdDSA || key.Mode == ModeMerkle {
 		return key.EdDSA.Address
