@@ -6,6 +6,5 @@ WORKDIR ./test/crypto/ed25519
 
 ENV TEST none
 ENV BENCH none
-ENV NUM_WORKERS 10
 
-CMD ["sh", "-c", "go test -run ${TEST}$ -bench ${BENCH}$ ./batch_verify_test.go -args ${NUM_WORKERS}"]
+CMD ["sh", "-c", "go test -run ${TEST}$ -bench ${BENCH}$ ./ed25519_test.go"]

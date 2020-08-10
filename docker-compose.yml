@@ -169,13 +169,36 @@ services:
         limits:
           cpus: '64'
 
-  verify_batch_benchmark_1:
+  benchmark_bls:
+    build: ./test/crypto/bls
+    depends_on:
+      - base
+    environment:
+      - BENCH
+      - GOGC=11000
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+
+  benchmark_ed25519:
     build: ./test/crypto/ed25519
     depends_on:
       - base
     environment:
-      - BENCH=BenchmarkVerifyBatch64
-      - NUM_WORKERS=1
+      - BENCH
+      - GOGC=11000
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+
+  benchmark_merkle:
+    build: ./test/crypto/merkle
+    depends_on:
+      - base
+    environment:
+      - BENCH
       - GOGC=11000
     deploy:
       resources:
