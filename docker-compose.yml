@@ -200,6 +200,7 @@ services:
     environment:
       - BENCH
       - POOL_SIZE
+      - BENCHTIME
       - GOGC=11000
     deploy:
       resources:
