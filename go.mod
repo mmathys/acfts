@@ -11,7 +11,9 @@ require (
 	github.com/oasislabs/ed25519 v0.0.0-20200302143042-29f6767a7c3e
 	github.com/olekukonko/tablewriter v0.0.4
 	github.com/pkg/term v0.0.0-20190109203006-aa71e9d9e942 // indirect
+	github.com/prometheus/common v0.0.0-20181113130724-41aa239b4cce
 	github.com/shirou/gopsutil v2.20.3+incompatible
+	github.com/sirupsen/logrus v1.6.0 // indirect
 	github.com/urfave/cli/v2 v2.2.0
 	golang.org/x/crypto v0.0.0-20200406173513-056763e48d71
 	gotest.tools v2.2.0+incompatible

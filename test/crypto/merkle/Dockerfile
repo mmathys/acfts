@@ -6,5 +6,6 @@ WORKDIR ./test/crypto/merkle
 
 ENV TEST none
 ENV BENCH none
+ENV POOL_SIZE 16
 
-CMD ["sh", "-c", "go test -run ${TEST}$ -bench ${BENCH}$ ./merkle_test.go"]
+CMD ["sh", "-c", "go test -run ${TEST}$ -bench ${BENCH}$ ./merkle_test.go -args ${POOL_SIZE}"]

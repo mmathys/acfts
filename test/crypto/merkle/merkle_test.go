@@ -4,8 +4,12 @@ import (
 	"crypto/rand"
 	"fmt"
 	"github.com/mmathys/acfts/common"
+	"os"
+	"strconv"
 	"testing"
 )
+
+const defaultPoolSize = 32
 
 func hashes(numLeaves int) [][]byte {
 	// prepare hashes
@@ -44,10 +48,24 @@ func TestVerifyMerkle(t *testing.T) {
 	}
 }
 
+func getPoolSize() int {
+	poolSize := defaultPoolSize
+	arg := os.Args[len(os.Args)-1]
+	if parsed, err := strconv.Atoi(arg); err == nil {
+		poolSize = parsed
+	}
+
+	return poolSize
+}
+
+func BenchmarkPoolSize(b *testing.B) {
+	fmt.Println("pool size:", getPoolSize())
+}
+
 // benchmarks a 32 signatures
 func BenchmarkSignMerkle32(b *testing.B) {
-	const NumLeaves = 32
-	hashes := hashes(NumLeaves)
+	poolSize := getPoolSize()
+	hashes := hashes(poolSize)
 	key := common.GenerateKey(common.ModeMerkle, 0)
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -57,8 +75,8 @@ func BenchmarkSignMerkle32(b *testing.B) {
 
 // only verify a single merkle signature.
 func BenchmarkVerifyMerkle(b *testing.B) {
-	const NumLeaves = 32
-	hashes := hashes(NumLeaves)
+	poolSize := getPoolSize()
+	hashes := hashes(poolSize)
 	key := common.GenerateKey(common.ModeMerkle, 0)
 	sigs := key.SignMultipleMerkle(hashes)
 	b.ResetTimer()
