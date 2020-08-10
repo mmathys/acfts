@@ -3,6 +3,7 @@ package ed25519
 import (
 	"crypto"
 	"crypto/rand"
+	"github.com/mmathys/acfts/common"
 	"github.com/oasislabs/ed25519"
 	"io"
 	"testing"
@@ -57,6 +58,36 @@ func testBatchInit(tb testing.TB, r io.Reader, batchSize int, opts *ed25519.Opti
 	}
 
 	return pks, sigs, messages
+}
+
+func TestVerifyBatch64(t *testing.T) {
+	hash := make([]byte, 64) // random hash
+	rand.Read(hash)
+	numSigs := 64
+	var sigs []common.Signature
+	for i := 0; i < numSigs; i++ {
+		key := common.GenerateKey(common.ModeEdDSA, 0)
+		sig := key.SignHash(hash)
+		sigs = append(sigs, *sig)
+	}
+
+	ok, err := common.VerifyEdDSABatch(sigs, hash)
+	if err != nil {
+		panic(err)
+	}
+	if !ok {
+		panic("batch verification failed")
+	}
+
+	sigs[0].Signature[0]++
+	ok2, err2 := common.VerifyEdDSABatch(sigs, hash)
+	if err2 != nil {
+		panic(err2)
+	}
+	if ok2 {
+		panic("batch verification should have failed")
+	}
+
 }
 
 func BenchmarkVerifyBatch64(b *testing.B) {

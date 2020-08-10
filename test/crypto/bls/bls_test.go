@@ -45,3 +45,44 @@ func TestPrintGeneratedTOfNBLSKeys(t *testing.T) {
 		fmt.Printf("{\"%x\",\"%x\"},\n", pubs[i].Serialize(), shares[i].Serialize())
 	}
 }
+
+// Below: benchmarks taken from BLS library
+func getSecPubHash() (*bls.SecretKey, *bls.PublicKey, []byte) {
+	var sec bls.SecretKey
+	sec.SetByCSPRNG()
+	pub := sec.GetPublicKey()
+	var x bls.Fp2
+	x.D[0].SetByCSPRNG()
+	x.D[1].SetByCSPRNG()
+	hash := x.Serialize()
+	return &sec, pub, hash
+}
+
+func BenchmarkSignHash(b *testing.B) {
+	b.StopTimer()
+	err := bls.Init(bls.BLS12_381)
+	if err != nil {
+		b.Fatal(err)
+	}
+	sec, _, hash := getSecPubHash()
+	b.StartTimer()
+	for n := 0; n < b.N; n++ {
+		sec.SignHash(hash)
+	}
+	b.StopTimer()
+}
+
+func BenchmarkVerifyHash(b *testing.B) {
+	b.StopTimer()
+	err := bls.Init(bls.BLS12_381)
+	if err != nil {
+		b.Fatal(err)
+	}
+	sec, pub, hash := getSecPubHash()
+	sig := sec.SignHash(hash)
+	b.StartTimer()
+	for n := 0; n < b.N; n++ {
+		sig.VerifyHash(pub, hash)
+	}
+	b.StopTimer()
+}

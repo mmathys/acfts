@@ -34,12 +34,12 @@ func blsKey(pub bls.PublicKey, sk bls.SecretKey, id int) *Key {
 }
 
 func GenerateKey(mode int, id int) *Key {
-	if mode == ModeEdDSA {
+	if mode == ModeEdDSA || mode == ModeMerkle {
 		pub, sk, err := ed25519.GenerateKey(rand.Reader)
 		if err != nil {
 			panic(err)
 		}
-		return edDSAKey(pub, sk, ModeEdDSA)
+		return edDSAKey(pub, sk, mode)
 	} else if mode == ModeBLS {
 		var sec bls.SecretKey
 		sec.SetByCSPRNG()
