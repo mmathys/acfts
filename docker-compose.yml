@@ -199,6 +199,7 @@ services:
       - base
     environment:
       - BENCH
+      - POOL_SIZE
       - GOGC=11000
     deploy:
       resources:
