@@ -12,7 +12,7 @@ import (
 
 // test basic behavior.
 func TestBasic(t *testing.T) {
-	key := GenerateKey(ModeEdDSA)
+	key := GenerateKey(ModeEdDSA, 0)
 
 	msg := make([]byte, 64) // random hash
 	rand.Read(msg)
@@ -47,8 +47,8 @@ func TestBasic(t *testing.T) {
 }
 
 func TestGenerateKeypair(t *testing.T) {
-	key := GenerateKey(ModeEdDSA)
-	key2 := GenerateKey(ModeEdDSA)
+	key := GenerateKey(ModeEdDSA, 0)
+	key2 := GenerateKey(ModeEdDSA, 0)
 
 	if bytes.Equal(key.GetAddress(), key2.GetAddress()) || bytes.Equal(key.GetPrivateKey(), key2.GetPrivateKey()) {
 		t.Fatal("did not generate different keypairs")
@@ -89,7 +89,7 @@ func TestPrintGeneratedKey(t *testing.T) {
 		bls.SetETHmode(bls.EthModeDraft07)
 	}
 	for i := 0; i < 64; i++ {
-		key := GenerateKey(mode)
+		key := GenerateKey(mode, i)
 		fmt.Printf("{\"%x\",\"%x\"},\n", key.SerializePublicKey(), key.SerializePrivateKey())
 	}
 }

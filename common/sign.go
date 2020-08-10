@@ -8,15 +8,23 @@ import (
 	"fmt"
 	"github.com/herumi/bls-eth-go-binary/bls"
 	"github.com/oasislabs/ed25519"
+	"sync"
 )
+
+var merkleSigCache sync.Map
 
 /**
 Signing
 */
 
-// Signs a single hash
+// Signs a single hash with default mode
 func (key *Key) SignHash(hash []byte) *Signature {
-	if key.Mode == ModeEdDSA {
+	return key.signHashWithMode(hash, key.Mode)
+}
+
+// Signs a single hash with a certain mode
+func (key *Key) signHashWithMode(hash []byte, mode int) *Signature {
+	if mode == ModeEdDSA {
 		opts := ed25519.Options{
 			Hash: crypto.SHA512,
 		}
@@ -27,18 +35,18 @@ func (key *Key) SignHash(hash []byte) *Signature {
 		return &Signature{
 			Address:   key.GetAddress(),
 			Signature: sig,
-			Mode:      key.Mode,
+			Mode:      mode,
 		}
-	} else if key.Mode == ModeBLS {
+	} else if mode == ModeBLS {
 		sig := key.BLS.PrivateKey.SignHash(hash)
 		id := key.BLS.ID
 		return &Signature{
 			BLSID:     id.Serialize(),
 			Address:   key.GetAddress(),
 			Signature: sig.Serialize(),
-			Mode:      key.Mode,
+			Mode:      mode,
 		}
-	} else if key.Mode == ModeMerkle {
+	} else if mode == ModeMerkle {
 		// this is only for a SINGLE merkle signature. should not be used
 		fmt.Println("warning: using merkle signing for debugging purposes")
 		sigs := key.SignMultipleMerkle([][]byte{hash})
@@ -46,7 +54,6 @@ func (key *Key) SignHash(hash []byte) *Signature {
 	} else {
 		panic("unsupported mode")
 	}
-
 }
 
 // Signs a value
@@ -77,7 +84,10 @@ func (key *Key) SignValues(outputs []Value) ([]Value, error) {
 // Signs transaction signature request, which is requested by a client
 func (key *Key) SignTransactionSigRequest(request *TransactionSigReq) error {
 	hash := HashTransactionSigRequest(key.Mode, *request)
-	sig := key.SignHash(hash)
+
+	// When signing a transaction sig request, use EdDSA only, even if the default mode is Merkle or BLS
+	sig := key.signHashWithMode(hash, ModeEdDSA)
+
 	request.Signature = *sig
 
 	return nil
@@ -188,12 +198,29 @@ func Verify(sig *Signature, hash []byte) (bool, error) {
 
 		// `current` should now be the merkle root.
 
-		opts := ed25519.Options{
-			Hash: crypto.SHA512,
-		}
+		// use caching: find out whether we previously already checked that
+		// signature is ok. for this, use hash(addr || merkle root || sig)
+		h := crypto.SHA256.New()
+		h.Write(sig.Address)
+		h.Write(current)
+		h.Write(sig.Signature)
+		sigHash := h.Sum(nil)
+		sigHashIndex := [32]byte{}
+		copy(sigHashIndex[:], sigHash[:])
 
-		valid := ed25519.VerifyWithOptions(sig.Address, current, sig.Signature, &opts)
-		return valid, nil
+		cachedValid, ok := merkleSigCache.Load(sigHashIndex)
+		if cachedValid == false || !ok {
+			opts := ed25519.Options{
+				Hash: crypto.SHA512,
+			}
+			valid := ed25519.VerifyWithOptions(sig.Address, current, sig.Signature, &opts)
+			if valid {
+				merkleSigCache.Store(sigHashIndex, true)
+			}
+			return valid, nil
+		} else {
+			return cachedValid == true, nil
+		}
 	} else {
 		return false, errors.New("mode not supported")
 	}

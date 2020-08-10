@@ -7,7 +7,9 @@ import (
 	"sync"
 )
 
-type UTXOMap struct{}
+type UTXOMap struct{
+	Initialized bool
+}
 
 const (
 	DefaultMapType       = TypeInsertOnly
@@ -37,6 +39,7 @@ func (m *UTXOMap) Init() {
 		funSetMap = funset.NewFunSet()
 		fmt.Println("initialized map. server is ready.")
 	}
+	m.Initialized = true
 }
 
 // returns true if the identifier has been doublespent. returns false if not.

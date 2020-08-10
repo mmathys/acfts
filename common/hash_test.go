@@ -26,6 +26,19 @@ func TestSha512(t *testing.T) {
 	fmt.Println(len(hash2))
 }
 
+func BenchmarkCryptoSha256(b *testing.B) {
+	msg := make([]byte, 64) // random hash
+	rand.Read(msg)
+
+	b.ResetTimer()
+	// crypto/sha256
+	for i := 0; i < b.N; i++ {
+		h := crypto.SHA256.New()
+		h.Write(msg)
+		h.Sum(nil)
+	}
+}
+
 func BenchmarkCryptoSha512(b *testing.B) {
 	msg := make([]byte, 64) // random hash
 	rand.Read(msg)
@@ -34,9 +47,21 @@ func BenchmarkCryptoSha512(b *testing.B) {
 	// crypto/sha512
 	for i := 0; i < b.N; i++ {
 		h := crypto.SHA512.New()
-		enc1 := gob.NewEncoder(h)
-		enc1.Encode(msg)
+		h.Write(msg)
 		h.Sum(nil)
+	}
+}
+
+func BenchmarkSha3256(b *testing.B) {
+	msg := make([]byte, 64) // random hash
+	rand.Read(msg)
+
+	b.ResetTimer()
+	// sha3-512
+	for i := 0; i < b.N; i++ {
+		d := sha3.New256()
+		d.Write(msg)
+		d.Sum(nil)
 	}
 }
 
@@ -48,8 +73,7 @@ func BenchmarkSha3512(b *testing.B) {
 	// sha3-512
 	for i := 0; i < b.N; i++ {
 		d := sha3.New512()
-		enc2 := gob.NewEncoder(d)
-		enc2.Encode(msg)
+		d.Write(msg)
 		d.Sum(nil)
 	}
 }
