@@ -72,12 +72,32 @@ func BenchmarkSignMerkle(b *testing.B) {
 	}
 }
 
-// only verify a single merkle signature.
-func BenchmarkVerifyMerkle(b *testing.B) {
+// only verify a single merkle signature, cached
+func BenchmarkVerifyMerkleWithCaching(b *testing.B) {
 	poolSize := getPoolSize()
 	hashes := hashes(poolSize)
 	key := common.GenerateKey(common.ModeMerkle, 0)
 	sigs := key.SignMultipleMerkle(hashes)
+
+	// fill cache
+	common.Verify(sigs[0], hashes[0])
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		common.Verify(sigs[0], hashes[0])
+	}
+}
+
+// only verify a single merkle signature.
+func BenchmarkVerifyMerkleNoCaching(b *testing.B) {
+	poolSize := getPoolSize()
+	hashes := hashes(poolSize)
+	key := common.GenerateKey(common.ModeMerkle, 0)
+	sigs := key.SignMultipleMerkle(hashes)
+
+	// disable cache
+	common.UseMerkleSignatureCaching = false
+
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		common.Verify(sigs[0], hashes[0])

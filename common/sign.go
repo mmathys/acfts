@@ -145,6 +145,8 @@ const (
 	BatchVerificationThreshold = 4
 )
 
+var UseMerkleSignatureCaching = true
+
 // Verifies a signature. for EdDSA, BLS or Merkle.
 func Verify(sig *Signature, hash []byte) (bool, error) {
 	if sig.Mode == ModeEdDSA {
@@ -208,19 +210,23 @@ func Verify(sig *Signature, hash []byte) (bool, error) {
 		sigHashIndex := [32]byte{}
 		copy(sigHashIndex[:], sigHash[:])
 
-		cachedValid, ok := merkleSigCache.Load(sigHashIndex)
-		if cachedValid == false || !ok {
-			opts := ed25519.Options{
-				Hash: crypto.SHA512,
+		// lookup cache and return if cached
+		if UseMerkleSignatureCaching {
+			cachedValid, ok := merkleSigCache.Load(sigHashIndex)
+			if ok && cachedValid == true {
+				return true, nil
 			}
-			valid := ed25519.VerifyWithOptions(sig.Address, current, sig.Signature, &opts)
-			if valid {
-				merkleSigCache.Store(sigHashIndex, true)
-			}
-			return valid, nil
-		} else {
-			return cachedValid == true, nil
 		}
+
+		// there is no cache entry, or entry was false.
+		opts := ed25519.Options{
+			Hash: crypto.SHA512,
+		}
+		valid := ed25519.VerifyWithOptions(sig.Address, current, sig.Signature, &opts)
+		if valid {
+			merkleSigCache.Store(sigHashIndex, true)
+		}
+		return valid, nil
 	} else {
 		return false, errors.New("mode not supported")
 	}
