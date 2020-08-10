@@ -62,8 +62,7 @@ func BenchmarkPoolSize(b *testing.B) {
 	fmt.Println("pool size:", getPoolSize())
 }
 
-// benchmarks a 32 signatures
-func BenchmarkSignMerkle32(b *testing.B) {
+func BenchmarkSignMerkle(b *testing.B) {
 	poolSize := getPoolSize()
 	hashes := hashes(poolSize)
 	key := common.GenerateKey(common.ModeMerkle, 0)
