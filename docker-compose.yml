@@ -62,6 +62,7 @@ services:
       - TOPOLOGY
       - ADDRESS
       - POOLING
+      - POOL_SIZE
 
   server_shard_0:
     build: ./server

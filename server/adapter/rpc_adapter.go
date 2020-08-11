@@ -41,6 +41,7 @@ type AdapterOpt struct {
 	UTXOMap           *store.UTXOMap
 	BatchVerification bool
 	MerklePooling     bool
+	MerklePoolSize    int
 }
 
 // Signs UTXOs

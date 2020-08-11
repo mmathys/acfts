@@ -18,15 +18,16 @@ var TxCounter = new(int32)
 var UTXOMap store.UTXOMap
 
 type serverOpt struct {
-	address       common.Address
-	instanceIndex int
-	benchmark     bool
-	topology      string
-	pprof         bool
-	disableBatch  bool
-	merklePooling bool
-	mapType       int
-	scheme        int
+	address        common.Address
+	instanceIndex  int
+	benchmark      bool
+	topology       string
+	pprof          bool
+	disableBatch   bool
+	merklePooling  bool
+	merklePoolSize int
+	mapType        int
+	scheme         int
 }
 
 func runServer(opt serverOpt) error {
@@ -47,8 +48,8 @@ func runServer(opt serverOpt) error {
 	UTXOMap.SetType(opt.mapType)
 
 	fmt.Println("initializing server with:")
-	fmt.Printf("addr=%x, instance=%d, port=%d, benchmark=%t, pprof=%t, batchVerification=%t, mapType=%s, merklePooling=%t\n",
-		opt.address, opt.instanceIndex, port, opt.benchmark, opt.pprof, !opt.disableBatch, mapTypeReadable, opt.merklePooling)
+	fmt.Printf("addr=%x, instance=%d, port=%d, benchmark=%t, pprof=%t, batchVerification=%t, mapType=%s, merklePooling=%t, merklePoolSize=%d\n",
+		opt.address, opt.instanceIndex, port, opt.benchmark, opt.pprof, !opt.disableBatch, mapTypeReadable, opt.merklePooling, opt.merklePoolSize)
 
 	if opt.benchmark {
 		go util.Ticker(TxCounter)
@@ -68,6 +69,7 @@ func runServer(opt serverOpt) error {
 		UTXOMap:           &UTXOMap,
 		BatchVerification: !opt.disableBatch,
 		MerklePooling:     opt.merklePooling,
+		MerklePoolSize:    opt.merklePoolSize,
 	})
 
 	return nil
@@ -98,15 +100,20 @@ func main() {
 				log.Panicf("--map-type must be either 'syncMap' or 'insertOnly' (got %s)", mapType)
 			}
 
+			if c.Bool("merkle-pooling") && c.Int("merkle-pool-size") < 1 {
+				panic("invalid pool size")
+			}
+
 			runServer(serverOpt{
-				address:       addr,
-				instanceIndex: c.Int("instance"),
-				benchmark:     c.Bool("benchmark"),
-				topology:      c.String("topology"),
-				pprof:         c.Bool("pprof"),
-				disableBatch:  c.Bool("disable-batch"),
-				merklePooling: c.Bool("merkle-pooling"),
-				mapType:       mapTypeInt,
+				address:        addr,
+				instanceIndex:  c.Int("instance"),
+				benchmark:      c.Bool("benchmark"),
+				topology:       c.String("topology"),
+				pprof:          c.Bool("pprof"),
+				disableBatch:   c.Bool("disable-batch"),
+				merklePooling:  c.Bool("merkle-pooling"),
+				merklePoolSize: c.Int("merkle-pool-size"),
+				mapType:        mapTypeInt,
 			})
 			return nil
 		},
@@ -154,7 +161,13 @@ func main() {
 			&cli.BoolFlag{
 				Name:     "merkle-pooling",
 				Value:    false,
-				Usage:    "Enable merkle pooling (collect and dispatch)",
+				Usage:    "Enable Merkle pooling (collect and dispatch)",
+				Required: false,
+			},
+			&cli.IntFlag{
+				Name:     "merkle-pool-size",
+				Value:    0,
+				Usage:    "Merkle pool size",
 				Required: false,
 			},
 		},
