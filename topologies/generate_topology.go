@@ -267,7 +267,6 @@ func main() {
 	writeConfig(signTest(), "signTest")
 	writeConfig(localSimpleExtended(), "localSimpleExtended")
 	writeConfig(localFull(), "localFull")
-	writeConfig(dockerSimple(), "dockerSimple")
 	writeConfig(awsSimple(), "awsSimple")
 	writeConfig(aws(), "aws")
 	writeConfig(bls(), "bls")
@@ -425,14 +424,6 @@ func aws() []byte {
 	return config(numClients, numServers, numInstances, false, true, common.ModeEdDSA)
 }
 
-// topology optimized for docker
-func dockerSimple() []byte {
-	numClients := 16
-	numServers := 1
-	numInstances := 1
-
-	return config(numClients, numServers, numInstances, true, false, common.ModeEdDSA)
-}
 
 // topology optimized for the sign test
 func signTest() []byte {

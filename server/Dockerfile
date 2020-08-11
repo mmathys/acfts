@@ -9,8 +9,9 @@ ENV ADDRESS none
 ENV ADAPTER rpc
 ENV TOPOLOGY none
 ENV INSTANCE 0
+ENV POOLING false
 
 WORKDIR /go/src/github.com/mmathys/acfts
 #CMD ["sh", "-c", "server -b --pprof -a ${ADDRESS} --topology /go/src/github.com/mmathys/acfts/topologies/${TOPOLOGY}.json"]
 #CMD ["sh", "-c", "server -b -a ${ADDRESS} --topology /go/src/github.com/mmathys/acfts/topologies/${TOPOLOGY}.json -i ${INSTANCE}"]
-CMD ["sh", "-c", "server -b -a ${ADDRESS} --topology /go/src/github.com/mmathys/acfts/topologies/${TOPOLOGY}.json"]
+CMD ["sh", "-c", "server -b -a ${ADDRESS} --topology /go/src/github.com/mmathys/acfts/topologies/${TOPOLOGY}.json --merkle-pooling=${POOLING}"]

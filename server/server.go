@@ -153,6 +153,7 @@ func main() {
 			},
 			&cli.BoolFlag{
 				Name:     "merkle-pooling",
+				Value:    false,
 				Usage:    "Enable merkle pooling (collect and dispatch)",
 				Required: false,
 			},
