@@ -261,7 +261,9 @@ func writeConfig(config []byte, name string) {
 
 // prints topology to stdout
 func main() {
-	writeConfig(localSimple(), "localSimple")
+	writeConfig(edDSASimple(), "edDSASimple")
+	writeConfig(blsSimple(), "blsSimple")
+	writeConfig(merkleSimple(), "merkleSimple")
 	writeConfig(signTest(), "signTest")
 	writeConfig(localSimpleExtended(), "localSimpleExtended")
 	writeConfig(localFull(), "localFull")
@@ -372,13 +374,28 @@ func localFull() []byte {
 	return config(numClients, numServers, numServerInstances, false, false, common.ModeEdDSA)
 }
 
-// topology optimized for local testing
-func localSimple() []byte {
+func edDSASimple() []byte {
 	numClients := 3
 	numServers := 1
 	numServerInstances := 1
 
 	return config(numClients, numServers, numServerInstances, false, false, common.ModeEdDSA)
+}
+
+func blsSimple() []byte {
+	numClients := 3
+	numServers := 1
+	numServerInstances := 1
+
+	return config(numClients, numServers, numServerInstances, false, false, common.ModeBLS)
+}
+
+func merkleSimple() []byte {
+	numClients := 3
+	numServers := 1
+	numServerInstances := 1
+
+	return config(numClients, numServers, numServerInstances, false, false, common.ModeMerkle)
 }
 
 // topology optimized for local testing, extended
@@ -393,7 +410,7 @@ func localSimpleExtended() []byte {
 // topology optimized for aws
 func awsSimple() []byte {
 	numClients := 64
-	numServers := 5
+	numServers := 1
 	numInstances := 1
 
 	return config(numClients, numServers, numInstances, false, true, common.ModeEdDSA)
