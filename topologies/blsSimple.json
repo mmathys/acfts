@@ -8,7 +8,7 @@
     {
       "Instances": [
         {
-          "Net": "localhost",
+          "Net": "server",
           "Port": 6666
         }
       ],
