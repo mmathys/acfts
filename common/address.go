@@ -273,10 +273,13 @@ func ServerQuorum() []Address {
 	numServers := GetNumServers()
 	quorumSize := QuorumSize()
 	keys := make([]Address, quorumSize)
-	indexes := rand.Perm(numServers)[:quorumSize]
+	r := rand.New(NewCryptoRandSource())
+	indexes := r.Perm(numServers)
 
-	for i, v := range indexes {
-		keys[i] = ServerAddresses[v]
+	for i := 0; i < quorumSize; i++ {
+		index := indexes[i]
+		fmt.Println(index)
+		keys[i] = ServerAddresses[index]
 	}
 	return keys
 }
