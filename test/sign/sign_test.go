@@ -122,7 +122,7 @@ func worker(N int, b *testing.B) error {
 	adapter.TxCounter = new(int32)
 	adapter.CheckTransactions = true
 	adapter.Benchmark = false
-	adapter.Key = common.GetIdentity(common.GetServers()[0])
+	adapter.Key = common.GetKey(common.GetServers()[0])
 	adapter.AllowDoublespend = false
 	adapter.UseUTXOMap = true
 	adapter.CheckTransactions = true
@@ -130,7 +130,7 @@ func worker(N int, b *testing.B) error {
 
 	// get clients from topology
 	client := common.GetClients()[0]
-	clientId := common.GetIdentity(client)
+	clientId := common.GetKey(client)
 	target := common.GetClients()[1]
 
 	// generate requests
@@ -145,7 +145,7 @@ func worker(N int, b *testing.B) error {
 				return err
 			}
 			req := common.TransactionSigReq{Transaction: tx}
-			err = common.SignTransactionSigRequest(clientId, &req)
+			err = clientId.SignTransactionSigRequest(&req)
 			if err != nil {
 				return err
 			}

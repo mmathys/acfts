@@ -26,7 +26,7 @@ func TestMain(m *testing.M) {
 // in this benchmark, in each iteration, a new wallet gets created. then, the wallet spends all of its credits.
 func BenchmarkSequentialNewWallet(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		walletA := common.NewWallet(A)
+		walletA := common.NewWalletWithAmount(A, 100)
 
 		tx, err := core.PrepareTransaction(walletA, B, 100)
 		if err != nil {
