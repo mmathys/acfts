@@ -22,7 +22,7 @@
   "Clients": [
     {
       "Instance": {
-        "Net": "localhost",
+        "Net": "client",
         "Port": 5555
       },
       "Key": {
@@ -34,7 +34,7 @@
     },
     {
       "Instance": {
-        "Net": "localhost",
+        "Net": "client",
         "Port": 5556
       },
       "Key": {
@@ -46,7 +46,7 @@
     },
     {
       "Instance": {
-        "Net": "localhost",
+        "Net": "client",
         "Port": 5557
       },
       "Key": {

@@ -2,4 +2,4 @@ export ADDRESS=81a44f12d738f5858043f6471bfbc9f222e2abdeae14c1a23109fef9ed78e461b
 export TOPOLOGY=blsSimple
 export POOLING=false
 export POOL_SIZE=0
-docker-compose up --build server
+/usr/local/bin/docker-compose up --build server
