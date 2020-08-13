@@ -2,6 +2,7 @@ package agents
 
 import (
 	"fmt"
+	"github.com/herumi/bls-eth-go-binary/bls"
 	"github.com/mmathys/acfts/client/core"
 	"github.com/mmathys/acfts/common"
 	"os"
@@ -72,8 +73,10 @@ func TestAgentsRPC(t *testing.T) {
 
 // works with the command line only
 func TestAgentsRPCFixed(t *testing.T) {
-	args := os.Args
+	bls.Init(bls.BLS12_381)
+	bls.SetETHmode(bls.EthModeDraft07)
 
+	args := os.Args
 	numClients, err := strconv.Atoi(args[len(args)-1])
 	if err != nil {
 		panic(err)
