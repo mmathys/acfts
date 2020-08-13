@@ -82,6 +82,30 @@
         "Mode": "bls"
       },
       "Balance": 100
+    },
+    {
+      "Instance": {
+        "Net": "localhost",
+        "Port": 5557
+      },
+      "Key": {
+        "PublicKey": "8920ec52513df1bb188e169df7a3e314bc1c6c6cde7e05eacd7137a0a63370cd8b850e2fd1b416a5352230306a23a40a",
+        "PrivateKey": "095ce139ad878b82a1139f957cede1c5e57eb421abe1f039ef0cbf48d17dd148",
+        "Mode": "bls"
+      },
+      "Balance": 100
+    },
+    {
+      "Instance": {
+        "Net": "localhost",
+        "Port": 5558
+      },
+      "Key": {
+        "PublicKey": "991967210f522d77da3a408b50a154695bc7215d51283a561ad4887a55a5026ccec2eacf3238e748af7cc72c3cae23e3",
+        "PrivateKey": "159eb3f3935df095fa609b2e05b2b7a8b426d9e2bba5bf1bebff6743a64dc7a3",
+        "Mode": "bls"
+      },
+      "Balance": 100
     }
   ]
 }

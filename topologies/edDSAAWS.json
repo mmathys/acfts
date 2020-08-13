@@ -4,7 +4,7 @@
     {
       "Instances": [
         {
-          "Net": "ec2-18-159-104-253.eu-central-1.compute.amazonaws.com",
+          "Net": "localhost",
           "Port": 6666
         }
       ],
