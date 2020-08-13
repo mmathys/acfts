@@ -93,7 +93,10 @@ func InitAddresses(path string) {
 
 	var topology TopologyConfig
 	dec := json.NewDecoder(file)
-	dec.Decode(&topology)
+	err = dec.Decode(&topology)
+	if err != nil {
+		panic(err)
+	}
 
 	for i, client := range topology.Clients {
 		key := read(client.Key, i)

@@ -285,7 +285,7 @@ var blsClient = [][]string{
 	{"88950143b9a009e003d697f38b5f5cb856b01f10ecc904638e10454b41c50d14ccc7edeb9a9a60ac8d4177846af754e9", "0eff502f1859e85b5e049590a75b3223ba631836edf7691baa26bbfcc2560ea4"},
 	{"968f59d5715d1ae37aa97dea60bb9fd24f3de5b15d4e9b6faeafd798ac71c27664cd6fdbe6c5b5a2f80f4da3d438b46e", "4acf7daa4c980308bacfc92bc7795f054ca755a01d7ecfc3b4837572d48b8ea7"},
 	{"b41de3dd4f580bc3932e2a7b9b702eaf35827e157f3545eee039da44878505bee9b5e4e95b55be747780e25fba1f1f56", "0de2742d38759fd017730b472ae20a4690b5ae24a9923b0c606ada7c1a1599e6"},
-	{"b3e111756159ca9ea61c14b44c908090ec2c03fae2cb7de2c0d054026202afad5feec2418bc8b4aab4cf91555a95d745", "2a8f70557399b2da199d9a73d789520134ec1cd1808630a221d1982d26415caf"},}
+	{"b3e111756159ca9ea61c14b44c908090ec2c03fae2cb7de2c0d054026202afad5feec2418bc8b4aab4cf91555a95d745", "2a8f70557399b2da199d9a73d789520134ec1cd1808630a221d1982d26415caf"}}
 
 type Instance struct {
 	Net  string // network address, with http
@@ -506,7 +506,6 @@ func aws() []byte {
 	return config(numClients, numServers, numInstances, false, true, common.ModeEdDSA)
 }
 
-
 // topology optimized for the sign test
 func signTest() []byte {
 	numClients := 64
@@ -517,7 +516,7 @@ func signTest() []byte {
 }
 
 func bls() []byte {
-	numClients := 2
+	numClients := 4
 	numServers := 4 // 3f+1 where f=1
 	numInstances := 1
 

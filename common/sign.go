@@ -85,8 +85,15 @@ func (key *Key) SignValues(outputs []Value) ([]Value, error) {
 func (key *Key) SignTransactionSigRequest(request *TransactionSigReq) error {
 	hash := HashTransactionSigRequest(key.Mode, *request)
 
-	// When signing a transaction sig request, use EdDSA only, even if the default mode is Merkle or BLS
-	sig := key.signHashWithMode(hash, ModeEdDSA)
+	// When signing a transaction sig request, use EdDSA only, even if the default mode is Merkle
+	var sig *Signature
+	if key.Mode == ModeEdDSA || key.Mode == ModeMerkle {
+		sig = key.signHashWithMode(hash, ModeEdDSA)
+	} else if key.Mode == ModeBLS {
+		sig = key.signHashWithMode(hash, ModeBLS)
+	} else {
+		panic("unrecognized mode")
+	}
 
 	request.Signature = *sig
 
