@@ -281,7 +281,6 @@ func ServerQuorum() []Address {
 
 	for i := 0; i < quorumSize; i++ {
 		index := indexes[i]
-		fmt.Println(index)
 		keys[i] = ServerAddresses[index]
 	}
 	return keys
