@@ -90,7 +90,7 @@ func (key *Key) SignTransactionSigRequest(request *TransactionSigReq) error {
 	if key.Mode == ModeEdDSA || key.Mode == ModeMerkle {
 		sig = key.signHashWithMode(hash, ModeEdDSA)
 	} else if key.Mode == ModeBLS {
-		sig = key.signHashWithMode(hash, ModeBLS)
+		panic("I have to work on this, should sign with EdDSA here as well.")
 	} else {
 		panic("unrecognized mode")
 	}
