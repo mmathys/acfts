@@ -57,7 +57,7 @@ func info(w *common.Wallet) {
 	fmt.Printf("Address (public key):\t%x\n", addr)
 	fmt.Printf("Private Key:\t\t%x\n", keySerialized)
 	modeReadable := "unrecognized"
-	if key.Mode == common.ModeEdDSA {
+	if key.Mode == common.ModeNaive {
 		modeReadable = "EdDSA"
 	} else if key.Mode == common.ModeBLS {
 		modeReadable = "BLS"
@@ -78,7 +78,7 @@ func utxo(w *common.Wallet) {
 		trimmedId := fmt.Sprintf("%x", v.Id)[:10]
 		sigMode := "unknown"
 		if len(v.Signatures) > 0 {
-			if v.Signatures[0].Mode == common.ModeEdDSA {
+			if v.Signatures[0].Mode == common.ModeNaive {
 				sigMode = "multisig (EdDSA)"
 			} else if v.Signatures[0].Mode == common.ModeBLS {
 				sigMode = "threshold (BLS)"

@@ -12,7 +12,7 @@ func TestServerQuorum(t *testing.T) {
 
 	ServerAddresses = []Address{}
 	for i := 0; i < numV; i++ {
-		addr := GenerateKey(ModeEdDSA, i).GetAddress()
+		addr := GenerateKey(ModeNaive, i).GetAddress()
 		ServerAddresses = append(ServerAddresses, addr)
 	}
 

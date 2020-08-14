@@ -12,7 +12,7 @@ import (
 
 // test basic behavior.
 func TestBasic(t *testing.T) {
-	key := GenerateKey(ModeEdDSA, 0)
+	key := GenerateKey(ModeNaive, 0)
 
 	msg := make([]byte, 64) // random hash
 	rand.Read(msg)
@@ -47,8 +47,8 @@ func TestBasic(t *testing.T) {
 }
 
 func TestGenerateKeypair(t *testing.T) {
-	key := GenerateKey(ModeEdDSA, 0)
-	key2 := GenerateKey(ModeEdDSA, 0)
+	key := GenerateKey(ModeNaive, 0)
+	key2 := GenerateKey(ModeNaive, 0)
 
 	if bytes.Equal(key.GetAddress(), key2.GetAddress()) || bytes.Equal(key.GetPrivateKey(), key2.GetPrivateKey()) {
 		t.Fatal("did not generate different keypairs")

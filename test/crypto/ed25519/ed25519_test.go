@@ -102,7 +102,7 @@ func TestVerifyBatch64(t *testing.T) {
 	numSigs := 64
 	var sigs []common.Signature
 	for i := 0; i < numSigs; i++ {
-		key := common.GenerateKey(common.ModeEdDSA, 0)
+		key := common.GenerateKey(common.ModeNaive, 0)
 		sig := key.SignHash(hash)
 		sigs = append(sigs, *sig)
 	}

@@ -1,10 +1,11 @@
 {
+  "Mode": "naive",
   "BLSMasterKey": null,
   "Servers": [
     {
       "Instances": [
         {
-          "Net": "ec2-52-29-181-249.eu-central-1.compute.amazonaws.com",
+          "Net": "localhost",
           "Port": 6666
         }
       ],
@@ -17,7 +18,7 @@
     {
       "Instances": [
         {
-          "Net": "ec2-18-196-114-90.eu-central-1.compute.amazonaws.com",
+          "Net": "localhost",
           "Port": 6666
         }
       ],
@@ -30,7 +31,7 @@
     {
       "Instances": [
         {
-          "Net": "ec2-3-122-114-76.eu-central-1.compute.amazonaws.com",
+          "Net": "localhost",
           "Port": 6666
         }
       ],
@@ -43,7 +44,7 @@
     {
       "Instances": [
         {
-          "Net": "ec2-3-122-227-150.eu-central-1.compute.amazonaws.com",
+          "Net": "localhost",
           "Port": 6666
         }
       ],

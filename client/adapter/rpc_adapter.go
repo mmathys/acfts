@@ -55,7 +55,7 @@ func getConnection(net string) (*rpc.Client, error) {
 	return c, nil
 }
 
-func RequestSignature(serverAddr common.Address, key *common.Key, t common.Transaction, wg *sync.WaitGroup, sigs chan common.TransactionSignRes, errs chan error) {
+func RequestSignature(serverAddr common.Address, key *common.Key, mode int, t common.Transaction, wg *sync.WaitGroup, sigs chan common.TransactionSignRes, errs chan error) {
 	defer wg.Done()
 
 	instanceIndex := common.GetServerInstanceIndex(serverAddr, key.GetAddress())
@@ -67,7 +67,7 @@ func RequestSignature(serverAddr common.Address, key *common.Key, t common.Trans
 	}
 
 	req := common.TransactionSigReq{Transaction: t}
-	err = key.SignTransactionSigRequest(&req)
+	err = key.SignTransactionSigRequest(&req, mode)
 	if err != nil {
 		errs <- err
 		log.Println(err)
@@ -91,7 +91,7 @@ func RequestSignature(serverAddr common.Address, key *common.Key, t common.Trans
 		return
 	}
 
- 	sigs <- res
+	sigs <- res
 }
 
 func ForwardValue(t common.Value) {

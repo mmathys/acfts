@@ -17,14 +17,9 @@ var merkleSigCache sync.Map
 Signing
 */
 
-// Signs a single hash with default mode
-func (key *Key) SignHash(hash []byte) *Signature {
-	return key.signHashWithMode(hash, key.Mode)
-}
-
 // Signs a single hash with a certain mode
-func (key *Key) signHashWithMode(hash []byte, mode int) *Signature {
-	if mode == ModeEdDSA {
+func (key *Key) SignHash(hash []byte, mode int) *Signature {
+	if mode == ModeNaive {
 		opts := ed25519.Options{
 			Hash: crypto.SHA512,
 		}
@@ -57,24 +52,24 @@ func (key *Key) signHashWithMode(hash []byte, mode int) *Signature {
 }
 
 // Signs a value
-func (key *Key) SignValue(value *Value) error {
+func (key *Key) SignValue(value *Value, mode int) error {
 	hash := HashValue(key.Mode, *value)
 
 	if value.Signatures == nil {
 		value.Signatures = []Signature{}
 	}
 
-	sig := key.SignHash(hash)
+	sig := key.SignHash(hash, mode)
 	value.Signatures = append(value.Signatures, *sig)
 	return nil
 }
 
 // Signs multiple values
-func (key *Key) SignValues(outputs []Value) ([]Value, error) {
+func (key *Key) SignValues(outputs []Value, mode int) ([]Value, error) {
 	var signed []Value
 
 	for _, i := range outputs {
-		key.SignValue(&i)
+		key.SignValue(&i, mode)
 		signed = append(signed, i)
 	}
 
@@ -82,13 +77,13 @@ func (key *Key) SignValues(outputs []Value) ([]Value, error) {
 }
 
 // Signs transaction signature request, which is requested by a client
-func (key *Key) SignTransactionSigRequest(request *TransactionSigReq) error {
+func (key *Key) SignTransactionSigRequest(request *TransactionSigReq, mode int) error {
 	hash := HashTransactionSigRequest(key.Mode, *request)
 
 	// When signing a transaction sig request, use EdDSA only, even if the default mode is Merkle
 	var sig *Signature
-	if key.Mode == ModeEdDSA || key.Mode == ModeMerkle {
-		sig = key.signHashWithMode(hash, ModeEdDSA)
+	if mode == ModeNaive || mode == ModeMerkle {
+		sig = key.SignHash(hash, mode)
 	} else if key.Mode == ModeBLS {
 		panic("I have to work on this, should sign with EdDSA here as well.")
 	} else {
@@ -156,7 +151,7 @@ var UseMerkleSignatureCaching = true
 
 // Verifies a signature. for EdDSA, BLS or Merkle.
 func Verify(sig *Signature, hash []byte) (bool, error) {
-	if sig.Mode == ModeEdDSA {
+	if sig.Mode == ModeNaive {
 		if len(hash) != crypto.SHA512.Size() {
 			msg := fmt.Sprintf("invalid hash length. wanted: %d, got: %d", crypto.SHA512.Size(), len(hash))
 			return false, errors.New(msg)
@@ -244,7 +239,7 @@ func VerifyEdDSABatch(sigs []Signature, hash []byte) (bool, error) {
 	var pks []ed25519.PublicKey
 	var sigsByte [][]byte
 	for _, sig := range sigs {
-		if sig.Mode != ModeEdDSA {
+		if sig.Mode != ModeNaive {
 			return false, errors.New("batch verification is only available for EdDSA, but found other types of signatures")
 		}
 
@@ -289,7 +284,7 @@ func VerifyValue(value *Value, enableBatchVerification bool) error {
 	}
 
 	hash := HashValue(mode, *value)
-	if mode == ModeEdDSA || mode == ModeMerkle {
+	if mode == ModeNaive || mode == ModeMerkle {
 		// look out for duplicates signatures
 		origins := make(map[[IndexLength]byte]bool)
 		for _, sig := range value.Signatures {
@@ -316,7 +311,7 @@ func VerifyValue(value *Value, enableBatchVerification bool) error {
 		}
 
 		// verify all signatures, either with batch verification or single verification
-		if mode == ModeEdDSA && enableBatchVerification && len(value.Signatures) >= BatchVerificationThreshold {
+		if mode == ModeNaive && enableBatchVerification && len(value.Signatures) >= BatchVerificationThreshold {
 			// batch verification
 			valid, err := VerifyEdDSABatch(value.Signatures, hash)
 			if err != nil {

@@ -9,7 +9,7 @@ import (
 
 const (
 	// EdDSA
-	ModeEdDSA             = 1
+	ModeNaive             = 1
 	EdDSAPublicKeyLength  = 32 // address = public key
 	EdDSAPrivateKeyLength = 64
 
@@ -42,7 +42,7 @@ type BLSKey struct {
 type Key struct {
 	EdDSA *EdDSAKey
 	BLS   *BLSKey
-	Mode  int
+	Type  int
 }
 
 // Signatures
@@ -87,6 +87,7 @@ type TransactionSignRes struct {
 }
 
 type Wallet struct {
+	Mode int
 	*Key
 	UTXO *sync.Map // of type int --> Value
 }

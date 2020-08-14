@@ -44,7 +44,7 @@ func SignTransaction(w *common.Wallet, t common.Transaction) (*[]common.Transact
 	var wg sync.WaitGroup
 	wg.Add(common.QuorumSize())
 	for _, server := range common.ServerQuorum() {
-		go adapter.RequestSignature(server, w.Key, t, &wg, sigs, errs)
+		go adapter.RequestSignature(server, w.Key, w.Mode, t, &wg, sigs, errs)
 	}
 	wg.Wait()
 

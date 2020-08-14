@@ -310,6 +310,7 @@ type ServerNode struct {
 }
 
 type Topology struct {
+	Mode         string
 	BLSMasterKey *Key
 	Servers      []ServerNode
 	Clients      []ClientNode
@@ -356,28 +357,41 @@ func getServerNetwork(dockerNetwork bool) string {
 	}
 }
 
-func config(numClients int, numServers int, numServerInstances int, dockerNetwork bool, sameServerPort bool, sigMode int) []byte {
+func config(numClients int, numServers int, numServerInstances int, dockerNetwork bool, sameServerPort bool, mode int) []byte {
+	topo := Topology{}
+
 	var serverKeys [][]string
 	var clientKeys [][]string
-	var readableMode string
-	if sigMode == common.ModeEdDSA {
+	var serverKeyType string
+	var clientKeyType string
+	if mode == common.ModeNaive {
 		serverKeys = eddsaServer
 		clientKeys = eddsaClient
-		readableMode = "eddsa"
-	} else if sigMode == common.ModeBLS {
+
+		serverKeyType = "eddsa"
+		clientKeyType = "eddsa"
+
+		topo.Mode = "naive"
+	} else if mode == common.ModeBLS {
 		serverKeys = blsServerShares
-		clientKeys = blsClient
-		readableMode = "bls"
-	} else if sigMode == common.ModeMerkle {
+		clientKeys = eddsaClient
+
+		serverKeyType = "bls"
+		clientKeyType = "eddsa"
+
+		topo.Mode = "bls"
+	} else if mode == common.ModeMerkle {
 		// for merkle, keys are the same as eddsa
 		serverKeys = eddsaServer
 		clientKeys = eddsaClient
-		readableMode = "merkle"
+
+		serverKeyType = "eddsa"
+		clientKeyType = "eddsa"
+
+		topo.Mode = "merkle"
 	} else {
 		panic("invalid mode")
 	}
-
-	topo := Topology{}
 
 	counter := 0
 	for i := 0; i < numServers; i++ {
@@ -399,7 +413,7 @@ func config(numClients int, numServers int, numServerInstances int, dockerNetwor
 			Key: Key{
 				PublicKey:  serverKeys[i][0],
 				PrivateKey: serverKeys[i][1],
-				Mode:       readableMode,
+				Mode:       serverKeyType,
 			},
 		})
 	}
@@ -414,12 +428,12 @@ func config(numClients int, numServers int, numServerInstances int, dockerNetwor
 			Key: Key{
 				PublicKey:  clientKeys[i][0],
 				PrivateKey: clientKeys[i][1],
-				Mode:       readableMode,
+				Mode:       clientKeyType,
 			},
 		})
 	}
 
-	if sigMode == common.ModeBLS {
+	if mode == common.ModeBLS {
 		topo.BLSMasterKey = &Key{
 			PublicKey:  blsMasterKey[0],
 			PrivateKey: blsMasterKey[1],
@@ -437,7 +451,7 @@ func localFull() []byte {
 	numServers := 1
 	numServerInstances := 3
 
-	return config(numClients, numServers, numServerInstances, false, false, common.ModeEdDSA)
+	return config(numClients, numServers, numServerInstances, false, false, common.ModeNaive)
 }
 
 func edDSASimple() []byte {
@@ -445,7 +459,7 @@ func edDSASimple() []byte {
 	numServers := 1
 	numServerInstances := 1
 
-	return config(numClients, numServers, numServerInstances, false, false, common.ModeEdDSA)
+	return config(numClients, numServers, numServerInstances, false, false, common.ModeNaive)
 }
 
 func edDSAAWS() []byte {
@@ -453,7 +467,7 @@ func edDSAAWS() []byte {
 	numServers := 1
 	numServerInstances := 1
 
-	return config(numClients, numServers, numServerInstances, false, true, common.ModeEdDSA)
+	return config(numClients, numServers, numServerInstances, false, true, common.ModeNaive)
 }
 
 func edDSAAWS4() []byte {
@@ -461,7 +475,7 @@ func edDSAAWS4() []byte {
 	numServers := 4
 	numServerInstances := 1
 
-	return config(numClients, numServers, numServerInstances, false, true, common.ModeEdDSA)
+	return config(numClients, numServers, numServerInstances, false, true, common.ModeNaive)
 }
 
 func blsSimple() []byte {
@@ -494,7 +508,7 @@ func localSimpleExtended() []byte {
 	numServers := 1
 	numServerInstances := 1
 
-	return config(numClients, numServers, numServerInstances, false, false, common.ModeEdDSA)
+	return config(numClients, numServers, numServerInstances, false, false, common.ModeNaive)
 }
 
 // topology optimized for aws
@@ -503,7 +517,7 @@ func awsSimple() []byte {
 	numServers := 1
 	numInstances := 1
 
-	return config(numClients, numServers, numInstances, false, true, common.ModeEdDSA)
+	return config(numClients, numServers, numInstances, false, true, common.ModeNaive)
 }
 
 // topology optimized for aws (sharded)
@@ -512,7 +526,7 @@ func aws() []byte {
 	numServers := 1
 	numInstances := 5
 
-	return config(numClients, numServers, numInstances, false, true, common.ModeEdDSA)
+	return config(numClients, numServers, numInstances, false, true, common.ModeNaive)
 }
 
 // topology optimized for the sign test
@@ -521,7 +535,7 @@ func signTest() []byte {
 	numServers := 64
 	numInstances := 1
 
-	return config(numClients, numServers, numInstances, true, false, common.ModeEdDSA)
+	return config(numClients, numServers, numInstances, true, false, common.ModeNaive)
 }
 
 func bls() []byte {

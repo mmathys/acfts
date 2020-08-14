@@ -11,7 +11,7 @@ func HashValue(mode int, value Value) []byte {
 	value.Signatures = nil // zero out signatures before hash
 
 	var d hash.Hash
-	if mode == ModeEdDSA || mode == ModeMerkle {
+	if mode == ModeNaive || mode == ModeMerkle {
 		d = crypto.SHA512.New()
 	} else if mode == ModeBLS {
 		d = crypto.SHA3_256.New()
@@ -40,7 +40,7 @@ func HashTransactionSigRequest(mode int, req TransactionSigReq) []byte {
 	req.Signature = Signature{} // zero out signature before hash
 
 	var d hash.Hash
-	if mode == ModeEdDSA || mode == ModeMerkle {
+	if mode == ModeNaive || mode == ModeMerkle {
 		d = crypto.SHA512.New()
 	} else if mode == ModeBLS {
 		d = crypto.SHA3_256.New()

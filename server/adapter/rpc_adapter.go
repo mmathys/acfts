@@ -17,6 +17,7 @@ import (
 )
 
 var Key *common.Key
+var Mode int
 var NoSigning bool
 var Benchmark bool
 var TxCounter *int32
@@ -33,6 +34,7 @@ var MerkleDispatches = make(chan []*merkle.PoolMsg)
 // struct for RPC
 type Server struct{}
 type AdapterOpt struct {
+	Mode              int
 	Port              int
 	Key               *common.Key
 	NoSigning         bool
@@ -77,7 +79,7 @@ func (s *Server) Sign(req common.TransactionSigReq, res *common.TransactionSignR
 	if !MerklePooling && !NoSigning {
 		// Non-merkle: Immediately sign the transaction request
 		var err error = nil
-		outputs, err = Key.SignValues(tx.Outputs)
+		outputs, err = Key.SignValues(tx.Outputs, Mode)
 		if err != nil {
 			fmt.Println(err)
 			return err
@@ -118,6 +120,8 @@ func Init(opt AdapterOpt) {
 	UTXOMap = opt.UTXOMap
 	BatchVerification = opt.BatchVerification
 	MerklePooling = opt.MerklePooling
+
+	Mode = common.GetMode()
 
 	UTXOMap.Init()
 

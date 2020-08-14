@@ -37,6 +37,7 @@ type ServerNodeConfig struct {
 }
 
 type TopologyConfig struct {
+	Mode         string
 	BLSMasterKey KeyConfig
 	Servers      []ServerNodeConfig
 	Clients      []ClientNodeConfig
@@ -45,7 +46,7 @@ type TopologyConfig struct {
 func read(conf KeyConfig, index int) *Key {
 	var mode int
 	if conf.Mode == "eddsa" {
-		mode = ModeEdDSA
+		mode = ModeNaive
 	} else if conf.Mode == "bls" {
 		mode = ModeBLS
 	} else if conf.Mode == "merkle" {
@@ -67,6 +68,7 @@ var ClientAddresses []Address
 var servers map[[IndexLength]byte]ServerNode
 var ServerAddresses []Address
 var masterKey *Key
+var topologyMode int
 
 func getIndex(addr Address) [IndexLength]byte {
 	index := [IndexLength]byte{}
@@ -121,6 +123,16 @@ func InitAddresses(path string) {
 	masterKeyConfig := topology.BLSMasterKey
 	if masterKeyConfig.Mode == "bls" {
 		masterKey = read(masterKeyConfig, 0)
+	}
+
+	if topology.Mode == "naive" {
+		topologyMode = ModeNaive
+	} else if topology.Mode == "merkle" {
+		topologyMode = ModeMerkle
+	} else if topology.Mode == "bls" {
+		topologyMode = ModeBLS
+	} else {
+		log.Panicf("unknown mode: '%s'\n", topology.Mode)
 	}
 }
 
@@ -199,6 +211,10 @@ func GetBLSMasterKey() *Key {
 
 func GetBLSMasterPublicKey() bls.PublicKey {
 	return masterKey.BLS.Address
+}
+
+func GetMode() int {
+	return topologyMode
 }
 
 func GetClientPort(address Address) int {
