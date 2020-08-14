@@ -326,11 +326,19 @@ func writeConfig(config []byte, name string) {
 // prints topology to stdout
 func main() {
 	writeConfig(edDSASimple(), "edDSASimple")
-	writeConfig(edDSAAWS(), "edDSAAWS")
-	writeConfig(edDSAAWS4(), "edDSAAWS4")
 	writeConfig(blsSimple(), "blsSimple")
 	writeConfig(merkleSimple(), "merkleSimple")
+
+	writeConfig(edDSAAWS(), "edDSAAWS")
+	writeConfig(edDSAAWS4(), "edDSAAWS4")
+	writeConfig(edDSAAWS7(), "edDSAAWS7")
+	writeConfig(edDSAAWS10(), "edDSAAWS10")
+
 	writeConfig(merkleAWS(), "merkleAWS")
+	writeConfig(merkleAWS4(), "merkleAWS4")
+	writeConfig(merkleAWS7(), "merkleAWS7")
+	writeConfig(merkleAWS10(), "merkleAWS10")
+
 	writeConfig(signTest(), "signTest")
 	writeConfig(localSimpleExtended(), "localSimpleExtended")
 	writeConfig(localFull(), "localFull")
@@ -464,6 +472,22 @@ func edDSAAWS4() []byte {
 	return config(numClients, numServers, numServerInstances, false, true, common.ModeEdDSA)
 }
 
+func edDSAAWS7() []byte {
+	numClients := 128
+	numServers := 7
+	numServerInstances := 1
+
+	return config(numClients, numServers, numServerInstances, false, true, common.ModeEdDSA)
+}
+
+func edDSAAWS10() []byte {
+	numClients := 128
+	numServers := 10
+	numServerInstances := 1
+
+	return config(numClients, numServers, numServerInstances, false, true, common.ModeEdDSA)
+}
+
 func blsSimple() []byte {
 	numClients := 3
 	numServers := 1
@@ -483,6 +507,30 @@ func merkleSimple() []byte {
 func merkleAWS() []byte {
 	numClients := 64
 	numServers := 1
+	numServerInstances := 1
+
+	return config(numClients, numServers, numServerInstances, false, true, common.ModeMerkle)
+}
+
+func merkleAWS4() []byte {
+	numClients := 64
+	numServers := 4
+	numServerInstances := 1
+
+	return config(numClients, numServers, numServerInstances, false, true, common.ModeMerkle)
+}
+
+func merkleAWS7() []byte {
+	numClients := 64
+	numServers := 7
+	numServerInstances := 1
+
+	return config(numClients, numServers, numServerInstances, false, true, common.ModeMerkle)
+}
+
+func merkleAWS10() []byte {
+	numClients := 64
+	numServers := 10
 	numServerInstances := 1
 
 	return config(numClients, numServers, numServerInstances, false, true, common.ModeMerkle)
