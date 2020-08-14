@@ -327,6 +327,7 @@ func writeConfig(config []byte, name string) {
 func main() {
 	writeConfig(edDSASimple(), "edDSASimple")
 	writeConfig(edDSAAWS(), "edDSAAWS")
+	writeConfig(edDSAAWS4(), "edDSAAWS4")
 	writeConfig(blsSimple(), "blsSimple")
 	writeConfig(merkleSimple(), "merkleSimple")
 	writeConfig(merkleAWS(), "merkleAWS")
@@ -444,7 +445,7 @@ func edDSASimple() []byte {
 	numServers := 1
 	numServerInstances := 1
 
-	return config(numClients, numServers, numServerInstances, true, false, common.ModeEdDSA)
+	return config(numClients, numServers, numServerInstances, false, false, common.ModeEdDSA)
 }
 
 func edDSAAWS() []byte {
@@ -452,7 +453,15 @@ func edDSAAWS() []byte {
 	numServers := 1
 	numServerInstances := 1
 
-	return config(numClients, numServers, numServerInstances, false, false, common.ModeEdDSA)
+	return config(numClients, numServers, numServerInstances, false, true, common.ModeEdDSA)
+}
+
+func edDSAAWS4() []byte {
+	numClients := 128
+	numServers := 4
+	numServerInstances := 1
+
+	return config(numClients, numServers, numServerInstances, false, true, common.ModeEdDSA)
 }
 
 func blsSimple() []byte {
@@ -476,7 +485,7 @@ func merkleAWS() []byte {
 	numServers := 1
 	numServerInstances := 1
 
-	return config(numClients, numServers, numServerInstances, false, false, common.ModeMerkle)
+	return config(numClients, numServers, numServerInstances, false, true, common.ModeMerkle)
 }
 
 // topology optimized for local testing, extended
