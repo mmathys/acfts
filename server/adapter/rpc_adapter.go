@@ -122,7 +122,7 @@ func Init(opt AdapterOpt) {
 	UTXOMap.Init()
 
 	if MerklePooling {
-		initMerklePooling()
+		initMerklePooling(opt.MerklePoolSize)
 	}
 
 	addr := fmt.Sprintf(":%d", opt.Port)
@@ -137,9 +137,9 @@ func Init(opt AdapterOpt) {
 }
 
 // Merkle pooling
-func initMerklePooling() {
+func initMerklePooling(poolSize int) {
 	// initialize a single collector with threshold 2 (TODO)
-	go merkle.CollectAndDispatch(2, MerkleRequests, MerkleDispatches)
+	go merkle.CollectAndDispatch(poolSize, MerkleRequests, MerkleDispatches)
 
 	// initialize runtime.NumCPU() many processors
 	for i := 0; i < runtime.NumCPU(); i++ {

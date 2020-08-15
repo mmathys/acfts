@@ -4,7 +4,7 @@
     {
       "Instances": [
         {
-          "Net": "ec2-18-156-77-97.eu-central-1.compute.amazonaws.com",
+          "Net": "localhost",
           "Port": 6666
         }
       ],
@@ -17,7 +17,7 @@
     {
       "Instances": [
         {
-          "Net": "ec2-3-122-241-87.eu-central-1.compute.amazonaws.com",
+          "Net": "localhost",
           "Port": 6666
         }
       ],
@@ -30,7 +30,7 @@
     {
       "Instances": [
         {
-          "Net": "ec2-18-158-59-165.eu-central-1.compute.amazonaws.com",
+          "Net": "localhost",
           "Port": 6666
         }
       ],
@@ -43,7 +43,7 @@
     {
       "Instances": [
         {
-          "Net": "ec2-35-158-240-11.eu-central-1.compute.amazonaws.com",
+          "Net": "localhost",
           "Port": 6666
         }
       ],
@@ -56,7 +56,7 @@
     {
       "Instances": [
         {
-          "Net": "ec2-54-93-69-50.eu-central-1.compute.amazonaws.com",
+          "Net": "localhost",
           "Port": 6666
         }
       ],
@@ -69,7 +69,7 @@
     {
       "Instances": [
         {
-          "Net": "ec2-3-120-187-235.eu-central-1.compute.amazonaws.com",
+          "Net": "localhost",
           "Port": 6666
         }
       ],
@@ -82,7 +82,7 @@
     {
       "Instances": [
         {
-          "Net": "ec2-18-197-102-177.eu-central-1.compute.amazonaws.com",
+          "Net": "localhost",
           "Port": 6666
         }
       ],
