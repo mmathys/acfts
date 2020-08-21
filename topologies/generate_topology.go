@@ -447,15 +447,15 @@ func blsSimple() []byte {
 }
 
 func merkleSimple() []byte {
-	numClients := 3
+	numClients := 4096
 	numServers := 1
 	numServerInstances := 1
 
-	return config(numClients, numServers, numServerInstances, true, false, false, common.ModeMerkle)
+	return config(numClients, numServers, numServerInstances, true, false, true, common.ModeMerkle)
 }
 
 func merkleAWS() []byte {
-	numClients := 256
+	numClients := 4096
 	numServers := 1
 	numServerInstances := 1
 

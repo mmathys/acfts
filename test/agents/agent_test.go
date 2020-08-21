@@ -5,6 +5,7 @@ import (
 	"github.com/herumi/bls-eth-go-binary/bls"
 	"github.com/mmathys/acfts/client/core"
 	"github.com/mmathys/acfts/common"
+	"math/rand"
 	"os"
 	"strconv"
 	"sync"
@@ -32,6 +33,8 @@ func simpleAgent(a common.Agent, wg *sync.WaitGroup) {
 		}
 
 		core.DoTransaction(w, t, false)
+		delay := rand.Float32() * float32(time.Millisecond * 100)
+		time.Sleep(time.Duration(delay) + 50 * time.Millisecond)
 	}
 }
 
