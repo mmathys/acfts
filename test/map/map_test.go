@@ -285,7 +285,7 @@ func insertBenchmark(b *testing.B, numWorkers int, overrideN int) {
 				id := common.RandomIdentifier()
 				identifiers[i] = append(identifiers[i], id)
 			}
-			fmt.Printf("worker %d done\n", i)
+			//fmt.Printf("worker %d done\n", i)
 			ig.Done()
 		}(i)
 	}
