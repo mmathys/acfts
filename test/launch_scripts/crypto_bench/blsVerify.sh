@@ -1,0 +1,1 @@
+BENCH=BenchmarkVerifyHash docker-compose up --build benchmark_bls

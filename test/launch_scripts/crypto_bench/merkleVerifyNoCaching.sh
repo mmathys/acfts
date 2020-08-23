@@ -1,0 +1,1 @@
+POOL_SIZE=64 BENCHTIME=5s BENCH=BenchmarkVerifyMerkleNoCaching docker-compose up --build benchmark_merkle
