@@ -276,6 +276,7 @@ func main() {
 	writeConfig(edDSAAWS10(), "edDSAAWS10")
 
 	writeConfig(merkleAWS(), "merkleAWS")
+	writeConfig(merkleAWS2Shards(), "merkleAWS2Shards")
 	writeConfig(merkleAWS4(), "merkleAWS4")
 	writeConfig(merkleAWS7(), "merkleAWS7")
 	writeConfig(merkleAWS10(), "merkleAWS10")
@@ -487,6 +488,14 @@ func merkleAWS() []byte {
 	numClients := 4096
 	numServers := 1
 	numServerInstances := 1
+
+	return config(numClients, numServers, numServerInstances, false, true, true, common.ModeMerkle)
+}
+
+func merkleAWS2Shards() []byte {
+	numClients := 4096
+	numServers := 1
+	numServerInstances := 2
 
 	return config(numClients, numServers, numServerInstances, false, true, true, common.ModeMerkle)
 }
