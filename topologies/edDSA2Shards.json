@@ -6,6 +6,10 @@
         {
           "Net": "server",
           "Port": 6666
+        },
+        {
+          "Net": "server",
+          "Port": 6667
         }
       ],
       "Key": {

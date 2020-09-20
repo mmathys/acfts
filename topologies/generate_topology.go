@@ -265,6 +265,11 @@ func main() {
 	writeConfig(blsSimple(), "blsSimple")
 	writeConfig(merkleSimple(), "merkleSimple")
 
+	writeConfig(merkleLocal(), "merkleLocal")
+
+	writeConfig(edDSA2Shards(), "edDSA2Shards")
+	writeConfig(merkle2Shards(), "merkle2Shards")
+
 	writeConfig(edDSAAWS(), "edDSAAWS")
 	writeConfig(edDSAAWS4(), "edDSAAWS4")
 	writeConfig(edDSAAWS7(), "edDSAAWS7")
@@ -399,17 +404,25 @@ func localFull() []byte {
 }
 
 func edDSASimple() []byte {
-	numClients := 3
+	numClients := 4096
 	numServers := 1
 	numServerInstances := 1
 
-	return config(numClients, numServers, numServerInstances, false, false, false, common.ModeEdDSA)
+	return config(numClients, numServers, numServerInstances, true, false, true, common.ModeEdDSA)
+}
+
+func edDSA2Shards() []byte {
+	numClients := 4096
+	numServers := 1
+	numServerInstances := 2
+
+	return config(numClients, numServers, numServerInstances, true, false, true, common.ModeEdDSA)
 }
 
 func edDSAAWS() []byte {
 	numClients := 128
 	numServers := 1
-	numServerInstances := 1
+	numServerInstances := 2
 
 	return config(numClients, numServers, numServerInstances, false, true, true, common.ModeEdDSA)
 }
@@ -447,9 +460,25 @@ func blsSimple() []byte {
 }
 
 func merkleSimple() []byte {
-	numClients := 4096
+	numClients := 8192
 	numServers := 1
 	numServerInstances := 1
+
+	return config(numClients, numServers, numServerInstances, true, false, true, common.ModeMerkle)
+}
+
+func merkleLocal() []byte {
+	numClients := 8192
+	numServers := 1
+	numServerInstances := 2
+
+	return config(numClients, numServers, numServerInstances, false, false, true, common.ModeMerkle)
+}
+
+func merkle2Shards() []byte {
+	numClients := 8192
+	numServers := 1
+	numServerInstances := 2
 
 	return config(numClients, numServers, numServerInstances, true, false, true, common.ModeMerkle)
 }
@@ -506,11 +535,11 @@ func awsSimple() []byte {
 
 // topology optimized for aws (sharded)
 func aws() []byte {
-	numClients := 64
+	numClients := 1024
 	numServers := 1
-	numInstances := 5
+	numInstances := 2
 
-	return config(numClients, numServers, numInstances, false, true, true, common.ModeEdDSA)
+	return config(numClients, numServers, numInstances, false, true, true, common.ModeMerkle)
 }
 
 // topology optimized for the sign test
