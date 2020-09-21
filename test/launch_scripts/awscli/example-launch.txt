@@ -1,0 +1,1 @@
+aws ec2 run-instances --launch-template LaunchTemplateId=lt-0e530c80ccc3334ab --user-data file://userdata
