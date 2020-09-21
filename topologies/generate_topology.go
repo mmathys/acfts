@@ -501,7 +501,7 @@ func merkleAWS2Shards() []byte {
 }
 
 func merkleAWS4() []byte {
-	numClients := 8192
+	numClients := 4096
 	numServers := 4
 	numServerInstances := 1
 
