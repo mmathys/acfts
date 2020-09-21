@@ -4,7 +4,7 @@
     {
       "Instances": [
         {
-          "Net": "localhost",
+          "Net": "172.31.21.77",
           "Port": 6666
         }
       ],
@@ -17,7 +17,7 @@
     {
       "Instances": [
         {
-          "Net": "localhost",
+          "Net": "172.31.30.83",
           "Port": 6666
         }
       ],
@@ -30,7 +30,7 @@
     {
       "Instances": [
         {
-          "Net": "localhost",
+          "Net": "172.31.23.32",
           "Port": 6666
         }
       ],
@@ -43,7 +43,7 @@
     {
       "Instances": [
         {
-          "Net": "localhost",
+          "Net": "172.31.21.132",
           "Port": 6666
         }
       ],

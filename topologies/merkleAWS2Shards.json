@@ -4,11 +4,11 @@
     {
       "Instances": [
         {
-          "Net": "ec2-3-123-25-16.eu-central-1.compute.amazonaws.com",
+          "Net": "localhost",
           "Port": 6666
         },
         {
-          "Net": "ec2-52-59-216-93.eu-central-1.compute.amazonaws.com",
+          "Net": "localhost",
           "Port": 6666
         }
       ],
