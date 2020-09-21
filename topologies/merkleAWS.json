@@ -18,7 +18,7 @@
   "Clients": [
     {
       "Instance": {
-        "Net": "localhost",
+        "Net": "54.183.157.216",
         "Port": 5555
       },
       "Key": {
