@@ -8,45 +8,53 @@ import (
 	"log"
 	"os"
 	"os/exec"
-	"regexp"
 	"strconv"
+	"strings"
+	"time"
 )
 
 // Configuration
 const (
-	Verbose  = true
-	Topology = "merkleAWS"
+	Verbose     = false
+	Topology    = "merkleAWS4"
+	Interactive = false
+	StartupTime = 3 * time.Minute
+	TestTime    = 6 * time.Minute
 
 	/* Validators */
 	NumShards               = 1
 	Pooling                 = true
-	PoolSize                = 2
+	PoolSize                = 64
 	ValidatorLaunchTemplate = "lt-0e530c80ccc3334ab" // us-west-1
 	//ValidatorLaunchTemplate = "lt-046c9ee55757a7a33" // eu-central-1
 
 	/* Agents */
 	AgentsLaunchTemplate = "lt-0664087648feb48a8" // us-west-1
-	NumAgentsInstances   = 2
-	NumWorkers           = 1
+	NumAgentsInstances   = 16
+	NumWorkers           = 4096
 )
 
 func main() {
-	common.InitAddresses(fmt.Sprintf("topologies/%s.json", Topology))
+	topologiesFile := fmt.Sprintf("topologies/%s.json", Topology)
+	common.InitAddresses(topologiesFile)
 
 	numValidators := common.GetNumServers()
 
 	fmt.Printf("Launching %d validators which %d shards (total: %d)\n", numValidators, NumShards, numValidators*NumShards)
 
+	var validatorIPs []string
+
 	/* Launch validators */
 	for i := 0; i < numValidators; i++ {
 		for j := 0; j < NumShards; j++ {
 			info(fmt.Sprintf("Launching validator %d, shard %d...", i, j))
-			filename := fmt.Sprintf("validator-%s-%d-%d", Topology, i, j)
+			filename := fmt.Sprintf("aws-validator-%s-%d-%d", Topology, i, j)
 			f, err := os.Create(filename)
 			if err != nil {
 				panic(err)
 			}
 			f.WriteString(validatorConfig(i, j))
+			f.Close()
 
 			args := []string{
 				"ec2",
@@ -56,25 +64,34 @@ func main() {
 				"--user-data",
 				fmt.Sprintf("file://%s", filename),
 			}
-			info(fmt.Sprintf("%v", args))
 			out := execute(args)
 
-			fmt.Printf("%d,%d: %s\n", i, j, getIp(out))
+			ip := getIp(out)
+			injectIP(ip)
+			validatorIPs = append(validatorIPs, ip)
 		}
 	}
 
-	fmt.Printf("→ Update %s.json validator addresses accordingly and push, then wait until validators have started up.\n", Topology)
-	fmt.Print("Press enter when done.")
-	bufio.NewScanner(os.Stdin).Scan()
+	pushChanges()
+
+	if Interactive {
+		fmt.Printf("→ wait until validators have started up.\n")
+		fmt.Print("Press enter when done.")
+		bufio.NewScanner(os.Stdin).Scan()
+	} else {
+		fmt.Println("waiting for startup...")
+		time.Sleep(StartupTime)
+	}
 
 	/* Launch agents */
-	info("Launching agents...\n")
-	filename := fmt.Sprintf("agents-%s", Topology)
+	fmt.Println("Launching agents...")
+	filename := fmt.Sprintf("aws-agents-%s", Topology)
 	f, err := os.Create(filename)
 	if err != nil {
 		panic(err)
 	}
 	f.WriteString(agentsConfig())
+	f.Close()
 
 	args := []string{
 		"ec2",
@@ -86,9 +103,46 @@ func main() {
 		"--user-data",
 		fmt.Sprintf("file://%s", filename),
 	}
-	out := execute(args)
-	fmt.Println(out)
-	fmt.Println("done :)")
+	execute(args)
+	os.Remove(topologiesFile)
+
+	if Interactive {
+		fmt.Printf("→ wait until the test is finished.\n")
+		fmt.Print("Press enter when done.")
+		bufio.NewScanner(os.Stdin).Scan()
+	} else {
+		fmt.Println("testing...")
+		time.Sleep(TestTime)
+	}
+
+	/* Retrieve logs from validators */
+	fmt.Println("retrieving logs...")
+	os.Mkdir("logs", os.ModePerm)
+	for _, ip := range validatorIPs {
+		cmd := exec.Command(
+			"ssh",
+			"-i",
+			"~/.ssh/makesxi-us-west-1",
+			"-oStrictHostKeyChecking=no",
+			fmt.Sprintf("ec2-user@%s", ip),
+			"docker logs acfts_server_1",
+		)
+		dir, _ := os.Getwd()
+		cmd.Dir = dir
+		out, err := cmd.CombinedOutput()
+		if err != nil {
+			log.Fatalf("could not get logs.. %s\n", err)
+		}
+		filename := fmt.Sprintf("logs/%s.log", ip)
+		f, err := os.Create(filename)
+		if err != nil {
+			panic(err)
+		}
+		f.Write(out)
+		f.Close()
+	}
+
+	fmt.Println("done")
 }
 
 func validatorConfig(validator int, shard int) string {
@@ -130,12 +184,22 @@ func export(key string, value string) string {
 }
 
 func getIp(output string) string {
-	re := regexp.MustCompile(`(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}`)
-	if re.MatchString(output) {
-		return re.FindString(output)
-	} else {
-		panic("could not find any ip addresses in output")
+	line := strings.Split(output, "\n")[1]
+	id := strings.Split(line, "\t")[7]
+
+	time.Sleep(time.Second)
+	args := []string{
+		"ec2",
+		"describe-instances",
+		"--query",
+		"Reservations[*].Instances[*].PublicIpAddress",
+		"--instance-ids",
+		id,
 	}
+	out := execute(args)
+	out = strings.TrimSpace(out)
+	fmt.Println(out)
+	return out
 }
 
 func execute(args []string) string {
@@ -157,5 +221,43 @@ func execute(args []string) string {
 func info(output string) {
 	if Verbose {
 		fmt.Println(output)
+	}
+}
+
+func injectIP(ip string) {
+	path := fmt.Sprintf("./topologies/%s.json", Topology)
+	args := []string{
+		"-i",
+		fmt.Sprintf("0,/localhost/{s/localhost/%s/}", ip),
+		path,
+	}
+	cmd := exec.Command("gsed", args...)
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		fmt.Println(string(out))
+		log.Fatalf("cmd.Run() failed with %s\n", err)
+	}
+}
+
+func pushChanges() {
+	cmd := exec.Command("git", "add", "topologies/*")
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		fmt.Println(string(out))
+		log.Fatalf("git add failed with %s\n", err)
+	}
+
+	cmd = exec.Command("git", "commit", "-m", "updated topology")
+	out, err = cmd.CombinedOutput()
+	if err != nil {
+		fmt.Println(string(out))
+		log.Fatalf("git commit failed with %s\n", err)
+	}
+
+	cmd = exec.Command("git", "push")
+	out, err = cmd.CombinedOutput()
+	if err != nil {
+		fmt.Println(string(out))
+		log.Fatalf("git push failed with %s\n", err)
 	}
 }

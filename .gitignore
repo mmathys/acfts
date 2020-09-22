@@ -1,8 +1,8 @@
 out # benchmark outputs
 server # server binary
 client # client binary
-validator-*
-agents-*
+aws-*
+logs
 
 ### Intellij ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio and WebStorm
