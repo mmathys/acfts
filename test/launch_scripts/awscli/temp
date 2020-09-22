@@ -1,0 +1,513 @@
+645658913490	r-05f19480b309011dc
+INSTANCES	14	x86_64	55139fb5-b325-4c2b-8cae-dcaec647eb61	False	xen	ami-0e65ed16c9bf1abc7	i-040226b3171080e4c	m5a.xlarge	makesxi-us-west-1	2020-09-22T09:08:54+00:00	ip-172-31-5-118.us-west-1.compute.internal	172.31.5.118		/dev/xvda	ebs	True		subnet-b3e9f0e8	hvm	vpc-15e5f772
+CAPACITYRESERVATIONSPECIFICATION	open
+CPUOPTIONS	2	2
+METADATAOPTIONS	enabled	1	optional	pending
+MONITORING	disabled
+NETWORKINTERFACES		interface	06:65:7f:a9:b4:6d	eni-021af732067e14e96	645658913490	ip-172-31-5-118.us-west-1.compute.internal	172.31.5.118	True	in-use	subnet-b3e9f0e8	vpc-15e5f772
+ATTACHMENT	2020-09-22T09:08:54+00:00	eni-attach-079a0bf2701097670	True	0	attaching
+GROUPS	sg-084a0f7779465d0c7	all-open
+PRIVATEIPADDRESSES	True	ip-172-31-5-118.us-west-1.compute.internal	172.31.5.118
+PLACEMENT	us-west-1b		default
+SECURITYGROUPS	sg-084a0f7779465d0c7	all-open
+STATE	0	pending
+STATEREASON	pending	pending
+TAGS	Name	agent
+TAGS	aws:ec2launchtemplate:id	lt-0664087648feb48a8
+TAGS	aws:ec2launchtemplate:version	1
+INSTANCES	15	x86_64	55139fb5-b325-4c2b-8cae-dcaec647eb61	False	xen	ami-0e65ed16c9bf1abc7	i-0cf6e0f79f276bc07	m5a.xlarge	makesxi-us-west-1	2020-09-22T09:08:54+00:00	ip-172-31-6-124.us-west-1.compute.internal	172.31.6.124		/dev/xvda	ebs	True		subnet-b3e9f0e8	hvm	vpc-15e5f772
+CAPACITYRESERVATIONSPECIFICATION	open
+CPUOPTIONS	2	2
+METADATAOPTIONS	enabled	1	optional	pending
+MONITORING	disabled
+NETWORKINTERFACES		interface	06:7d:21:18:72:c5	eni-03edcd305aedf9d67	645658913490	ip-172-31-6-124.us-west-1.compute.internal	172.31.6.124	True	in-use	subnet-b3e9f0e8	vpc-15e5f772
+ATTACHMENT	2020-09-22T09:08:54+00:00	eni-attach-05cb547b73ab99ee0	True	0	attaching
+GROUPS	sg-084a0f7779465d0c7	all-open
+PRIVATEIPADDRESSES	True	ip-172-31-6-124.us-west-1.compute.internal	172.31.6.124
+PLACEMENT	us-west-1b		default
+SECURITYGROUPS	sg-084a0f7779465d0c7	all-open
+STATE	0	pending
+STATEREASON	pending	pending
+TAGS	aws:ec2launchtemplate:id	lt-0664087648feb48a8
+TAGS	aws:ec2launchtemplate:version	1
+TAGS	Name	agent
+INSTANCES	12	x86_64	55139fb5-b325-4c2b-8cae-dcaec647eb61	False	xen	ami-0e65ed16c9bf1abc7	i-058c0dedcbace94f1	m5a.xlarge	makesxi-us-west-1	2020-09-22T09:08:54+00:00	ip-172-31-2-241.us-west-1.compute.internal	172.31.2.241		/dev/xvda	ebs	True		subnet-b3e9f0e8	hvm	vpc-15e5f772
+CAPACITYRESERVATIONSPECIFICATION	open
+CPUOPTIONS	2	2
+METADATAOPTIONS	enabled	1	optional	pending
+MONITORING	disabled
+NETWORKINTERFACES		interface	06:57:12:ab:46:5f	eni-0e61302a6a646e2cf	645658913490	ip-172-31-2-241.us-west-1.compute.internal	172.31.2.241	True	in-use	subnet-b3e9f0e8	vpc-15e5f772
+ATTACHMENT	2020-09-22T09:08:54+00:00	eni-attach-0896eb9e453de8ee4	True	0	attaching
+GROUPS	sg-084a0f7779465d0c7	all-open
+PRIVATEIPADDRESSES	True	ip-172-31-2-241.us-west-1.compute.internal	172.31.2.241
+PLACEMENT	us-west-1b		default
+SECURITYGROUPS	sg-084a0f7779465d0c7	all-open
+STATE	0	pending
+STATEREASON	pending	pending
+TAGS	aws:ec2launchtemplate:id	lt-0664087648feb48a8
+TAGS	Name	agent
+TAGS	aws:ec2launchtemplate:version	1
+INSTANCES	13	x86_64	55139fb5-b325-4c2b-8cae-dcaec647eb61	False	xen	ami-0e65ed16c9bf1abc7	i-0b9064941ad568f49	m5a.xlarge	makesxi-us-west-1	2020-09-22T09:08:54+00:00	ip-172-31-11-52.us-west-1.compute.internal	172.31.11.52		/dev/xvda	ebs	True		subnet-b3e9f0e8	hvm	vpc-15e5f772
+CAPACITYRESERVATIONSPECIFICATION	open
+CPUOPTIONS	2	2
+METADATAOPTIONS	enabled	1	optional	pending
+MONITORING	disabled
+NETWORKINTERFACES		interface	06:8c:5a:49:76:67	eni-071982d6848098a21	645658913490	ip-172-31-11-52.us-west-1.compute.internal	172.31.11.52	True	in-use	subnet-b3e9f0e8	vpc-15e5f772
+ATTACHMENT	2020-09-22T09:08:54+00:00	eni-attach-019b3de32855f2aab	True	0	attaching
+GROUPS	sg-084a0f7779465d0c7	all-open
+PRIVATEIPADDRESSES	True	ip-172-31-11-52.us-west-1.compute.internal	172.31.11.52
+PLACEMENT	us-west-1b		default
+SECURITYGROUPS	sg-084a0f7779465d0c7	all-open
+STATE	0	pending
+STATEREASON	pending	pending
+TAGS	aws:ec2launchtemplate:id	lt-0664087648feb48a8
+TAGS	aws:ec2launchtemplate:version	1
+TAGS	Name	agent
+INSTANCES	23	x86_64	55139fb5-b325-4c2b-8cae-dcaec647eb61	False	xen	ami-0e65ed16c9bf1abc7	i-08d1ec1bcb6b6ad0f	m5a.xlarge	makesxi-us-west-1	2020-09-22T09:08:54+00:00	ip-172-31-12-22.us-west-1.compute.internal	172.31.12.22		/dev/xvda	ebs	True		subnet-b3e9f0e8	hvm	vpc-15e5f772
+CAPACITYRESERVATIONSPECIFICATION	open
+CPUOPTIONS	2	2
+METADATAOPTIONS	enabled	1	optional	pending
+MONITORING	disabled
+NETWORKINTERFACES		interface	06:e2:0a:92:22:7f	eni-029c3cab161ef9fc2	645658913490	ip-172-31-12-22.us-west-1.compute.internal	172.31.12.22	True	in-use	subnet-b3e9f0e8	vpc-15e5f772
+ATTACHMENT	2020-09-22T09:08:54+00:00	eni-attach-01eaee89e477ff86f	True	0	attaching
+GROUPS	sg-084a0f7779465d0c7	all-open
+PRIVATEIPADDRESSES	True	ip-172-31-12-22.us-west-1.compute.internal	172.31.12.22
+PLACEMENT	us-west-1b		default
+SECURITYGROUPS	sg-084a0f7779465d0c7	all-open
+STATE	0	pending
+STATEREASON	pending	pending
+TAGS	Name	agent
+TAGS	aws:ec2launchtemplate:version	1
+TAGS	aws:ec2launchtemplate:id	lt-0664087648feb48a8
+INSTANCES	16	x86_64	55139fb5-b325-4c2b-8cae-dcaec647eb61	False	xen	ami-0e65ed16c9bf1abc7	i-023610d3a6aa7a38d	m5a.xlarge	makesxi-us-west-1	2020-09-22T09:08:54+00:00	ip-172-31-12-128.us-west-1.compute.internal	172.31.12.128		/dev/xvda	ebs	True		subnet-b3e9f0e8	hvm	vpc-15e5f772
+CAPACITYRESERVATIONSPECIFICATION	open
+CPUOPTIONS	2	2
+METADATAOPTIONS	enabled	1	optional	pending
+MONITORING	disabled
+NETWORKINTERFACES		interface	06:fb:8e:85:f8:e1	eni-0c957a3d0fec95393	645658913490	ip-172-31-12-128.us-west-1.compute.internal	172.31.12.128	True	in-use	subnet-b3e9f0e8	vpc-15e5f772
+ATTACHMENT	2020-09-22T09:08:54+00:00	eni-attach-0b7ca7368802138a1	True	0	attaching
+GROUPS	sg-084a0f7779465d0c7	all-open
+PRIVATEIPADDRESSES	True	ip-172-31-12-128.us-west-1.compute.internal	172.31.12.128
+PLACEMENT	us-west-1b		default
+SECURITYGROUPS	sg-084a0f7779465d0c7	all-open
+STATE	0	pending
+STATEREASON	pending	pending
+TAGS	aws:ec2launchtemplate:version	1
+TAGS	Name	agent
+TAGS	aws:ec2launchtemplate:id	lt-0664087648feb48a8
+INSTANCES	21	x86_64	55139fb5-b325-4c2b-8cae-dcaec647eb61	False	xen	ami-0e65ed16c9bf1abc7	i-09f789104b4fdd405	m5a.xlarge	makesxi-us-west-1	2020-09-22T09:08:54+00:00	ip-172-31-13-207.us-west-1.compute.internal	172.31.13.207		/dev/xvda	ebs	True		subnet-b3e9f0e8	hvm	vpc-15e5f772
+CAPACITYRESERVATIONSPECIFICATION	open
+CPUOPTIONS	2	2
+METADATAOPTIONS	enabled	1	optional	pending
+MONITORING	disabled
+NETWORKINTERFACES		interface	06:37:07:65:90:cb	eni-079efc0e6b34bfecc	645658913490	ip-172-31-13-207.us-west-1.compute.internal	172.31.13.207	True	in-use	subnet-b3e9f0e8	vpc-15e5f772
+ATTACHMENT	2020-09-22T09:08:54+00:00	eni-attach-0e940d50aa391f3ea	True	0	attaching
+GROUPS	sg-084a0f7779465d0c7	all-open
+PRIVATEIPADDRESSES	True	ip-172-31-13-207.us-west-1.compute.internal	172.31.13.207
+PLACEMENT	us-west-1b		default
+SECURITYGROUPS	sg-084a0f7779465d0c7	all-open
+STATE	0	pending
+STATEREASON	pending	pending
+TAGS	aws:ec2launchtemplate:id	lt-0664087648feb48a8
+TAGS	Name	agent
+TAGS	aws:ec2launchtemplate:version	1
+INSTANCES	22	x86_64	55139fb5-b325-4c2b-8cae-dcaec647eb61	False	xen	ami-0e65ed16c9bf1abc7	i-0d51d4d09e81fca51	m5a.xlarge	makesxi-us-west-1	2020-09-22T09:08:54+00:00	ip-172-31-1-82.us-west-1.compute.internal	172.31.1.82		/dev/xvda	ebs	True		subnet-b3e9f0e8	hvm	vpc-15e5f772
+CAPACITYRESERVATIONSPECIFICATION	open
+CPUOPTIONS	2	2
+METADATAOPTIONS	enabled	1	optional	pending
+MONITORING	disabled
+NETWORKINTERFACES		interface	06:89:de:bb:d0:a3	eni-088306bf91a4edecd	645658913490	ip-172-31-1-82.us-west-1.compute.internal	172.31.1.82	True	in-use	subnet-b3e9f0e8	vpc-15e5f772
+ATTACHMENT	2020-09-22T09:08:54+00:00	eni-attach-04bf1cbd9d5da40c2	True	0	attaching
+GROUPS	sg-084a0f7779465d0c7	all-open
+PRIVATEIPADDRESSES	True	ip-172-31-1-82.us-west-1.compute.internal	172.31.1.82
+PLACEMENT	us-west-1b		default
+SECURITYGROUPS	sg-084a0f7779465d0c7	all-open
+STATE	0	pending
+STATEREASON	pending	pending
+TAGS	Name	agent
+TAGS	aws:ec2launchtemplate:version	1
+TAGS	aws:ec2launchtemplate:id	lt-0664087648feb48a8
+INSTANCES	19	x86_64	55139fb5-b325-4c2b-8cae-dcaec647eb61	False	xen	ami-0e65ed16c9bf1abc7	i-0816fb7a49ef5cb06	m5a.xlarge	makesxi-us-west-1	2020-09-22T09:08:54+00:00	ip-172-31-11-134.us-west-1.compute.internal	172.31.11.134		/dev/xvda	ebs	True		subnet-b3e9f0e8	hvm	vpc-15e5f772
+CAPACITYRESERVATIONSPECIFICATION	open
+CPUOPTIONS	2	2
+METADATAOPTIONS	enabled	1	optional	pending
+MONITORING	disabled
+NETWORKINTERFACES		interface	06:f8:6a:9f:e0:fb	eni-09c7f0e8450eb8880	645658913490	ip-172-31-11-134.us-west-1.compute.internal	172.31.11.134	True	in-use	subnet-b3e9f0e8	vpc-15e5f772
+ATTACHMENT	2020-09-22T09:08:54+00:00	eni-attach-0aeb8bfb28a77e37e	True	0	attaching
+GROUPS	sg-084a0f7779465d0c7	all-open
+PRIVATEIPADDRESSES	True	ip-172-31-11-134.us-west-1.compute.internal	172.31.11.134
+PLACEMENT	us-west-1b		default
+SECURITYGROUPS	sg-084a0f7779465d0c7	all-open
+STATE	0	pending
+STATEREASON	pending	pending
+TAGS	aws:ec2launchtemplate:id	lt-0664087648feb48a8
+TAGS	Name	agent
+TAGS	aws:ec2launchtemplate:version	1
+INSTANCES	17	x86_64	55139fb5-b325-4c2b-8cae-dcaec647eb61	False	xen	ami-0e65ed16c9bf1abc7	i-058437bfd741b71d9	m5a.xlarge	makesxi-us-west-1	2020-09-22T09:08:54+00:00	ip-172-31-1-195.us-west-1.compute.internal	172.31.1.195		/dev/xvda	ebs	True		subnet-b3e9f0e8	hvm	vpc-15e5f772
+CAPACITYRESERVATIONSPECIFICATION	open
+CPUOPTIONS	2	2
+METADATAOPTIONS	enabled	1	optional	pending
+MONITORING	disabled
+NETWORKINTERFACES		interface	06:e9:89:3a:12:cd	eni-0eee2e111429a6adf	645658913490	ip-172-31-1-195.us-west-1.compute.internal	172.31.1.195	True	in-use	subnet-b3e9f0e8	vpc-15e5f772
+ATTACHMENT	2020-09-22T09:08:54+00:00	eni-attach-08c842c36d7c5a6c8	True	0	attaching
+GROUPS	sg-084a0f7779465d0c7	all-open
+PRIVATEIPADDRESSES	True	ip-172-31-1-195.us-west-1.compute.internal	172.31.1.195
+PLACEMENT	us-west-1b		default
+SECURITYGROUPS	sg-084a0f7779465d0c7	all-open
+STATE	0	pending
+STATEREASON	pending	pending
+TAGS	aws:ec2launchtemplate:version	1
+TAGS	aws:ec2launchtemplate:id	lt-0664087648feb48a8
+TAGS	Name	agent
+INSTANCES	18	x86_64	55139fb5-b325-4c2b-8cae-dcaec647eb61	False	xen	ami-0e65ed16c9bf1abc7	i-0edadbdc75658d833	m5a.xlarge	makesxi-us-west-1	2020-09-22T09:08:54+00:00	ip-172-31-4-196.us-west-1.compute.internal	172.31.4.196		/dev/xvda	ebs	True		subnet-b3e9f0e8	hvm	vpc-15e5f772
+CAPACITYRESERVATIONSPECIFICATION	open
+CPUOPTIONS	2	2
+METADATAOPTIONS	enabled	1	optional	pending
+MONITORING	disabled
+NETWORKINTERFACES		interface	06:6e:c9:7f:d6:0d	eni-0515de63535e283ac	645658913490	ip-172-31-4-196.us-west-1.compute.internal	172.31.4.196	True	in-use	subnet-b3e9f0e8	vpc-15e5f772
+ATTACHMENT	2020-09-22T09:08:54+00:00	eni-attach-0e497c074a921de89	True	0	attaching
+GROUPS	sg-084a0f7779465d0c7	all-open
+PRIVATEIPADDRESSES	True	ip-172-31-4-196.us-west-1.compute.internal	172.31.4.196
+PLACEMENT	us-west-1b		default
+SECURITYGROUPS	sg-084a0f7779465d0c7	all-open
+STATE	0	pending
+STATEREASON	pending	pending
+TAGS	Name	agent
+TAGS	aws:ec2launchtemplate:version	1
+TAGS	aws:ec2launchtemplate:id	lt-0664087648feb48a8
+INSTANCES	27	x86_64	55139fb5-b325-4c2b-8cae-dcaec647eb61	False	xen	ami-0e65ed16c9bf1abc7	i-061bb006a2b56fed0	m5a.xlarge	makesxi-us-west-1	2020-09-22T09:08:54+00:00	ip-172-31-8-216.us-west-1.compute.internal	172.31.8.216		/dev/xvda	ebs	True		subnet-b3e9f0e8	hvm	vpc-15e5f772
+CAPACITYRESERVATIONSPECIFICATION	open
+CPUOPTIONS	2	2
+METADATAOPTIONS	enabled	1	optional	pending
+MONITORING	disabled
+NETWORKINTERFACES		interface	06:e1:33:db:41:bf	eni-0e0f20b359e4434b2	645658913490	ip-172-31-8-216.us-west-1.compute.internal	172.31.8.216	True	in-use	subnet-b3e9f0e8	vpc-15e5f772
+ATTACHMENT	2020-09-22T09:08:54+00:00	eni-attach-0fdc3927efd6be37c	True	0	attaching
+GROUPS	sg-084a0f7779465d0c7	all-open
+PRIVATEIPADDRESSES	True	ip-172-31-8-216.us-west-1.compute.internal	172.31.8.216
+PLACEMENT	us-west-1b		default
+SECURITYGROUPS	sg-084a0f7779465d0c7	all-open
+STATE	0	pending
+STATEREASON	pending	pending
+TAGS	aws:ec2launchtemplate:id	lt-0664087648feb48a8
+TAGS	Name	agent
+TAGS	aws:ec2launchtemplate:version	1
+INSTANCES	20	x86_64	55139fb5-b325-4c2b-8cae-dcaec647eb61	False	xen	ami-0e65ed16c9bf1abc7	i-0797c25f0bfcc587d	m5a.xlarge	makesxi-us-west-1	2020-09-22T09:08:54+00:00	ip-172-31-15-13.us-west-1.compute.internal	172.31.15.13		/dev/xvda	ebs	True		subnet-b3e9f0e8	hvm	vpc-15e5f772
+CAPACITYRESERVATIONSPECIFICATION	open
+CPUOPTIONS	2	2
+METADATAOPTIONS	enabled	1	optional	pending
+MONITORING	disabled
+NETWORKINTERFACES		interface	06:35:34:79:4c:57	eni-078ca2bf01de6eb2a	645658913490	ip-172-31-15-13.us-west-1.compute.internal	172.31.15.13	True	in-use	subnet-b3e9f0e8	vpc-15e5f772
+ATTACHMENT	2020-09-22T09:08:54+00:00	eni-attach-01e478e8b734110da	True	0	attaching
+GROUPS	sg-084a0f7779465d0c7	all-open
+PRIVATEIPADDRESSES	True	ip-172-31-15-13.us-west-1.compute.internal	172.31.15.13
+PLACEMENT	us-west-1b		default
+SECURITYGROUPS	sg-084a0f7779465d0c7	all-open
+STATE	0	pending
+STATEREASON	pending	pending
+TAGS	Name	agent
+TAGS	aws:ec2launchtemplate:id	lt-0664087648feb48a8
+TAGS	aws:ec2launchtemplate:version	1
+INSTANCES	26	x86_64	55139fb5-b325-4c2b-8cae-dcaec647eb61	False	xen	ami-0e65ed16c9bf1abc7	i-064d9ffdd61864988	m5a.xlarge	makesxi-us-west-1	2020-09-22T09:08:54+00:00	ip-172-31-12-152.us-west-1.compute.internal	172.31.12.152		/dev/xvda	ebs	True		subnet-b3e9f0e8	hvm	vpc-15e5f772
+CAPACITYRESERVATIONSPECIFICATION	open
+CPUOPTIONS	2	2
+METADATAOPTIONS	enabled	1	optional	pending
+MONITORING	disabled
+NETWORKINTERFACES		interface	06:0c:42:58:af:d1	eni-0377c8de2e2c09353	645658913490	ip-172-31-12-152.us-west-1.compute.internal	172.31.12.152	True	in-use	subnet-b3e9f0e8	vpc-15e5f772
+ATTACHMENT	2020-09-22T09:08:54+00:00	eni-attach-0b0b3b07e7e558618	True	0	attaching
+GROUPS	sg-084a0f7779465d0c7	all-open
+PRIVATEIPADDRESSES	True	ip-172-31-12-152.us-west-1.compute.internal	172.31.12.152
+PLACEMENT	us-west-1b		default
+SECURITYGROUPS	sg-084a0f7779465d0c7	all-open
+STATE	0	pending
+STATEREASON	pending	pending
+TAGS	aws:ec2launchtemplate:version	1
+TAGS	Name	agent
+TAGS	aws:ec2launchtemplate:id	lt-0664087648feb48a8
+INSTANCES	4	x86_64	55139fb5-b325-4c2b-8cae-dcaec647eb61	False	xen	ami-0e65ed16c9bf1abc7	i-07356bd183740b953	m5a.xlarge	makesxi-us-west-1	2020-09-22T09:08:54+00:00	ip-172-31-14-34.us-west-1.compute.internal	172.31.14.34		/dev/xvda	ebs	True		subnet-b3e9f0e8	hvm	vpc-15e5f772
+CAPACITYRESERVATIONSPECIFICATION	open
+CPUOPTIONS	2	2
+METADATAOPTIONS	enabled	1	optional	pending
+MONITORING	disabled
+NETWORKINTERFACES		interface	06:45:3f:32:8a:d9	eni-08ee853a0f52c6d27	645658913490	ip-172-31-14-34.us-west-1.compute.internal	172.31.14.34	True	in-use	subnet-b3e9f0e8	vpc-15e5f772
+ATTACHMENT	2020-09-22T09:08:54+00:00	eni-attach-0e57215885fb364ea	True	0	attaching
+GROUPS	sg-084a0f7779465d0c7	all-open
+PRIVATEIPADDRESSES	True	ip-172-31-14-34.us-west-1.compute.internal	172.31.14.34
+PLACEMENT	us-west-1b		default
+SECURITYGROUPS	sg-084a0f7779465d0c7	all-open
+STATE	0	pending
+STATEREASON	pending	pending
+TAGS	aws:ec2launchtemplate:version	1
+TAGS	aws:ec2launchtemplate:id	lt-0664087648feb48a8
+TAGS	Name	agent
+INSTANCES	5	x86_64	55139fb5-b325-4c2b-8cae-dcaec647eb61	False	xen	ami-0e65ed16c9bf1abc7	i-0d340abf636c5066b	m5a.xlarge	makesxi-us-west-1	2020-09-22T09:08:54+00:00	ip-172-31-2-103.us-west-1.compute.internal	172.31.2.103		/dev/xvda	ebs	True		subnet-b3e9f0e8	hvm	vpc-15e5f772
+CAPACITYRESERVATIONSPECIFICATION	open
+CPUOPTIONS	2	2
+METADATAOPTIONS	enabled	1	optional	pending
+MONITORING	disabled
+NETWORKINTERFACES		interface	06:b7:eb:46:58:db	eni-06f0aa86cefc8786f	645658913490	ip-172-31-2-103.us-west-1.compute.internal	172.31.2.103	True	in-use	subnet-b3e9f0e8	vpc-15e5f772
+ATTACHMENT	2020-09-22T09:08:54+00:00	eni-attach-04f2ecd9ac667a71f	True	0	attaching
+GROUPS	sg-084a0f7779465d0c7	all-open
+PRIVATEIPADDRESSES	True	ip-172-31-2-103.us-west-1.compute.internal	172.31.2.103
+PLACEMENT	us-west-1b		default
+SECURITYGROUPS	sg-084a0f7779465d0c7	all-open
+STATE	0	pending
+STATEREASON	pending	pending
+TAGS	Name	agent
+TAGS	aws:ec2launchtemplate:id	lt-0664087648feb48a8
+TAGS	aws:ec2launchtemplate:version	1
+INSTANCES	10	x86_64	55139fb5-b325-4c2b-8cae-dcaec647eb61	False	xen	ami-0e65ed16c9bf1abc7	i-091e1209755a1dfde	m5a.xlarge	makesxi-us-west-1	2020-09-22T09:08:54+00:00	ip-172-31-0-175.us-west-1.compute.internal	172.31.0.175		/dev/xvda	ebs	True		subnet-b3e9f0e8	hvm	vpc-15e5f772
+CAPACITYRESERVATIONSPECIFICATION	open
+CPUOPTIONS	2	2
+METADATAOPTIONS	enabled	1	optional	pending
+MONITORING	disabled
+NETWORKINTERFACES		interface	06:4b:e9:34:72:db	eni-004166301ec7f5211	645658913490	ip-172-31-0-175.us-west-1.compute.internal	172.31.0.175	True	in-use	subnet-b3e9f0e8	vpc-15e5f772
+ATTACHMENT	2020-09-22T09:08:54+00:00	eni-attach-0d54115d97e02a1bd	True	0	attaching
+GROUPS	sg-084a0f7779465d0c7	all-open
+PRIVATEIPADDRESSES	True	ip-172-31-0-175.us-west-1.compute.internal	172.31.0.175
+PLACEMENT	us-west-1b		default
+SECURITYGROUPS	sg-084a0f7779465d0c7	all-open
+STATE	0	pending
+STATEREASON	pending	pending
+TAGS	aws:ec2launchtemplate:id	lt-0664087648feb48a8
+TAGS	aws:ec2launchtemplate:version	1
+TAGS	Name	agent
+INSTANCES	11	x86_64	55139fb5-b325-4c2b-8cae-dcaec647eb61	False	xen	ami-0e65ed16c9bf1abc7	i-065f13a6db93f4460	m5a.xlarge	makesxi-us-west-1	2020-09-22T09:08:54+00:00	ip-172-31-7-48.us-west-1.compute.internal	172.31.7.48		/dev/xvda	ebs	True		subnet-b3e9f0e8	hvm	vpc-15e5f772
+CAPACITYRESERVATIONSPECIFICATION	open
+CPUOPTIONS	2	2
+METADATAOPTIONS	enabled	1	optional	pending
+MONITORING	disabled
+NETWORKINTERFACES		interface	06:08:c2:ad:54:01	eni-09244ae1b9a85e112	645658913490	ip-172-31-7-48.us-west-1.compute.internal	172.31.7.48	True	in-use	subnet-b3e9f0e8	vpc-15e5f772
+ATTACHMENT	2020-09-22T09:08:54+00:00	eni-attach-0d527dd8af2454337	True	0	attaching
+GROUPS	sg-084a0f7779465d0c7	all-open
+PRIVATEIPADDRESSES	True	ip-172-31-7-48.us-west-1.compute.internal	172.31.7.48
+PLACEMENT	us-west-1b		default
+SECURITYGROUPS	sg-084a0f7779465d0c7	all-open
+STATE	0	pending
+STATEREASON	pending	pending
+TAGS	aws:ec2launchtemplate:version	1
+TAGS	Name	agent
+TAGS	aws:ec2launchtemplate:id	lt-0664087648feb48a8
+INSTANCES	6	x86_64	55139fb5-b325-4c2b-8cae-dcaec647eb61	False	xen	ami-0e65ed16c9bf1abc7	i-0cf488eae6ca92f8e	m5a.xlarge	makesxi-us-west-1	2020-09-22T09:08:54+00:00	ip-172-31-2-233.us-west-1.compute.internal	172.31.2.233		/dev/xvda	ebs	True		subnet-b3e9f0e8	hvm	vpc-15e5f772
+CAPACITYRESERVATIONSPECIFICATION	open
+CPUOPTIONS	2	2
+METADATAOPTIONS	enabled	1	optional	pending
+MONITORING	disabled
+NETWORKINTERFACES		interface	06:b4:0d:5f:79:c3	eni-0e3ec7d33424d82f3	645658913490	ip-172-31-2-233.us-west-1.compute.internal	172.31.2.233	True	in-use	subnet-b3e9f0e8	vpc-15e5f772
+ATTACHMENT	2020-09-22T09:08:54+00:00	eni-attach-0ea6902759a864302	True	0	attaching
+GROUPS	sg-084a0f7779465d0c7	all-open
+PRIVATEIPADDRESSES	True	ip-172-31-2-233.us-west-1.compute.internal	172.31.2.233
+PLACEMENT	us-west-1b		default
+SECURITYGROUPS	sg-084a0f7779465d0c7	all-open
+STATE	0	pending
+STATEREASON	pending	pending
+TAGS	Name	agent
+TAGS	aws:ec2launchtemplate:version	1
+TAGS	aws:ec2launchtemplate:id	lt-0664087648feb48a8
+INSTANCES	7	x86_64	55139fb5-b325-4c2b-8cae-dcaec647eb61	False	xen	ami-0e65ed16c9bf1abc7	i-085e5d772bfbfce5f	m5a.xlarge	makesxi-us-west-1	2020-09-22T09:08:54+00:00	ip-172-31-7-235.us-west-1.compute.internal	172.31.7.235		/dev/xvda	ebs	True		subnet-b3e9f0e8	hvm	vpc-15e5f772
+CAPACITYRESERVATIONSPECIFICATION	open
+CPUOPTIONS	2	2
+METADATAOPTIONS	enabled	1	optional	pending
+MONITORING	disabled
+NETWORKINTERFACES		interface	06:52:cf:eb:5f:91	eni-03cfff17db74758c2	645658913490	ip-172-31-7-235.us-west-1.compute.internal	172.31.7.235	True	in-use	subnet-b3e9f0e8	vpc-15e5f772
+ATTACHMENT	2020-09-22T09:08:54+00:00	eni-attach-0c85d24c824218efa	True	0	attaching
+GROUPS	sg-084a0f7779465d0c7	all-open
+PRIVATEIPADDRESSES	True	ip-172-31-7-235.us-west-1.compute.internal	172.31.7.235
+PLACEMENT	us-west-1b		default
+SECURITYGROUPS	sg-084a0f7779465d0c7	all-open
+STATE	0	pending
+STATEREASON	pending	pending
+TAGS	aws:ec2launchtemplate:id	lt-0664087648feb48a8
+TAGS	Name	agent
+TAGS	aws:ec2launchtemplate:version	1
+INSTANCES	28	x86_64	55139fb5-b325-4c2b-8cae-dcaec647eb61	False	xen	ami-0e65ed16c9bf1abc7	i-0fb6242aff26aa35f	m5a.xlarge	makesxi-us-west-1	2020-09-22T09:08:54+00:00	ip-172-31-14-26.us-west-1.compute.internal	172.31.14.26		/dev/xvda	ebs	True		subnet-b3e9f0e8	hvm	vpc-15e5f772
+CAPACITYRESERVATIONSPECIFICATION	open
+CPUOPTIONS	2	2
+METADATAOPTIONS	enabled	1	optional	pending
+MONITORING	disabled
+NETWORKINTERFACES		interface	06:73:ea:45:99:b5	eni-0fcca66a15abeac84	645658913490	ip-172-31-14-26.us-west-1.compute.internal	172.31.14.26	True	in-use	subnet-b3e9f0e8	vpc-15e5f772
+ATTACHMENT	2020-09-22T09:08:54+00:00	eni-attach-0499f3f1c143c2539	True	0	attaching
+GROUPS	sg-084a0f7779465d0c7	all-open
+PRIVATEIPADDRESSES	True	ip-172-31-14-26.us-west-1.compute.internal	172.31.14.26
+PLACEMENT	us-west-1b		default
+SECURITYGROUPS	sg-084a0f7779465d0c7	all-open
+STATE	0	pending
+STATEREASON	pending	pending
+TAGS	aws:ec2launchtemplate:id	lt-0664087648feb48a8
+TAGS	aws:ec2launchtemplate:version	1
+TAGS	Name	agent
+INSTANCES	0	x86_64	55139fb5-b325-4c2b-8cae-dcaec647eb61	False	xen	ami-0e65ed16c9bf1abc7	i-0d47762059e6511c6	m5a.xlarge	makesxi-us-west-1	2020-09-22T09:08:54+00:00	ip-172-31-11-32.us-west-1.compute.internal	172.31.11.32		/dev/xvda	ebs	True		subnet-b3e9f0e8	hvm	vpc-15e5f772
+CAPACITYRESERVATIONSPECIFICATION	open
+CPUOPTIONS	2	2
+METADATAOPTIONS	enabled	1	optional	pending
+MONITORING	disabled
+NETWORKINTERFACES		interface	06:b5:40:b4:68:37	eni-087de7f75975eed82	645658913490	ip-172-31-11-32.us-west-1.compute.internal	172.31.11.32	True	in-use	subnet-b3e9f0e8	vpc-15e5f772
+ATTACHMENT	2020-09-22T09:08:54+00:00	eni-attach-02afd7c60b336199f	True	0	attaching
+GROUPS	sg-084a0f7779465d0c7	all-open
+PRIVATEIPADDRESSES	True	ip-172-31-11-32.us-west-1.compute.internal	172.31.11.32
+PLACEMENT	us-west-1b		default
+SECURITYGROUPS	sg-084a0f7779465d0c7	all-open
+STATE	0	pending
+STATEREASON	pending	pending
+TAGS	Name	agent
+TAGS	aws:ec2launchtemplate:version	1
+TAGS	aws:ec2launchtemplate:id	lt-0664087648feb48a8
+INSTANCES	29	x86_64	55139fb5-b325-4c2b-8cae-dcaec647eb61	False	xen	ami-0e65ed16c9bf1abc7	i-02e430ce6066dd814	m5a.xlarge	makesxi-us-west-1	2020-09-22T09:08:54+00:00	ip-172-31-3-92.us-west-1.compute.internal	172.31.3.92		/dev/xvda	ebs	True		subnet-b3e9f0e8	hvm	vpc-15e5f772
+CAPACITYRESERVATIONSPECIFICATION	open
+CPUOPTIONS	2	2
+METADATAOPTIONS	enabled	1	optional	pending
+MONITORING	disabled
+NETWORKINTERFACES		interface	06:56:f4:ba:b8:6d	eni-075340a4b3e2e9424	645658913490	ip-172-31-3-92.us-west-1.compute.internal	172.31.3.92	True	in-use	subnet-b3e9f0e8	vpc-15e5f772
+ATTACHMENT	2020-09-22T09:08:54+00:00	eni-attach-01c46cddac79232e1	True	0	attaching
+GROUPS	sg-084a0f7779465d0c7	all-open
+PRIVATEIPADDRESSES	True	ip-172-31-3-92.us-west-1.compute.internal	172.31.3.92
+PLACEMENT	us-west-1b		default
+SECURITYGROUPS	sg-084a0f7779465d0c7	all-open
+STATE	0	pending
+STATEREASON	pending	pending
+TAGS	aws:ec2launchtemplate:id	lt-0664087648feb48a8
+TAGS	aws:ec2launchtemplate:version	1
+TAGS	Name	agent
+INSTANCES	8	x86_64	55139fb5-b325-4c2b-8cae-dcaec647eb61	False	xen	ami-0e65ed16c9bf1abc7	i-0182121aa66295b16	m5a.xlarge	makesxi-us-west-1	2020-09-22T09:08:54+00:00	ip-172-31-9-43.us-west-1.compute.internal	172.31.9.43		/dev/xvda	ebs	True		subnet-b3e9f0e8	hvm	vpc-15e5f772
+CAPACITYRESERVATIONSPECIFICATION	open
+CPUOPTIONS	2	2
+METADATAOPTIONS	enabled	1	optional	pending
+MONITORING	disabled
+NETWORKINTERFACES		interface	06:90:a9:d6:9c:61	eni-01c83a77b26df9e80	645658913490	ip-172-31-9-43.us-west-1.compute.internal	172.31.9.43	True	in-use	subnet-b3e9f0e8	vpc-15e5f772
+ATTACHMENT	2020-09-22T09:08:54+00:00	eni-attach-02b4dd687b9d63866	True	0	attaching
+GROUPS	sg-084a0f7779465d0c7	all-open
+PRIVATEIPADDRESSES	True	ip-172-31-9-43.us-west-1.compute.internal	172.31.9.43
+PLACEMENT	us-west-1b		default
+SECURITYGROUPS	sg-084a0f7779465d0c7	all-open
+STATE	0	pending
+STATEREASON	pending	pending
+TAGS	Name	agent
+TAGS	aws:ec2launchtemplate:version	1
+TAGS	aws:ec2launchtemplate:id	lt-0664087648feb48a8
+INSTANCES	3	x86_64	55139fb5-b325-4c2b-8cae-dcaec647eb61	False	xen	ami-0e65ed16c9bf1abc7	i-0d670ae03fad9f8ca	m5a.xlarge	makesxi-us-west-1	2020-09-22T09:08:54+00:00	ip-172-31-3-97.us-west-1.compute.internal	172.31.3.97		/dev/xvda	ebs	True		subnet-b3e9f0e8	hvm	vpc-15e5f772
+CAPACITYRESERVATIONSPECIFICATION	open
+CPUOPTIONS	2	2
+METADATAOPTIONS	enabled	1	optional	pending
+MONITORING	disabled
+NETWORKINTERFACES		interface	06:bd:81:da:d2:55	eni-0a5e0a7c4b90518ec	645658913490	ip-172-31-3-97.us-west-1.compute.internal	172.31.3.97	True	in-use	subnet-b3e9f0e8	vpc-15e5f772
+ATTACHMENT	2020-09-22T09:08:54+00:00	eni-attach-09bcaa0a2dcfd9fb1	True	0	attaching
+GROUPS	sg-084a0f7779465d0c7	all-open
+PRIVATEIPADDRESSES	True	ip-172-31-3-97.us-west-1.compute.internal	172.31.3.97
+PLACEMENT	us-west-1b		default
+SECURITYGROUPS	sg-084a0f7779465d0c7	all-open
+STATE	0	pending
+STATEREASON	pending	pending
+TAGS	aws:ec2launchtemplate:id	lt-0664087648feb48a8
+TAGS	aws:ec2launchtemplate:version	1
+TAGS	Name	agent
+INSTANCES	24	x86_64	55139fb5-b325-4c2b-8cae-dcaec647eb61	False	xen	ami-0e65ed16c9bf1abc7	i-0f89562a4c8567fb3	m5a.xlarge	makesxi-us-west-1	2020-09-22T09:08:54+00:00	ip-172-31-13-23.us-west-1.compute.internal	172.31.13.23		/dev/xvda	ebs	True		subnet-b3e9f0e8	hvm	vpc-15e5f772
+CAPACITYRESERVATIONSPECIFICATION	open
+CPUOPTIONS	2	2
+METADATAOPTIONS	enabled	1	optional	pending
+MONITORING	disabled
+NETWORKINTERFACES		interface	06:0e:f1:cf:87:4b	eni-0672fa910080de771	645658913490	ip-172-31-13-23.us-west-1.compute.internal	172.31.13.23	True	in-use	subnet-b3e9f0e8	vpc-15e5f772
+ATTACHMENT	2020-09-22T09:08:54+00:00	eni-attach-0125b94f3d90ca97d	True	0	attaching
+GROUPS	sg-084a0f7779465d0c7	all-open
+PRIVATEIPADDRESSES	True	ip-172-31-13-23.us-west-1.compute.internal	172.31.13.23
+PLACEMENT	us-west-1b		default
+SECURITYGROUPS	sg-084a0f7779465d0c7	all-open
+STATE	0	pending
+STATEREASON	pending	pending
+TAGS	aws:ec2launchtemplate:version	1
+TAGS	Name	agent
+TAGS	aws:ec2launchtemplate:id	lt-0664087648feb48a8
+INSTANCES	9	x86_64	55139fb5-b325-4c2b-8cae-dcaec647eb61	False	xen	ami-0e65ed16c9bf1abc7	i-0620811a14e76d2be	m5a.xlarge	makesxi-us-west-1	2020-09-22T09:08:54+00:00	ip-172-31-1-237.us-west-1.compute.internal	172.31.1.237		/dev/xvda	ebs	True		subnet-b3e9f0e8	hvm	vpc-15e5f772
+CAPACITYRESERVATIONSPECIFICATION	open
+CPUOPTIONS	2	2
+METADATAOPTIONS	enabled	1	optional	pending
+MONITORING	disabled
+NETWORKINTERFACES		interface	06:89:f1:60:33:cf	eni-0de21d814b9cfbffb	645658913490	ip-172-31-1-237.us-west-1.compute.internal	172.31.1.237	True	in-use	subnet-b3e9f0e8	vpc-15e5f772
+ATTACHMENT	2020-09-22T09:08:54+00:00	eni-attach-0f9edff30a2c7b13e	True	0	attaching
+GROUPS	sg-084a0f7779465d0c7	all-open
+PRIVATEIPADDRESSES	True	ip-172-31-1-237.us-west-1.compute.internal	172.31.1.237
+PLACEMENT	us-west-1b		default
+SECURITYGROUPS	sg-084a0f7779465d0c7	all-open
+STATE	0	pending
+STATEREASON	pending	pending
+TAGS	aws:ec2launchtemplate:version	1
+TAGS	Name	agent
+TAGS	aws:ec2launchtemplate:id	lt-0664087648feb48a8
+INSTANCES	25	x86_64	55139fb5-b325-4c2b-8cae-dcaec647eb61	False	xen	ami-0e65ed16c9bf1abc7	i-089b7e2263a9fb356	m5a.xlarge	makesxi-us-west-1	2020-09-22T09:08:54+00:00	ip-172-31-6-23.us-west-1.compute.internal	172.31.6.23		/dev/xvda	ebs	True		subnet-b3e9f0e8	hvm	vpc-15e5f772
+CAPACITYRESERVATIONSPECIFICATION	open
+CPUOPTIONS	2	2
+METADATAOPTIONS	enabled	1	optional	pending
+MONITORING	disabled
+NETWORKINTERFACES		interface	06:49:9a:55:3b:95	eni-085c749c1fd0a3a1c	645658913490	ip-172-31-6-23.us-west-1.compute.internal	172.31.6.23	True	in-use	subnet-b3e9f0e8	vpc-15e5f772
+ATTACHMENT	2020-09-22T09:08:54+00:00	eni-attach-04e7be6584300a972	True	0	attaching
+GROUPS	sg-084a0f7779465d0c7	all-open
+PRIVATEIPADDRESSES	True	ip-172-31-6-23.us-west-1.compute.internal	172.31.6.23
+PLACEMENT	us-west-1b		default
+SECURITYGROUPS	sg-084a0f7779465d0c7	all-open
+STATE	0	pending
+STATEREASON	pending	pending
+TAGS	aws:ec2launchtemplate:version	1
+TAGS	aws:ec2launchtemplate:id	lt-0664087648feb48a8
+TAGS	Name	agent
+INSTANCES	1	x86_64	55139fb5-b325-4c2b-8cae-dcaec647eb61	False	xen	ami-0e65ed16c9bf1abc7	i-0076f601791660ac6	m5a.xlarge	makesxi-us-west-1	2020-09-22T09:08:54+00:00	ip-172-31-4-32.us-west-1.compute.internal	172.31.4.32		/dev/xvda	ebs	True		subnet-b3e9f0e8	hvm	vpc-15e5f772
+CAPACITYRESERVATIONSPECIFICATION	open
+CPUOPTIONS	2	2
+METADATAOPTIONS	enabled	1	optional	pending
+MONITORING	disabled
+NETWORKINTERFACES		interface	06:99:6d:ca:86:e7	eni-00550ea6c7a2cdcb2	645658913490	ip-172-31-4-32.us-west-1.compute.internal	172.31.4.32	True	in-use	subnet-b3e9f0e8	vpc-15e5f772
+ATTACHMENT	2020-09-22T09:08:54+00:00	eni-attach-0692a307adc5b08ba	True	0	attaching
+GROUPS	sg-084a0f7779465d0c7	all-open
+PRIVATEIPADDRESSES	True	ip-172-31-4-32.us-west-1.compute.internal	172.31.4.32
+PLACEMENT	us-west-1b		default
+SECURITYGROUPS	sg-084a0f7779465d0c7	all-open
+STATE	0	pending
+STATEREASON	pending	pending
+TAGS	aws:ec2launchtemplate:id	lt-0664087648feb48a8
+TAGS	Name	agent
+TAGS	aws:ec2launchtemplate:version	1
+INSTANCES	30	x86_64	55139fb5-b325-4c2b-8cae-dcaec647eb61	False	xen	ami-0e65ed16c9bf1abc7	i-0dedda2117278247f	m5a.xlarge	makesxi-us-west-1	2020-09-22T09:08:54+00:00	ip-172-31-13-158.us-west-1.compute.internal	172.31.13.158		/dev/xvda	ebs	True		subnet-b3e9f0e8	hvm	vpc-15e5f772
+CAPACITYRESERVATIONSPECIFICATION	open
+CPUOPTIONS	2	2
+METADATAOPTIONS	enabled	1	optional	pending
+MONITORING	disabled
+NETWORKINTERFACES		interface	06:99:1f:de:9a:47	eni-07ae04c7e38d7fd26	645658913490	ip-172-31-13-158.us-west-1.compute.internal	172.31.13.158	True	in-use	subnet-b3e9f0e8	vpc-15e5f772
+ATTACHMENT	2020-09-22T09:08:54+00:00	eni-attach-06f933bd60d46a4f2	True	0	attaching
+GROUPS	sg-084a0f7779465d0c7	all-open
+PRIVATEIPADDRESSES	True	ip-172-31-13-158.us-west-1.compute.internal	172.31.13.158
+PLACEMENT	us-west-1b		default
+SECURITYGROUPS	sg-084a0f7779465d0c7	all-open
+STATE	0	pending
+STATEREASON	pending	pending
+TAGS	aws:ec2launchtemplate:id	lt-0664087648feb48a8
+TAGS	Name	agent
+TAGS	aws:ec2launchtemplate:version	1
+INSTANCES	2	x86_64	55139fb5-b325-4c2b-8cae-dcaec647eb61	False	xen	ami-0e65ed16c9bf1abc7	i-08efd29fc7e441d93	m5a.xlarge	makesxi-us-west-1	2020-09-22T09:08:54+00:00	ip-172-31-10-97.us-west-1.compute.internal	172.31.10.97		/dev/xvda	ebs	True		subnet-b3e9f0e8	hvm	vpc-15e5f772
+CAPACITYRESERVATIONSPECIFICATION	open
+CPUOPTIONS	2	2
+METADATAOPTIONS	enabled	1	optional	pending
+MONITORING	disabled
+NETWORKINTERFACES		interface	06:33:fe:62:4c:e5	eni-061710ef5e1021d5a	645658913490	ip-172-31-10-97.us-west-1.compute.internal	172.31.10.97	True	in-use	subnet-b3e9f0e8	vpc-15e5f772
+ATTACHMENT	2020-09-22T09:08:54+00:00	eni-attach-01f629ae314ecbc33	True	0	attaching
+GROUPS	sg-084a0f7779465d0c7	all-open
+PRIVATEIPADDRESSES	True	ip-172-31-10-97.us-west-1.compute.internal	172.31.10.97
+PLACEMENT	us-west-1b		default
+SECURITYGROUPS	sg-084a0f7779465d0c7	all-open
+STATE	0	pending
+STATEREASON	pending	pending
+TAGS	Name	agent
+TAGS	aws:ec2launchtemplate:id	lt-0664087648feb48a8
+TAGS	aws:ec2launchtemplate:version	1
+INSTANCES	31	x86_64	55139fb5-b325-4c2b-8cae-dcaec647eb61	False	xen	ami-0e65ed16c9bf1abc7	i-0792359450f9693e7	m5a.xlarge	makesxi-us-west-1	2020-09-22T09:08:54+00:00	ip-172-31-9-222.us-west-1.compute.internal	172.31.9.222		/dev/xvda	ebs	True		subnet-b3e9f0e8	hvm	vpc-15e5f772
+CAPACITYRESERVATIONSPECIFICATION	open
+CPUOPTIONS	2	2
+METADATAOPTIONS	enabled	1	optional	pending
+MONITORING	disabled
+NETWORKINTERFACES		interface	06:84:c5:d5:03:d1	eni-0db6a3e6f3833d872	645658913490	ip-172-31-9-222.us-west-1.compute.internal	172.31.9.222	True	in-use	subnet-b3e9f0e8	vpc-15e5f772
+ATTACHMENT	2020-09-22T09:08:54+00:00	eni-attach-0d273b1f644236252	True	0	attaching
+GROUPS	sg-084a0f7779465d0c7	all-open
+PRIVATEIPADDRESSES	True	ip-172-31-9-222.us-west-1.compute.internal	172.31.9.222
+PLACEMENT	us-west-1b		default
+SECURITYGROUPS	sg-084a0f7779465d0c7	all-open
+STATE	0	pending
+STATEREASON	pending	pending
+TAGS	Name	agent
+TAGS	aws:ec2launchtemplate:version	1
+TAGS	aws:ec2launchtemplate:id	lt-0664087648feb48a8

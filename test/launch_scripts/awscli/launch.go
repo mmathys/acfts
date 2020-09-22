@@ -15,9 +15,9 @@ import (
 
 // Configuration
 const (
+	Interactive = false
 	Verbose     = false
 	Topology    = "merkleAWS4"
-	Interactive = false
 	StartupTime = 3 * time.Minute
 	TestTime    = 6 * time.Minute
 
@@ -30,9 +30,15 @@ const (
 
 	/* Agents */
 	AgentsLaunchTemplate = "lt-0664087648feb48a8" // us-west-1
-	NumAgentsInstances   = 16
+	NumAgentsInstances   = 40
 	NumWorkers           = 4096
 )
+
+type Validator struct {
+	id int
+	shard int
+	ip string
+}
 
 func main() {
 	topologiesFile := fmt.Sprintf("topologies/%s.json", Topology)
@@ -42,7 +48,8 @@ func main() {
 
 	fmt.Printf("Launching %d validators which %d shards (total: %d)\n", numValidators, NumShards, numValidators*NumShards)
 
-	var validatorIPs []string
+	var validators []Validator
+	var instanceIDs []string
 
 	/* Launch validators */
 	for i := 0; i < numValidators; i++ {
@@ -66,9 +73,14 @@ func main() {
 			}
 			out := execute(args)
 
-			ip := getIp(out)
+			id, ip := parse(out)
+			instanceIDs = append(instanceIDs, id)
 			injectIP(ip)
-			validatorIPs = append(validatorIPs, ip)
+			validators = append(validators, Validator{
+				id: i,
+				shard: j,
+				ip: ip,
+			})
 		}
 	}
 
@@ -103,7 +115,9 @@ func main() {
 		"--user-data",
 		fmt.Sprintf("file://%s", filename),
 	}
-	execute(args)
+	out := execute(args)
+	ids := parseIDs(out)
+	instanceIDs = append(instanceIDs, ids...)
 	os.Remove(topologiesFile)
 
 	if Interactive {
@@ -118,13 +132,13 @@ func main() {
 	/* Retrieve logs from validators */
 	fmt.Println("retrieving logs...")
 	os.Mkdir("logs", os.ModePerm)
-	for _, ip := range validatorIPs {
+	for _, validator := range validators {
 		cmd := exec.Command(
 			"ssh",
 			"-i",
 			"~/.ssh/makesxi-us-west-1",
 			"-oStrictHostKeyChecking=no",
-			fmt.Sprintf("ec2-user@%s", ip),
+			fmt.Sprintf("ec2-user@%s", validator.ip),
 			"docker logs acfts_server_1",
 		)
 		dir, _ := os.Getwd()
@@ -132,8 +146,9 @@ func main() {
 		out, err := cmd.CombinedOutput()
 		if err != nil {
 			log.Fatalf("could not get logs.. %s\n", err)
+			fmt.Println(out)
 		}
-		filename := fmt.Sprintf("logs/%s.log", ip)
+		filename := fmt.Sprintf("logs/%d-%d-%s.log", validator.id, validator.shard, validator.ip)
 		f, err := os.Create(filename)
 		if err != nil {
 			panic(err)
@@ -141,6 +156,16 @@ func main() {
 		f.Write(out)
 		f.Close()
 	}
+
+	/* Terminate instances */
+	fmt.Println("terminating instances...")
+	args = []string{
+		"ec2",
+		"terminate-instances",
+		"--instance-ids",
+	}
+	args = append(args, instanceIDs...)
+	execute(args)
 
 	fmt.Println("done")
 }
@@ -183,7 +208,7 @@ func export(key string, value string) string {
 	return fmt.Sprintf("export %s=%s\n", key, value)
 }
 
-func getIp(output string) string {
+func parse(output string) (string, string) {
 	line := strings.Split(output, "\n")[1]
 	id := strings.Split(line, "\t")[7]
 
@@ -199,7 +224,7 @@ func getIp(output string) string {
 	out := execute(args)
 	out = strings.TrimSpace(out)
 	fmt.Println(out)
-	return out
+	return strings.TrimSpace(id), out
 }
 
 func execute(args []string) string {
@@ -260,4 +285,16 @@ func pushChanges() {
 		fmt.Println(string(out))
 		log.Fatalf("git push failed with %s\n", err)
 	}
+}
+
+func parseIDs(out string) []string {
+	lines := strings.Split(out, "\n")
+	var ids []string
+	for _, line := range lines {
+		e := strings.Split(line, "\t")
+		if e[0] == "INSTANCES" {
+			ids = append(ids, strings.TrimSpace(e[7]))
+		}
+	}
+	return ids
 }
