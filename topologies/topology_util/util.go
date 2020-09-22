@@ -508,7 +508,7 @@ func merkleAWS4() []byte {
 }
 
 func merkleAWS7() []byte {
-	numClients := 64
+	numClients := 4096
 	numServers := 7
 	numServerInstances := 1
 
@@ -516,7 +516,7 @@ func merkleAWS7() []byte {
 }
 
 func merkleAWS10() []byte {
-	numClients := 64
+	numClients := 4096
 	numServers := 10
 	numServerInstances := 1
 
