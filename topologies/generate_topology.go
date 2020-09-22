@@ -259,8 +259,11 @@ func writeConfig(config []byte, name string) {
 	}
 }
 
-// prints topology to stdout
 func main() {
+	generateAll()
+}
+
+func generateAll() {
 	writeConfig(edDSASimple(), "edDSASimple")
 	writeConfig(blsSimple(), "blsSimple")
 	writeConfig(merkleSimple(), "merkleSimple")
