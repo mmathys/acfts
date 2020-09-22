@@ -4,7 +4,7 @@
     {
       "Instances": [
         {
-          "Net": "54.151.80.127",
+          "Net": "localhost",
           "Port": 6666
         }
       ],
