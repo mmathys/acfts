@@ -4,13 +4,52 @@
     {
       "Instances": [
         {
-          "Net": "54.151.50.205",
+          "Net": "localhost",
           "Port": 6666
         }
       ],
       "Key": {
         "PublicKey": "a77000e6e7e77df500e39144e34e31f1715c98a5ecaaf34b8863f2d907c35ab4",
         "PrivateKey": "26665d594658641d981cb13e74e130c12bb5a0924c217e10b2a0e20437cabf97a77000e6e7e77df500e39144e34e31f1715c98a5ecaaf34b8863f2d907c35ab4",
+        "Mode": "merkle"
+      }
+    },
+    {
+      "Instances": [
+        {
+          "Net": "localhost",
+          "Port": 6666
+        }
+      ],
+      "Key": {
+        "PublicKey": "c8766183072ad3a0aeb17e672152bff7d5382a62f14a818f2a7dbe3c123d1fc3",
+        "PrivateKey": "19d771ac0e1f2b76082820840dd8b7df7c7e2614f8d7346186460946b5f6173dc8766183072ad3a0aeb17e672152bff7d5382a62f14a818f2a7dbe3c123d1fc3",
+        "Mode": "merkle"
+      }
+    },
+    {
+      "Instances": [
+        {
+          "Net": "localhost",
+          "Port": 6666
+        }
+      ],
+      "Key": {
+        "PublicKey": "564c67c3cd08863a570e632c60409d57b02f576a0582bcaf297aa4610f98aead",
+        "PrivateKey": "eb1a60b82e72545395f8ce4334703f13597985aed204107ea5bdaf6289c38a68564c67c3cd08863a570e632c60409d57b02f576a0582bcaf297aa4610f98aead",
+        "Mode": "merkle"
+      }
+    },
+    {
+      "Instances": [
+        {
+          "Net": "localhost",
+          "Port": 6666
+        }
+      ],
+      "Key": {
+        "PublicKey": "4a155d1c1d86854aae1008373c3e9a92dd02cbbef52e5372aee13c2efe22398d",
+        "PrivateKey": "e76b8dee9a5eca0000da56aadaa39e8cdb564ee6f82008052caad39741e72b134a155d1c1d86854aae1008373c3e9a92dd02cbbef52e5372aee13c2efe22398d",
         "Mode": "merkle"
       }
     }
