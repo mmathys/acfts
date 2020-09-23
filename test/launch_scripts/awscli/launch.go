@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"github.com/mmathys/acfts/common"
+	"github.com/mmathys/acfts/topologies/topology_util"
 	"io/ioutil"
 	"log"
 	"os"
@@ -17,9 +18,9 @@ import (
 const (
 	Interactive = false
 	Verbose     = false
-	Topology    = "merkleAWS4"
+	Topology    = "merkleAWS28"
 	StartupTime = 3 * time.Minute
-	TestTime    = 6 * time.Minute
+	TestTime    = 7 * time.Minute
 
 	/* Validators */
 	NumShards               = 1
@@ -30,8 +31,8 @@ const (
 
 	/* Agents */
 	AgentsLaunchTemplate = "lt-0664087648feb48a8" // us-west-1
-	NumAgentsInstances   = 40
-	NumWorkers           = 4096
+	NumAgentsInstances   = 3 * 28 * NumShards // 3 * validators * shards
+	NumWorkers           = 2048
 )
 
 type Validator struct {
@@ -41,12 +42,13 @@ type Validator struct {
 }
 
 func main() {
+	topology_util.GenerateAll()
 	topologiesFile := fmt.Sprintf("topologies/%s.json", Topology)
 	common.InitAddresses(topologiesFile)
 
 	numValidators := common.GetNumServers()
 
-	fmt.Printf("Launching %d validators which %d shards (total: %d)\n", numValidators, NumShards, numValidators*NumShards)
+	log.Printf("Launching %d validators with %d shards (total: %d)\n", numValidators, NumShards, numValidators*NumShards)
 
 	var validators []Validator
 	var instanceIDs []string
@@ -87,16 +89,16 @@ func main() {
 	pushChanges()
 
 	if Interactive {
-		fmt.Printf("→ wait until validators have started up.\n")
+		log.Printf("→ wait until validators have started up.\n")
 		fmt.Print("Press enter when done.")
 		bufio.NewScanner(os.Stdin).Scan()
 	} else {
-		fmt.Println("waiting for startup...")
+		log.Println("waiting for startup...")
 		time.Sleep(StartupTime)
 	}
 
 	/* Launch agents */
-	fmt.Println("Launching agents...")
+	log.Println("launching agents...")
 	filename := fmt.Sprintf("aws-agents-%s", Topology)
 	f, err := os.Create(filename)
 	if err != nil {
@@ -121,17 +123,18 @@ func main() {
 	os.Remove(topologiesFile)
 
 	if Interactive {
-		fmt.Printf("→ wait until the test is finished.\n")
-		fmt.Print("Press enter when done.")
+		log.Printf("→ wait until the test is finished.\n")
+		log.Print("Press enter when done.")
 		bufio.NewScanner(os.Stdin).Scan()
 	} else {
-		fmt.Println("testing...")
+		log.Println("testing...")
 		time.Sleep(TestTime)
 	}
 
 	/* Retrieve logs from validators */
-	fmt.Println("retrieving logs...")
-	os.Mkdir("logs", os.ModePerm)
+	log.Println("retrieving logs...")
+	outputFolder := fmt.Sprintf("logs/%s-%d", Topology, time.Now().Unix())
+	os.MkdirAll(outputFolder, os.ModePerm)
 	for _, validator := range validators {
 		cmd := exec.Command(
 			"ssh",
@@ -148,7 +151,7 @@ func main() {
 			log.Fatalf("could not get logs.. %s\n", err)
 			fmt.Println(out)
 		}
-		filename := fmt.Sprintf("logs/%d-%d-%s.log", validator.id, validator.shard, validator.ip)
+		filename := fmt.Sprintf("%s/%d-%d.log", outputFolder, validator.id, validator.shard)
 		f, err := os.Create(filename)
 		if err != nil {
 			panic(err)
@@ -158,7 +161,7 @@ func main() {
 	}
 
 	/* Terminate instances */
-	fmt.Println("terminating instances...")
+	log.Println("terminating instances...")
 	args = []string{
 		"ec2",
 		"terminate-instances",
@@ -167,7 +170,7 @@ func main() {
 	args = append(args, instanceIDs...)
 	execute(args)
 
-	fmt.Println("done")
+	log.Println("done")
 }
 
 func validatorConfig(validator int, shard int) string {
@@ -239,13 +242,14 @@ func execute(args []string) string {
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		log.Fatalf("cmd.Run() failed with %s\n", err)
+		fmt.Println(out)
 	}
 	return string(out)
 }
 
 func info(output string) {
 	if Verbose {
-		fmt.Println(output)
+		log.Println(output)
 	}
 }
 

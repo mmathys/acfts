@@ -277,8 +277,15 @@ func GenerateAll() {
 	writeConfig(merkleAWS(), "merkleAWS")
 	writeConfig(merkleAWS2Shards(), "merkleAWS2Shards")
 	writeConfig(merkleAWS4(), "merkleAWS4")
+	writeConfig(merkleAWS4_2(), "merkleAWS4_2")
+	writeConfig(merkleAWS4_4(), "merkleAWS4_4")
 	writeConfig(merkleAWS7(), "merkleAWS7")
 	writeConfig(merkleAWS10(), "merkleAWS10")
+	writeConfig(merkleAWS10_2(), "merkleAWS10_2")
+	writeConfig(merkleAWS10_4(), "merkleAWS10_4")
+	writeConfig(merkleAWS28(), "merkleAWS28")
+	writeConfig(merkleAWS28_2(), "merkleAWS28_2")
+	writeConfig(merkleAWS28_4(), "merkleAWS28_4")
 
 	writeConfig(signTest(), "signTest")
 	writeConfig(localSimpleExtended(), "localSimpleExtended")
@@ -507,6 +514,22 @@ func merkleAWS4() []byte {
 	return config(numClients, numServers, numServerInstances, false, true, true, common.ModeMerkle)
 }
 
+func merkleAWS4_2() []byte {
+	numClients := 4096
+	numServers := 4
+	numServerInstances := 2
+
+	return config(numClients, numServers, numServerInstances, false, true, true, common.ModeMerkle)
+}
+
+func merkleAWS4_4() []byte {
+	numClients := 4096
+	numServers := 4
+	numServerInstances := 4
+
+	return config(numClients, numServers, numServerInstances, false, true, true, common.ModeMerkle)
+}
+
 func merkleAWS7() []byte {
 	numClients := 4096
 	numServers := 7
@@ -519,6 +542,46 @@ func merkleAWS10() []byte {
 	numClients := 4096
 	numServers := 10
 	numServerInstances := 1
+
+	return config(numClients, numServers, numServerInstances, false, true, true, common.ModeMerkle)
+}
+
+func merkleAWS10_2() []byte {
+	numClients := 4096
+	numServers := 10
+	numServerInstances := 2
+
+	return config(numClients, numServers, numServerInstances, false, true, true, common.ModeMerkle)
+}
+
+func merkleAWS10_4() []byte {
+	numClients := 4096
+	numServers := 10
+	numServerInstances := 4
+
+	return config(numClients, numServers, numServerInstances, false, true, true, common.ModeMerkle)
+}
+
+func merkleAWS28() []byte {
+	numClients := 4096
+	numServers := 28
+	numServerInstances := 1
+
+	return config(numClients, numServers, numServerInstances, false, true, true, common.ModeMerkle)
+}
+
+func merkleAWS28_2() []byte {
+	numClients := 4096
+	numServers := 28
+	numServerInstances := 2
+
+	return config(numClients, numServers, numServerInstances, false, true, true, common.ModeMerkle)
+}
+
+func merkleAWS28_4() []byte {
+	numClients := 4096
+	numServers := 28
+	numServerInstances := 4
 
 	return config(numClients, numServers, numServerInstances, false, true, true, common.ModeMerkle)
 }

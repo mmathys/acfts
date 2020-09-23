@@ -6,6 +6,18 @@
         {
           "Net": "localhost",
           "Port": 6666
+        },
+        {
+          "Net": "localhost",
+          "Port": 6666
+        },
+        {
+          "Net": "localhost",
+          "Port": 6666
+        },
+        {
+          "Net": "localhost",
+          "Port": 6666
         }
       ],
       "Key": {
@@ -16,6 +28,18 @@
     },
     {
       "Instances": [
+        {
+          "Net": "localhost",
+          "Port": 6666
+        },
+        {
+          "Net": "localhost",
+          "Port": 6666
+        },
+        {
+          "Net": "localhost",
+          "Port": 6666
+        },
         {
           "Net": "localhost",
           "Port": 6666
@@ -32,6 +56,18 @@
         {
           "Net": "localhost",
           "Port": 6666
+        },
+        {
+          "Net": "localhost",
+          "Port": 6666
+        },
+        {
+          "Net": "localhost",
+          "Port": 6666
+        },
+        {
+          "Net": "localhost",
+          "Port": 6666
         }
       ],
       "Key": {
@@ -45,89 +81,23 @@
         {
           "Net": "localhost",
           "Port": 6666
+        },
+        {
+          "Net": "localhost",
+          "Port": 6666
+        },
+        {
+          "Net": "localhost",
+          "Port": 6666
+        },
+        {
+          "Net": "localhost",
+          "Port": 6666
         }
       ],
       "Key": {
         "PublicKey": "4a155d1c1d86854aae1008373c3e9a92dd02cbbef52e5372aee13c2efe22398d",
         "PrivateKey": "e76b8dee9a5eca0000da56aadaa39e8cdb564ee6f82008052caad39741e72b134a155d1c1d86854aae1008373c3e9a92dd02cbbef52e5372aee13c2efe22398d",
-        "Mode": "merkle"
-      }
-    },
-    {
-      "Instances": [
-        {
-          "Net": "localhost",
-          "Port": 6666
-        }
-      ],
-      "Key": {
-        "PublicKey": "da67cdf6dcf621da70f2a3e902b371853b64d2da457de81eff5c9cb1da811f09",
-        "PrivateKey": "fc2d5e43dea1ce49885ad705abfa0c4370d103b2c5db566b8f5903b0b7acb3b1da67cdf6dcf621da70f2a3e902b371853b64d2da457de81eff5c9cb1da811f09",
-        "Mode": "merkle"
-      }
-    },
-    {
-      "Instances": [
-        {
-          "Net": "localhost",
-          "Port": 6666
-        }
-      ],
-      "Key": {
-        "PublicKey": "e1a4cca58d70ac85d567358d01878648abdcdb9a92f0fe289c116b27181b04b6",
-        "PrivateKey": "3823a36ed2057ebb2b00da9c75677fca4be8829e4ecc4d55bc3b1196f8c5fbb9e1a4cca58d70ac85d567358d01878648abdcdb9a92f0fe289c116b27181b04b6",
-        "Mode": "merkle"
-      }
-    },
-    {
-      "Instances": [
-        {
-          "Net": "localhost",
-          "Port": 6666
-        }
-      ],
-      "Key": {
-        "PublicKey": "30d615e6962bcfd30847a8aa6ed103aba903603b0f0b11a090b344aca881a114",
-        "PrivateKey": "3b5495f1843e199b1c559320603eeb0e05e4b3ebf48d64aebd19bd7a5ce5d38230d615e6962bcfd30847a8aa6ed103aba903603b0f0b11a090b344aca881a114",
-        "Mode": "merkle"
-      }
-    },
-    {
-      "Instances": [
-        {
-          "Net": "localhost",
-          "Port": 6666
-        }
-      ],
-      "Key": {
-        "PublicKey": "a23370ed4fdb9219e03dd354f3aa76400b440ba70e40f95615c2577c4d88e4c2",
-        "PrivateKey": "b72ebb6b81268c9c103dd432477edbb580d9e936ad3978d6e5f037337583eaa8a23370ed4fdb9219e03dd354f3aa76400b440ba70e40f95615c2577c4d88e4c2",
-        "Mode": "merkle"
-      }
-    },
-    {
-      "Instances": [
-        {
-          "Net": "localhost",
-          "Port": 6666
-        }
-      ],
-      "Key": {
-        "PublicKey": "a3f70dbb0a14afa7a33358bae945293dbbe355068efc90e9ff3d7dfe45136a27",
-        "PrivateKey": "de4ce7be9625ac97c56aeb64c8c62be83f36f5898fd9b1bf72d56c1bcb7d18dfa3f70dbb0a14afa7a33358bae945293dbbe355068efc90e9ff3d7dfe45136a27",
-        "Mode": "merkle"
-      }
-    },
-    {
-      "Instances": [
-        {
-          "Net": "localhost",
-          "Port": 6666
-        }
-      ],
-      "Key": {
-        "PublicKey": "618a1a777293968592084a0b5ef0ef6117358025fa513c978197ad027273b1f2",
-        "PrivateKey": "877ea07f401c16c6c4b22b0fb8f38e4fd9a7766a57daca7c21b07ccab8812573618a1a777293968592084a0b5ef0ef6117358025fa513c978197ad027273b1f2",
         "Mode": "merkle"
       }
     }
