@@ -4,11 +4,11 @@
     {
       "Instances": [
         {
-          "Net": "localhost",
+          "Net": "54.151.40.236",
           "Port": 6666
         },
         {
-          "Net": "localhost",
+          "Net": "52.53.167.212",
           "Port": 6666
         }
       ],
@@ -21,11 +21,11 @@
     {
       "Instances": [
         {
-          "Net": "localhost",
+          "Net": "54.153.25.18",
           "Port": 6666
         },
         {
-          "Net": "localhost",
+          "Net": "54.153.33.0",
           "Port": 6666
         }
       ],
@@ -38,11 +38,11 @@
     {
       "Instances": [
         {
-          "Net": "localhost",
+          "Net": "54.67.66.92",
           "Port": 6666
         },
         {
-          "Net": "localhost",
+          "Net": "18.144.24.242",
           "Port": 6666
         }
       ],
@@ -55,11 +55,11 @@
     {
       "Instances": [
         {
-          "Net": "localhost",
+          "Net": "3.101.43.117",
           "Port": 6666
         },
         {
-          "Net": "localhost",
+          "Net": "54.219.35.254",
           "Port": 6666
         }
       ],
