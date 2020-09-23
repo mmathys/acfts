@@ -287,6 +287,8 @@ func GenerateAll() {
 	writeConfig(merkleAWS28_2(), "merkleAWS28_2")
 	writeConfig(merkleAWS28_4(), "merkleAWS28_4")
 
+	writeConfig(merkleAWSInsane(), "merkleAWSInsane")
+
 	writeConfig(signTest(), "signTest")
 	writeConfig(localSimpleExtended(), "localSimpleExtended")
 	writeConfig(localFull(), "localFull")
@@ -582,6 +584,14 @@ func merkleAWS28_4() []byte {
 	numClients := 4096
 	numServers := 28
 	numServerInstances := 4
+
+	return config(numClients, numServers, numServerInstances, false, true, true, common.ModeMerkle)
+}
+
+func merkleAWSInsane() []byte {
+	numClients := 4096
+	numServers := 4
+	numServerInstances := 100
 
 	return config(numClients, numServers, numServerInstances, false, true, true, common.ModeMerkle)
 }
