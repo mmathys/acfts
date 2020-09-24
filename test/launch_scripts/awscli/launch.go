@@ -11,6 +11,7 @@ import (
 	"os/exec"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -18,28 +19,29 @@ import (
 const (
 	Interactive = false
 	Verbose     = false
-	Topology    = "merkleAWS28"
+	Topology    = "merkleAWS28_4"
 	StartupTime = 3 * time.Minute
-	TestTime    = 7 * time.Minute
+	TestTime    = 12 * time.Minute
 
 	/* Validators */
-	NumShards               = 1
+	NumShards               = 4
 	Pooling                 = true
 	PoolSize                = 64
-	ValidatorLaunchTemplate = "lt-0e530c80ccc3334ab" // us-west-1
-	//ValidatorLaunchTemplate = "lt-046c9ee55757a7a33" // eu-central-1
+	ValidatorLaunchTemplate = "lt-0e530c80ccc3334ab"
 
 	/* Agents */
 	AgentsLaunchTemplate = "lt-0664087648feb48a8" // us-west-1
-	NumAgentsInstances   = 3 * 28 * NumShards // 3 * validators * shards
+	NumAgentsInstances   = 3 * 28 * NumShards
 	NumWorkers           = 2048
 )
 
 type Validator struct {
-	id int
+	id    int
 	shard int
-	ip string
+	ip    string
 }
+
+var instanceIDs []string
 
 func main() {
 	topology_util.GenerateAll()
@@ -51,7 +53,6 @@ func main() {
 	log.Printf("Launching %d validators with %d shards (total: %d)\n", numValidators, NumShards, numValidators*NumShards)
 
 	var validators []Validator
-	var instanceIDs []string
 
 	/* Launch validators */
 	for i := 0; i < numValidators; i++ {
@@ -79,9 +80,9 @@ func main() {
 			instanceIDs = append(instanceIDs, id)
 			injectIP(ip)
 			validators = append(validators, Validator{
-				id: i,
+				id:    i,
 				shard: j,
-				ip: ip,
+				ip:    ip,
 			})
 		}
 	}
@@ -135,6 +136,7 @@ func main() {
 	log.Println("retrieving logs...")
 	outputFolder := fmt.Sprintf("logs/%s-%d", Topology, time.Now().Unix())
 	os.MkdirAll(outputFolder, os.ModePerm)
+
 	for _, validator := range validators {
 		cmd := exec.Command(
 			"ssh",
@@ -148,8 +150,8 @@ func main() {
 		cmd.Dir = dir
 		out, err := cmd.CombinedOutput()
 		if err != nil {
+			fmt.Println(string(out))
 			log.Fatalf("could not get logs.. %s\n", err)
-			fmt.Println(out)
 		}
 		filename := fmt.Sprintf("%s/%d-%d.log", outputFolder, validator.id, validator.shard)
 		f, err := os.Create(filename)
@@ -215,19 +217,26 @@ func parse(output string) (string, string) {
 	line := strings.Split(output, "\n")[1]
 	id := strings.Split(line, "\t")[7]
 
-	time.Sleep(time.Second)
-	args := []string{
-		"ec2",
-		"describe-instances",
-		"--query",
-		"Reservations[*].Instances[*].PublicIpAddress",
-		"--instance-ids",
-		id,
+	for i := 0; i < 10; i++ {
+		args := []string{
+			"ec2",
+			"describe-instances",
+			"--query",
+			"Reservations[*].Instances[*].PublicIpAddress",
+			"--instance-ids",
+			id,
+		}
+		out := execute(args)
+		out = strings.TrimSpace(out)
+		if out != "" {
+			fmt.Println(out)
+			return strings.TrimSpace(id), out
+		} else {
+			time.Sleep(3 * time.Second)
+		}
 	}
-	out := execute(args)
-	out = strings.TrimSpace(out)
-	fmt.Println(out)
-	return strings.TrimSpace(id), out
+	panicIDs(instanceIDs)
+	panic("after 10 tries, didn't manage to get ip. :(")
 }
 
 func execute(args []string) string {
@@ -241,8 +250,9 @@ func execute(args []string) string {
 
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Fatalf("cmd.Run() failed with %s\n", err)
+		panicIDs(instanceIDs)
 		fmt.Println(out)
+		log.Fatalf("cmd.Run() failed with %s\n", err)
 	}
 	return string(out)
 }
@@ -253,6 +263,8 @@ func info(output string) {
 	}
 }
 
+var injectIPMutex sync.Mutex
+
 func injectIP(ip string) {
 	path := fmt.Sprintf("./topologies/%s.json", Topology)
 	args := []string{
@@ -260,12 +272,14 @@ func injectIP(ip string) {
 		fmt.Sprintf("0,/localhost/{s/localhost/%s/}", ip),
 		path,
 	}
+	injectIPMutex.Lock()
 	cmd := exec.Command("gsed", args...)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		fmt.Println(string(out))
 		log.Fatalf("cmd.Run() failed with %s\n", err)
 	}
+	injectIPMutex.Unlock()
 }
 
 func pushChanges() {
@@ -301,4 +315,12 @@ func parseIDs(out string) []string {
 		}
 	}
 	return ids
+}
+
+func panicIDs(ids []string) {
+	fmt.Print("aws ec2 terminate-instances --instance-ids ")
+	for _, id := range ids {
+		fmt.Printf(" %s", id)
+	}
+	fmt.Println()
 }
