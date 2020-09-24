@@ -9,6 +9,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"sort"
 	"strconv"
 	"strings"
 	"sync"
@@ -19,19 +20,19 @@ import (
 const (
 	Interactive = false
 	Verbose     = false
-	Topology    = "merkleAWS28_4"
+	Topology    = "merkleAWSInsane"
 	StartupTime = 3 * time.Minute
 	TestTime    = 12 * time.Minute
 
 	/* Validators */
-	NumShards               = 4
+	NumShards               = 100
 	Pooling                 = true
 	PoolSize                = 64
 	ValidatorLaunchTemplate = "lt-0e530c80ccc3334ab"
 
 	/* Agents */
 	AgentsLaunchTemplate = "lt-0664087648feb48a8" // us-west-1
-	NumAgentsInstances   = 3 * 28 * NumShards
+	NumAgentsInstances   = 3 * 4 * NumShards
 	NumWorkers           = 2048
 )
 
@@ -55,36 +56,57 @@ func main() {
 	var validators []Validator
 
 	/* Launch validators */
+	var wg sync.WaitGroup
+	var validatorMutex sync.Mutex
+
 	for i := 0; i < numValidators; i++ {
 		for j := 0; j < NumShards; j++ {
-			info(fmt.Sprintf("Launching validator %d, shard %d...", i, j))
-			filename := fmt.Sprintf("aws-validator-%s-%d-%d", Topology, i, j)
-			f, err := os.Create(filename)
-			if err != nil {
-				panic(err)
-			}
-			f.WriteString(validatorConfig(i, j))
-			f.Close()
+			wg.Add(1)
+			go func(i int, j int, wg *sync.WaitGroup) {
+				defer wg.Done()
+				info(fmt.Sprintf("Launching validator %d, shard %d...", i, j))
+				filename := fmt.Sprintf("aws-validator-%s-%d-%d", Topology, i, j)
+				f, err := os.Create(filename)
+				if err != nil {
+					panic(err)
+				}
+				f.WriteString(validatorConfig(i, j))
+				f.Close()
 
-			args := []string{
-				"ec2",
-				"run-instances",
-				"--launch-template",
-				fmt.Sprintf("LaunchTemplateId=%s", ValidatorLaunchTemplate),
-				"--user-data",
-				fmt.Sprintf("file://%s", filename),
-			}
-			out := execute(args)
+				args := []string{
+					"ec2",
+					"run-instances",
+					"--launch-template",
+					fmt.Sprintf("LaunchTemplateId=%s", ValidatorLaunchTemplate),
+					"--user-data",
+					fmt.Sprintf("file://%s", filename),
+				}
+				out := execute(args)
 
-			id, ip := parse(out)
-			instanceIDs = append(instanceIDs, id)
-			injectIP(ip)
-			validators = append(validators, Validator{
-				id:    i,
-				shard: j,
-				ip:    ip,
-			})
+				id, ip := parse(out)
+
+				validatorMutex.Lock()
+				instanceIDs = append(instanceIDs, id)
+				validators = append(validators, Validator{
+					id:    i,
+					shard: j,
+					ip:    ip,
+				})
+				validatorMutex.Unlock()
+			}(i, j, &wg)
 		}
+	}
+
+	wg.Wait()
+
+	sort.Slice(validators, func(i, j int) bool {
+		a := validators[i]
+		b := validators[j]
+		return a.id < b.id || (a.id == b.id && a.shard < b.shard)
+	})
+
+	for _, validator := range validators {
+		injectIP(validator.ip)
 	}
 
 	pushChanges()
