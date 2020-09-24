@@ -591,7 +591,7 @@ func merkleAWS28_4() []byte {
 func merkleAWSInsane() []byte {
 	numClients := 4096
 	numServers := 4
-	numServerInstances := 100
+	numServerInstances := 50
 
 	return config(numClients, numServers, numServerInstances, false, true, true, common.ModeMerkle)
 }
