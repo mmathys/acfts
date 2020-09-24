@@ -4,7 +4,7 @@
     {
       "Instances": [
         {
-          "Net": "54.153.119.51",
+          "Net": "localhost",
           "Port": 6666
         }
       ],
@@ -17,7 +17,7 @@
     {
       "Instances": [
         {
-          "Net": "50.18.26.2",
+          "Net": "localhost",
           "Port": 6666
         }
       ],
@@ -30,7 +30,7 @@
     {
       "Instances": [
         {
-          "Net": "54.193.120.174",
+          "Net": "localhost",
           "Port": 6666
         }
       ],
@@ -43,7 +43,7 @@
     {
       "Instances": [
         {
-          "Net": "54.183.139.34",
+          "Net": "localhost",
           "Port": 6666
         }
       ],
@@ -56,7 +56,7 @@
     {
       "Instances": [
         {
-          "Net": "54.193.152.35",
+          "Net": "localhost",
           "Port": 6666
         }
       ],
@@ -69,7 +69,7 @@
     {
       "Instances": [
         {
-          "Net": "54.215.49.66",
+          "Net": "localhost",
           "Port": 6666
         }
       ],
@@ -82,7 +82,7 @@
     {
       "Instances": [
         {
-          "Net": "13.52.230.241",
+          "Net": "localhost",
           "Port": 6666
         }
       ],
@@ -95,7 +95,7 @@
     {
       "Instances": [
         {
-          "Net": "54.183.215.132",
+          "Net": "localhost",
           "Port": 6666
         }
       ],
@@ -108,7 +108,7 @@
     {
       "Instances": [
         {
-          "Net": "54.183.198.109",
+          "Net": "localhost",
           "Port": 6666
         }
       ],
@@ -121,7 +121,7 @@
     {
       "Instances": [
         {
-          "Net": "54.176.97.93",
+          "Net": "localhost",
           "Port": 6666
         }
       ],
