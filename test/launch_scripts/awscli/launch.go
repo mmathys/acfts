@@ -26,7 +26,7 @@ const (
 	NumLauncherWorkers = 20
 
 	/* Validators */
-	NumShards               = 75
+	NumShards               = 100
 	Pooling                 = true
 	PoolSize                = 64
 	ValidatorLaunchTemplate = "lt-0e530c80ccc3334ab"
