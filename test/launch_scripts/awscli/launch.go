@@ -76,7 +76,7 @@ func main() {
 	for i := 0; i < numValidators; i++ {
 		for j := 0; j < NumShards; j++ {
 			wg.Add(1)
-			time.Sleep(time.Second)
+			time.Sleep(2 * time.Second)
 			ch <- LaunchJob{
 				i:  i,
 				j:  j,
@@ -136,6 +136,7 @@ func main() {
 		out := execute(args)
 		ids := parseIDs(out)
 		instanceIDs = append(instanceIDs, ids...)
+		time.Sleep(10 * time.Second)
 	}
 
 	os.Remove(topologiesFile)
