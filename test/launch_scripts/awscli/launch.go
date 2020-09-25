@@ -18,14 +18,15 @@ import (
 
 // Configuration
 const (
-	Interactive = false
-	Verbose     = false
-	Topology    = "merkleAWSInsane"
-	StartupTime = 3 * time.Minute
-	TestTime    = 12 * time.Minute
+	Interactive        = false
+	Verbose            = false
+	Topology           = "merkleAWSInsane"
+	StartupTime        = 3 * time.Minute
+	TestTime           = 12 * time.Minute
+	NumLauncherWorkers = 20
 
 	/* Validators */
-	NumShards               = 100
+	NumShards               = 50
 	Pooling                 = true
 	PoolSize                = 64
 	ValidatorLaunchTemplate = "lt-0e530c80ccc3334ab"
@@ -44,6 +45,15 @@ type Validator struct {
 
 var instanceIDs []string
 
+type LaunchJob struct {
+	i  int
+	j  int
+	wg *sync.WaitGroup
+}
+
+type GetLogJob struct {
+}
+
 func main() {
 	topology_util.GenerateAll()
 	topologiesFile := fmt.Sprintf("topologies/%s.json", Topology)
@@ -57,43 +67,21 @@ func main() {
 
 	/* Launch validators */
 	var wg sync.WaitGroup
-	var validatorMutex sync.Mutex
+
+	ch := make(chan LaunchJob, NumLauncherWorkers)
+	for i := 0; i < NumLauncherWorkers; i++ {
+		go launchJobConsumer(ch, &wg, &validators)
+	}
 
 	for i := 0; i < numValidators; i++ {
 		for j := 0; j < NumShards; j++ {
 			wg.Add(1)
-			go func(i int, j int, wg *sync.WaitGroup) {
-				defer wg.Done()
-				info(fmt.Sprintf("Launching validator %d, shard %d...", i, j))
-				filename := fmt.Sprintf("aws-validator-%s-%d-%d", Topology, i, j)
-				f, err := os.Create(filename)
-				if err != nil {
-					panic(err)
-				}
-				f.WriteString(validatorConfig(i, j))
-				f.Close()
-
-				args := []string{
-					"ec2",
-					"run-instances",
-					"--launch-template",
-					fmt.Sprintf("LaunchTemplateId=%s", ValidatorLaunchTemplate),
-					"--user-data",
-					fmt.Sprintf("file://%s", filename),
-				}
-				out := execute(args)
-
-				id, ip := parse(out)
-
-				validatorMutex.Lock()
-				instanceIDs = append(instanceIDs, id)
-				validators = append(validators, Validator{
-					id:    i,
-					shard: j,
-					ip:    ip,
-				})
-				validatorMutex.Unlock()
-			}(i, j, &wg)
+			time.Sleep(time.Second)
+			ch <- LaunchJob{
+				i:  i,
+				j:  j,
+				wg: &wg,
+			}
 		}
 	}
 
@@ -130,19 +118,26 @@ func main() {
 	f.WriteString(agentsConfig())
 	f.Close()
 
-	args := []string{
-		"ec2",
-		"run-instances",
-		"--launch-template",
-		fmt.Sprintf("LaunchTemplateId=%s", AgentsLaunchTemplate),
-		"--count",
-		strconv.Itoa(NumAgentsInstances),
-		"--user-data",
-		fmt.Sprintf("file://%s", filename),
+	launched := 0
+	limit := 250
+	for i := 0; i < NumAgentsInstances; i += limit {
+		toLaunch := min(limit, NumAgentsInstances-launched)
+		launched += toLaunch
+		args := []string{
+			"ec2",
+			"run-instances",
+			"--launch-template",
+			fmt.Sprintf("LaunchTemplateId=%s", AgentsLaunchTemplate),
+			"--count",
+			strconv.Itoa(toLaunch),
+			"--user-data",
+			fmt.Sprintf("file://%s", filename),
+		}
+		out := execute(args)
+		ids := parseIDs(out)
+		instanceIDs = append(instanceIDs, ids...)
 	}
-	out := execute(args)
-	ids := parseIDs(out)
-	instanceIDs = append(instanceIDs, ids...)
+
 	os.Remove(topologiesFile)
 
 	if Interactive {
@@ -159,7 +154,75 @@ func main() {
 	outputFolder := fmt.Sprintf("logs/%s-%d", Topology, time.Now().Unix())
 	os.MkdirAll(outputFolder, os.ModePerm)
 
+	ch2 := make(chan Validator)
+	var wg2 sync.WaitGroup
+
+	for i := 0; i < NumLauncherWorkers; i++ {
+		go getLogConsumer(ch2, &wg2, outputFolder)
+	}
+
 	for _, validator := range validators {
+		wg2.Add(1)
+		ch2 <- validator
+		time.Sleep(500 * time.Millisecond)
+	}
+
+	wg2.Wait()
+
+	/* Terminate instances */
+	log.Println("terminating instances...")
+	args := []string{
+		"ec2",
+		"terminate-instances",
+		"--instance-ids",
+	}
+	args = append(args, instanceIDs...)
+	execute(args)
+
+	log.Println("done")
+}
+
+var validatorMutex sync.Mutex
+
+func launchJobConsumer(ch chan LaunchJob, wg *sync.WaitGroup, validators *[]Validator) {
+	for {
+		job := <-ch
+		info(fmt.Sprintf("Launching validator %d, shard %d...", job.i, job.j))
+		filename := fmt.Sprintf("aws-validator-%s-%d-%d", Topology, job.i, job.j)
+		f, err := os.Create(filename)
+		if err != nil {
+			panic(err)
+		}
+		f.WriteString(validatorConfig(job.i, job.j))
+		f.Close()
+
+		args := []string{
+			"ec2",
+			"run-instances",
+			"--launch-template",
+			fmt.Sprintf("LaunchTemplateId=%s", ValidatorLaunchTemplate),
+			"--user-data",
+			fmt.Sprintf("file://%s", filename),
+		}
+		out := execute(args)
+
+		id, ip := parse(out)
+
+		validatorMutex.Lock()
+		instanceIDs = append(instanceIDs, id)
+		*validators = append(*validators, Validator{
+			id:    job.i,
+			shard: job.j,
+			ip:    ip,
+		})
+		validatorMutex.Unlock()
+		wg.Done()
+	}
+}
+
+func getLogConsumer(ch chan Validator, wg *sync.WaitGroup, outputFolder string) {
+	for {
+		validator := <-ch
 		cmd := exec.Command(
 			"ssh",
 			"-i",
@@ -182,19 +245,8 @@ func main() {
 		}
 		f.Write(out)
 		f.Close()
+		wg.Done()
 	}
-
-	/* Terminate instances */
-	log.Println("terminating instances...")
-	args = []string{
-		"ec2",
-		"terminate-instances",
-		"--instance-ids",
-	}
-	args = append(args, instanceIDs...)
-	execute(args)
-
-	log.Println("done")
 }
 
 func validatorConfig(validator int, shard int) string {
@@ -273,7 +325,7 @@ func execute(args []string) string {
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		panicIDs(instanceIDs)
-		fmt.Println(out)
+		fmt.Println(string(out))
 		log.Fatalf("cmd.Run() failed with %s\n", err)
 	}
 	return string(out)
@@ -345,4 +397,12 @@ func panicIDs(ids []string) {
 		fmt.Printf(" %s", id)
 	}
 	fmt.Println()
+}
+
+func min(a int, b int) int {
+	if a <= b {
+		return a
+	} else {
+		return b
+	}
 }
