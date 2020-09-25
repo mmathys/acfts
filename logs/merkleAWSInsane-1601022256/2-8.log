@@ -1,0 +1,7 @@
+Warning: Permanently added '13.52.219.246' (ECDSA) to the list of known hosts.
+/etc/profile.d/lang.sh: line 19: warning: setlocale: LC_CTYPE: cannot change locale (UTF-8): No such file or directory
+initializing server with:
+addr=564c67c3cd08863a570e632c60409d57b02f576a0582bcaf297aa4610f98aead, instance=8, port=6666, benchmark=true, pprof=false, batchVerification=true, mapType=insertOnly, merklePooling=true, merklePoolSize=64
+initializing map with len = 1.000000e+07...
+initialized map. server is ready.
+collect and dispatch: 64

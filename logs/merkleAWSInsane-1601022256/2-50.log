@@ -1,0 +1,19 @@
+Warning: Permanently added '13.52.182.36' (ECDSA) to the list of known hosts.
+/etc/profile.d/lang.sh: line 19: warning: setlocale: LC_CTYPE: cannot change locale (UTF-8): No such file or directory
+panic: runtime error: index out of range [50] with length 50
+
+goroutine 1 [running]:
+github.com/mmathys/acfts/common.lookupServerInstance(0xc0000804c0, 0x20, 0x40, 0x32, 0xc0003ef894, 0x6, 0xc0003ef886, 0x9, 0x25b2)
+	/go/src/github.com/mmathys/acfts/common/address.go:160 +0x237
+github.com/mmathys/acfts/common.GetServerPort(0xc0000804c0, 0x20, 0x40, 0x32, 0x4c02e1)
+	/go/src/github.com/mmathys/acfts/common/address.go:215 +0x50
+main.runServer(0xc0000804c0, 0x20, 0x40, 0x32, 0x1, 0x7ffe63c1ae1f, 0x40, 0x10000, 0x40, 0x1, ...)
+	/go/src/github.com/mmathys/acfts/server/server.go:39 +0xa2
+main.main.func1(0xc0000b1ec0, 0xc00000fa00, 0x12)
+	/go/src/github.com/mmathys/acfts/server/server.go:107 +0x3f4
+github.com/urfave/cli/v2.(*App).RunContext(0xc000001e00, 0xa56ae0, 0xc000026238, 0xc0000200a0, 0xa, 0xa, 0x0, 0x0)
+	/go/pkg/mod/github.com/urfave/cli/v2@v2.2.0/app.go:315 +0x70b
+github.com/urfave/cli/v2.(*App).Run(...)
+	/go/pkg/mod/github.com/urfave/cli/v2@v2.2.0/app.go:215
+main.main()
+	/go/src/github.com/mmathys/acfts/server/server.go:176 +0x5fd
