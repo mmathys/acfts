@@ -20,4 +20,4 @@ Usually I set the number to 3 times the number of validator servers. So for exam
 
 `launch.go` must be launched from the path of the repo.
 
-If you have any other question, just write me on Hangouts :)
+If you have any other questions, just let me know.
