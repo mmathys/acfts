@@ -6,7 +6,7 @@ Instructions on how to set up the benchmarks.
 
 - Docker version >= 19.03.13
 - docker-compose version >= 1.27.4 (usually included in the Docker installation)
-- go version go >= 1.14.2
+- go version >= 1.14.2
 
 ## Local variables
 
@@ -20,13 +20,13 @@ export DOCKER_BUILDKIT=1
 
 ## GitHub
 
-1. Make sure that you have write access to github.com/mmathys/acfts
+1. Make sure that you have write access to `github.com/mmathys/acfts`
 1. Make sure that your Git remote is over SSH, not HTTPS
 1. Make sure that your public key in `~/.ssh/.id_rsa.pub` is added to your GitHub account
 
 ## AWS
 
-1. Set up an AWS account
+1. Create an AWS account
 1. Install the AWS CLI and make sure the binary is in your `PATH`
 1. Configure the CLI for your account with `aws configure`
 1. Generate a key pair for the selected AWS region and store it on your machine (I used `us-west-1`)
