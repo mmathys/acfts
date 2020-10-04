@@ -33,7 +33,7 @@ export DOCKER_BUILDKIT=1
 1. Create a security group
     1. Name it `all-open`
     1. Create inbound and outbound rules: all traffic should be allowed.
-1. Create EC2 launch configurations for validators and clients and save the launch configuration IDs.
+1. Create two separate EC2 launch configurations for validators and clients and save the launch configuration IDs.
     1. The image should be an Amazon Linux 2 AMI
     1. I used EC2 compute instances (beginning with `c`) but you can basically freely chose any type.
     1. Make sure that your generated keypair is added to both launch configurations.
