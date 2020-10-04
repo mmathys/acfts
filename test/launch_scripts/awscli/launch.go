@@ -24,6 +24,8 @@ const (
 	StartupTime        = 3 * time.Minute
 	TestTime           = 12 * time.Minute
 	NumLauncherWorkers = 20
+	SedExe             = "gsed"
+	SSHKey             = "~/.ssh/makesxi-us-west-1"
 
 	/* Validators */
 	NumShards               = 100
@@ -227,7 +229,7 @@ func getLogConsumer(ch chan Validator, wg *sync.WaitGroup, outputFolder string) 
 		cmd := exec.Command(
 			"ssh",
 			"-i",
-			"~/.ssh/makesxi-us-west-1",
+			SSHKey,
 			"-oStrictHostKeyChecking=no",
 			fmt.Sprintf("ec2-user@%s", validator.ip),
 			"docker logs acfts_server_1",
@@ -348,7 +350,7 @@ func injectIP(ip string) {
 		path,
 	}
 	injectIPMutex.Lock()
-	cmd := exec.Command("gsed", args...)
+	cmd := exec.Command(SedExe, args...)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		fmt.Println(string(out))
